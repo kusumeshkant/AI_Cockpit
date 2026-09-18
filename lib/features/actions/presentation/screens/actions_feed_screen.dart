@@ -13,7 +13,6 @@ import 'package:cockpit/core/localization/formatters.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
 import 'package:cockpit/core/responsive/breakpoints.dart';
 import 'package:cockpit/core/router/routes.dart';
-import 'package:cockpit/core/theme/app_text_styles.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/widgets/app_empty_view.dart';
 import 'package:cockpit/core/widgets/app_error_view.dart';
@@ -303,7 +302,7 @@ class _ReviewCount extends ConsumerWidget {
             context.l10n.needsReviewCount(count),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.monoData.copyWith(color: color),
+            style: context.monoLabel.copyWith(color: color),
           ),
         ),
       ],

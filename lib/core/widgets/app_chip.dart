@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:cockpit/core/theme/app_theme.dart';
-import 'package:cockpit/core/theme/app_text_styles.dart';
 import 'package:cockpit/core/widgets/tap_target.dart';
 
 /// Full-radius filter chip (mono label).
@@ -56,7 +55,7 @@ class AppChip extends StatelessWidget {
               ),
               child: Text(
                 label,
-                style: AppTextStyles.monoData.copyWith(
+                style: context.monoLabel.copyWith(
                   color: selected ? colors.onFill : colors.muted,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                 ),

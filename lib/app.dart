@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
 import 'package:cockpit/core/localization/locale_controller.dart';
 import 'package:cockpit/core/router/app_router.dart';
+import 'package:cockpit/core/theme/localized_typography.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/theme/theme_controller.dart';
 import 'package:cockpit/features/notifications/presentation/push_gate.dart';
@@ -33,7 +34,9 @@ class CockpitApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
-      builder: (context, child) => PushGate(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => LocalizedTypography(
+        child: PushGate(child: child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }

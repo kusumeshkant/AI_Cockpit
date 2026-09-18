@@ -57,7 +57,7 @@ class StatusPill extends StatelessWidget {
         ),
         SizedBox(width: spacing.xs + spacing.xxs / 2),
         Text(
-          label.toUpperCase(),
+          context.labelCase(label),
           maxLines: 1,
           style: context.textTheme.labelSmall?.copyWith(color: foreground),
         ),

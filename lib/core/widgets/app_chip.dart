@@ -1,9 +1,12 @@
 // Chips: full-radius filter pills (audit) and flex segmented chips (theme,
-// language, platform). Selected = accent fill; unselected = outlined.
+// language, platform). Selected = accent fill; unselected = outlined. Both
+// keep their compact look but are tappable over at least
+// `AppSpacing.minTapTarget` (TapTargetPadding).
 import 'package:flutter/material.dart';
 
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/theme/app_text_styles.dart';
+import 'package:cockpit/core/widgets/tap_target.dart';
 
 /// Full-radius filter chip (mono label).
 class AppChip extends StatelessWidget {
@@ -30,30 +33,33 @@ class AppChip extends StatelessWidget {
     final spacing = context.spacing;
     final radius = BorderRadius.circular(spacing.radiusPill);
 
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      excludeSemantics: true,
-      child: Material(
-        color: selected ? colors.accent : colors.paper,
-        shape: RoundedRectangleBorder(
-          borderRadius: radius,
-          side: selected ? BorderSide.none : BorderSide(color: colors.line),
-        ),
-        child: InkWell(
-          onTap: onSelected,
-          borderRadius: radius,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.md + spacing.xxs / 2,
-              vertical: spacing.xs + spacing.xxs,
-            ),
-            child: Text(
-              label,
-              style: AppTextStyles.monoData.copyWith(
-                color: selected ? colors.onFill : colors.muted,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+    return TapTargetPadding(
+      minSize: Size.square(spacing.minTapTarget),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        excludeSemantics: true,
+        child: Material(
+          color: selected ? colors.accent : colors.paper,
+          shape: RoundedRectangleBorder(
+            borderRadius: radius,
+            side: selected ? BorderSide.none : BorderSide(color: colors.line),
+          ),
+          child: InkWell(
+            onTap: onSelected,
+            borderRadius: radius,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.md + spacing.xxs / 2,
+                vertical: spacing.xs + spacing.xxs,
+              ),
+              child: Text(
+                label,
+                style: AppTextStyles.monoData.copyWith(
+                  color: selected ? colors.onFill : colors.muted,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -67,16 +73,20 @@ class AppChip extends StatelessWidget {
 @immutable
 class SegmentOption<T> {
   /// Creates an option.
-  const SegmentOption({required this.value, required this.label});
+  const SegmentOption({required this.value, required this.label, this.key});
 
   /// Value reported on selection.
   final T value;
 
   /// Localized label.
   final String label;
+
+  /// Stable key for the segment (tests / UI automation), e.g.
+  /// `Key('themeMode.dark')`. Defaults to `ValueKey(value)`.
+  final Key? key;
 }
 
-/// Equal-width segmented choice (height 40, radius 10).
+/// Equal-width segmented choice (height 40, radius 10; tap target ≥ 44).
 class SegmentedChips<T> extends StatelessWidget {
   /// Creates the control.
   const SegmentedChips({
@@ -104,7 +114,7 @@ class SegmentedChips<T> extends StatelessWidget {
           if (i > 0) SizedBox(width: spacing.sm),
           Expanded(
             child: _Segment(
-              key: ValueKey(options[i].value),
+              key: options[i].key ?? ValueKey(options[i].value),
               label: options[i].label,
               selected: options[i].value == selected,
               onTap: () => onChanged(options[i].value),
@@ -134,34 +144,41 @@ class _Segment extends StatelessWidget {
     final spacing = context.spacing;
     final radius = BorderRadius.circular(spacing.radiusSegment);
 
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      excludeSemantics: true,
-      child: Material(
-        color: selected ? colors.accent : colors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: radius,
-          side: selected ? BorderSide.none : BorderSide(color: colors.lineStrong),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: radius,
-          child: SizedBox(
-            height: spacing.segmentHeight,
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: spacing.xs),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: selected ? colors.onFill : colors.inkSoft,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                      height: 1,
+    return TapTargetPadding(
+      minSize: Size.square(spacing.minTapTarget),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        excludeSemantics: true,
+        child: Material(
+          color: selected ? colors.accent : colors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: radius,
+            side: selected
+                ? BorderSide.none
+                : BorderSide(color: colors.lineStrong),
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: radius,
+            child: SizedBox(
+              height: spacing.segmentHeight,
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: spacing.xs),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: selected ? colors.onFill : colors.inkSoft,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),

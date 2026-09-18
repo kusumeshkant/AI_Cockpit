@@ -15,6 +15,7 @@ class AppNavItem {
     required this.label,
     required this.railLabel,
     this.badgeCount,
+    this.key,
   });
 
   /// Glyph.
@@ -28,6 +29,10 @@ class AppNavItem {
 
   /// Optional count badge shown in the rail.
   final int? badgeCount;
+
+  /// Stable key for the destination's button in the bottom nav and the rail
+  /// (tests / UI automation), e.g. `Key('nav.audit')`.
+  final Key? key;
 }
 
 /// Phone bottom navigation: icon 22 + mono 9.5 label; active = accent.
@@ -73,6 +78,7 @@ class AppBottomNav extends StatelessWidget {
               for (var i = 0; i < items.length; i++)
                 Expanded(
                   child: _BottomNavButton(
+                    key: items[i].key,
                     item: items[i],
                     selected: i == currentIndex,
                     onTap: () => onSelected(i),
@@ -91,6 +97,7 @@ class _BottomNavButton extends StatelessWidget {
     required this.item,
     required this.selected,
     required this.onTap,
+    super.key,
   });
 
   final AppNavItem item;
@@ -206,6 +213,7 @@ class AppNavRail extends StatelessWidget {
                 SizedBox(height: spacing.xl + spacing.xs),
                 for (var i = 0; i < items.length; i++) ...[
                   _RailButton(
+                    key: items[i].key,
                     item: items[i],
                     selected: i == currentIndex,
                     onTap: () => onSelected(i),
@@ -226,6 +234,7 @@ class _RailButton extends StatelessWidget {
     required this.item,
     required this.selected,
     required this.onTap,
+    super.key,
   });
 
   final AppNavItem item;

@@ -21,9 +21,21 @@ class ThemeModeTile extends ConsumerWidget {
       onChanged: (mode) =>
           ref.read(settingsControllerProvider).setThemeMode(mode),
       options: [
-        SegmentOption(value: ThemeMode.system, label: l10n.themeSystem),
-        SegmentOption(value: ThemeMode.light, label: l10n.themeLight),
-        SegmentOption(value: ThemeMode.dark, label: l10n.themeDark),
+        SegmentOption(
+          value: ThemeMode.system,
+          label: l10n.themeSystem,
+          key: const Key('themeMode.system'),
+        ),
+        SegmentOption(
+          value: ThemeMode.light,
+          label: l10n.themeLight,
+          key: const Key('themeMode.light'),
+        ),
+        SegmentOption(
+          value: ThemeMode.dark,
+          label: l10n.themeDark,
+          key: const Key('themeMode.dark'),
+        ),
       ],
     );
   }

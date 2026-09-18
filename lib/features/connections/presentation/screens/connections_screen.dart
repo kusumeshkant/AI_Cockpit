@@ -37,7 +37,6 @@ class ConnectionsScreen extends ConsumerWidget {
         trailing: AppButton(
           label: l10n.connect,
           icon: AppIcons.plus,
-          size: AppButtonSize.compact,
           onPressed: openConnect,
         ),
       ),

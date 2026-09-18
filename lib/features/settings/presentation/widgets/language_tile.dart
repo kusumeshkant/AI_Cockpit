@@ -22,9 +22,21 @@ class LanguageTile extends ConsumerWidget {
           .read(settingsControllerProvider)
           .setLocale(code == null ? null : Locale(code)),
       options: [
-        SegmentOption(value: null, label: l10n.languageSystem),
-        SegmentOption(value: 'en', label: l10n.languageEnglish),
-        SegmentOption(value: 'hi', label: l10n.languageHindi),
+        SegmentOption(
+          value: null,
+          label: l10n.languageSystem,
+          key: const Key('locale.system'),
+        ),
+        SegmentOption(
+          value: 'en',
+          label: l10n.languageEnglish,
+          key: const Key('locale.en'),
+        ),
+        SegmentOption(
+          value: 'hi',
+          label: l10n.languageHindi,
+          key: const Key('locale.hi'),
+        ),
       ],
     );
   }

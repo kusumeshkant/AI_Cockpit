@@ -139,22 +139,26 @@ class _NavigationShell extends ConsumerWidget {
       ),
       items: [
         AppNavItem(
+          key: const Key('nav.actions'),
           icon: AppIcons.tray,
           label: l10n.navFeed,
           railLabel: l10n.navFeed,
           badgeCount: pendingCount,
         ),
         AppNavItem(
+          key: const Key('nav.connect'),
           icon: AppIcons.link,
           label: l10n.navConnectShort,
           railLabel: l10n.navConnections,
         ),
         AppNavItem(
+          key: const Key('nav.audit'),
           icon: AppIcons.list,
           label: l10n.navAuditShort,
           railLabel: l10n.navAudit,
         ),
         AppNavItem(
+          key: const Key('nav.settings'),
           icon: AppIcons.gear,
           label: l10n.navSettings,
           railLabel: l10n.navSettings,

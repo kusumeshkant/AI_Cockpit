@@ -6,14 +6,16 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/widgets.dart';
+import 'package:marionette_flutter/marionette_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:cockpit/core/config/app_config.dart';
 import 'package:cockpit/core/di/injection.dart';
+import 'package:cockpit/core/testing/marionette_config.dart';
 import 'package:cockpit/core/utils/logger.dart';
 
 /// Initialises Firebase (push only) from the platform config files
@@ -35,7 +37,15 @@ typedef RootBuilder = Widget Function(SharedPreferences prefs);
 Future<void> bootstrap(RootBuilder builder) async {
   await runZonedGuarded<Future<void>>(
     () async {
-      WidgetsFlutterBinding.ensureInitialized();
+      // Debug builds use Marionette's binding (a WidgetsFlutterBinding) so an
+      // MCP agent can drive the UI over the local VM service. kDebugMode is a
+      // compile-time constant: release builds keep the plain binding and
+      // tree-shake the Marionette code.
+      if (kDebugMode) {
+        MarionetteBinding.ensureInitialized(buildMarionetteConfiguration());
+      } else {
+        WidgetsFlutterBinding.ensureInitialized();
+      }
       final config = AppConfig.fromEnvironment();
 
       await _initFirebase(config);

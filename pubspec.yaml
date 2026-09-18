@@ -1,0 +1,65 @@
+name: cockpit
+description: "Cockpit — the mobile control panel for AI agents. Review, edit and approve what your agents propose."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.10.0
+
+# TODO(deps): pin every `any` constraint to a caret version once the first
+# green CI build locks a working set (copy resolved versions from pubspec.lock).
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State, DI, routing
+  flutter_riverpod: any
+  riverpod_annotation: any
+  go_router: any
+  get_it: any
+  injectable: any
+
+  # Models & errors
+  freezed_annotation: any
+  json_annotation: ^4.9.0 # json_serializable rejects constraints allowing < 4.9.0
+  dartz: any
+
+  # Network & i18n
+  dio: any
+  intl: any
+
+  # Persistence
+  shared_preferences: any
+  flutter_secure_storage: any
+
+  # Backend & push
+  supabase_flutter: any
+  firebase_core: any
+  firebase_messaging: any
+  flutter_local_notifications: any
+
+  # Observability
+  sentry_flutter: ^9.30.0 # 8.x targets Kotlin language 1.6, which current Android toolchains reject
+  posthog_flutter: any
+  google_fonts: ^8.2.1
+  flutter_svg: ^2.3.0
+  http: ^1.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  build_runner: any
+  injectable_generator: any
+  freezed: any
+  json_serializable: any
+  riverpod_generator: any
+  flutter_lints: any
+  mocktail: any
+
+flutter:
+  uses-material-design: true
+  generate: true

@@ -142,6 +142,11 @@ class _Segment extends StatelessWidget {
     final colors = context.colors;
     final spacing = context.spacing;
     final radius = BorderRadius.circular(spacing.radiusSegment);
+    final style = (context.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+      color: selected ? colors.onFill : colors.inkSoft,
+      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+      height: 1,
+    );
 
     return TapTargetPadding(
       minSize: Size.square(spacing.minTapTarget),
@@ -171,12 +176,14 @@ class _Segment extends StatelessWidget {
                     child: Text(
                       label,
                       maxLines: 1,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: selected ? colors.onFill : colors.inkSoft,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        height: 1,
+                      style: style,
+                      // Force line metrics from this style: fallback fonts
+                      // (e.g. Devanagari) otherwise bring their own ascent /
+                      // descent split, and with `height: 1` their labels sit
+                      // higher than Latin ones in the same row.
+                      strutStyle: StrutStyle.fromTextStyle(
+                        style,
+                        forceStrutHeight: true,
                       ),
                     ),
                   ),

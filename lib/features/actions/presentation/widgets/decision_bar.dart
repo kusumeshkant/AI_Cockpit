@@ -1,7 +1,8 @@
 // Feature: actions · Layer: presentation
 // Sticky decision bar (design: ActionDetail.dc.html / TabletFeed.dc.html).
-//  * phone  — Reject (danger, flex) · Edit (secondary, fixed) · Approve
-//             (success, widest).
+//  * phone  — Reject (danger, flex) · Edit (secondary, sized to its label,
+//             at least editButtonMinWidth) · Approve (success, widest).
+//             Edit is capped so Approve always stays the widest button.
 //  * wide   — right-aligned, intrinsic-width buttons.
 // Edit mode swaps to Cancel · Approve with edits.
 import 'package:flutter/material.dart';
@@ -31,6 +32,12 @@ class DecisionBar extends StatelessWidget {
 
   /// Flex of the Approve button (widest).
   static const int approveFlex = 13;
+
+  /// Widest the Edit button may be in a phone row of [rowWidth] with
+  /// [gap] between buttons, so that Approve (which shares the remaining
+  /// width with Reject at [approveFlex] : [rejectFlex]) is never narrower.
+  static double maxEditWidth(double rowWidth, double gap) =>
+      (rowWidth - 2 * gap) * approveFlex / (rejectFlex + 2 * approveFlex);
 
   /// Approve (or approve-with-edits in edit mode).
   final VoidCallback onApprove;
@@ -78,7 +85,6 @@ class DecisionBar extends StatelessWidget {
             label: l10n.edit,
             variant: AppButtonVariant.secondary,
             onPressed: busy ? null : onEdit,
-            expand: !wide,
           )
         : null;
     final approve = AppButton(
@@ -97,16 +103,30 @@ class DecisionBar extends StatelessWidget {
             runSpacing: spacing.sm,
             children: [leading, ?edit, approve],
           )
-        : Row(
-            children: [
-              Expanded(flex: rejectFlex, child: leading),
-              if (edit != null) ...[
-                SizedBox(width: spacing.sm + spacing.xxs / 2),
-                SizedBox(width: spacing.editButtonWidth, child: edit),
-              ],
-              SizedBox(width: spacing.sm + spacing.xxs / 2),
-              Expanded(flex: approveFlex, child: approve),
-            ],
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              final gap = spacing.sm + spacing.xxs / 2;
+              final maxEdit = maxEditWidth(constraints.maxWidth, gap);
+              return Row(
+                children: [
+                  Expanded(flex: rejectFlex, child: leading),
+                  if (edit != null) ...[
+                    SizedBox(width: gap),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: spacing.editButtonMinWidth,
+                        maxWidth: maxEdit < spacing.editButtonMinWidth
+                            ? spacing.editButtonMinWidth
+                            : maxEdit,
+                      ),
+                      child: edit,
+                    ),
+                  ],
+                  SizedBox(width: gap),
+                  Expanded(flex: approveFlex, child: approve),
+                ],
+              );
+            },
           );
 
     return AppBottomBar(child: row);

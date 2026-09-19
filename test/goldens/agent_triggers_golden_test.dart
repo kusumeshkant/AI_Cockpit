@@ -78,7 +78,7 @@ void main() {
   setUpAll(() => useTolerantGoldens('agent_triggers_golden_test.dart'));
 
   for (final (name, themeMode, locale) in _variants) {
-    testWidgets('connections Run states ($name)', (tester) async {
+    testWidgets('connections Run states ($name)', skip: skipGoldensOnCi, (tester) async {
       final listTriggers = _MockListTriggers();
       when(() => listTriggers()).thenAnswer(
         (_) async => Right([
@@ -109,7 +109,7 @@ void main() {
       await expectLater(find.byType(MaterialApp), matchesGoldenFile('triggers/connections_$name.png'));
     });
 
-    testWidgets('connect agent · trigger saved ($name)', (tester) async {
+    testWidgets('connect agent · trigger saved ($name)', skip: skipGoldensOnCi, (tester) async {
       final configure = _MockConfigureTrigger();
       final listTriggers = _MockListTriggers();
       when(() => listTriggers()).thenAnswer((_) async => const Right([]));

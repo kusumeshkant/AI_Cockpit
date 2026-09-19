@@ -73,12 +73,12 @@ class _FakeDetail extends ActionDetailController {
 void main() {
   setUpAll(() => useTolerantGoldens('flag_off_regression_golden_test.dart'));
 
-  testWidgets('feed (flags off)', (tester) async {
+  testWidgets('feed (flags off)', skip: skipGoldensOnCi, (tester) async {
     await pumpApp(tester, const ActionsFeedScreen(), overrides: [feedOverride(fixtureFeed)]);
     await expectLater(find.byType(MaterialApp), matchesGoldenFile('regression/feed.png'));
   });
 
-  testWidgets('action detail / approve bar (flags off)', (tester) async {
+  testWidgets('action detail / approve bar (flags off)', skip: skipGoldensOnCi, (tester) async {
     await pumpApp(
       tester,
       ActionDetailScreen(actionId: pendingEmail.id),
@@ -87,7 +87,7 @@ void main() {
     await expectLater(find.byType(MaterialApp), matchesGoldenFile('regression/action_detail.png'));
   });
 
-  testWidgets('connections (flags off)', (tester) async {
+  testWidgets('connections (flags off)', skip: skipGoldensOnCi, (tester) async {
     await pumpApp(
       tester,
       const ConnectionsScreen(),
@@ -96,7 +96,7 @@ void main() {
     await expectLater(find.byType(MaterialApp), matchesGoldenFile('regression/connections.png'));
   });
 
-  testWidgets('audit (flags off)', (tester) async {
+  testWidgets('audit (flags off)', skip: skipGoldensOnCi, (tester) async {
     await pumpApp(
       tester,
       const AuditScreen(),

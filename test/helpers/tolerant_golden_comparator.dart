@@ -1,5 +1,13 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// Goldens are rendered and checked on the dev machine only. CI runs Linux
+/// with an unpinned stable Flutter, which rasterizes shadows / anti-aliasing
+/// differently (1.7–2.5% of pixels) — so golden tests are skipped there
+/// (`CI=true`, set by GitHub Actions). Every other test still runs on CI.
+final bool skipGoldensOnCi = Platform.environment['CI'] == 'true';
 
 /// Golden comparator tolerating tiny rasterization differences between
 /// platforms: goldens are generated on the dev machine, CI runs on Linux.

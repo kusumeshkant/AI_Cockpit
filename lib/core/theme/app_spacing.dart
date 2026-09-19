@@ -85,8 +85,9 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
   /// Minimum tap target.
   double get minTapTarget => 44;
 
-  /// Width of the fixed-size Edit button in the decision bar.
-  double get editButtonWidth => 66;
+  /// Minimum width of the decision bar's Edit button; it grows to fit
+  /// longer labels (e.g. Hindi) up to the width of Approve.
+  double get editButtonMinWidth => 66;
 
   /// Hairline border.
   double get borderThin => 1;

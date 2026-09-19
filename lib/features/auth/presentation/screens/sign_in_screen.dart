@@ -130,11 +130,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             children: [
                               Text(l10n.appTitle, style: text.displayMedium),
                               Text(
-                                l10n.brandTagline.toUpperCase(),
+                                context.labelCase(l10n.brandTagline),
                                 style: text.labelMedium?.copyWith(
                                   color: colors.muted,
-                                  letterSpacing:
-                                      (text.labelMedium?.fontSize ?? 0) * 0.04,
+                                  letterSpacing: context.labelTracking(text.labelMedium, 0.04),
                                 ),
                               ),
                             ],

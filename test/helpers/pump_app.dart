@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cockpit/core/di/providers.dart';
 import 'package:cockpit/core/localization/locale_controller.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
+import 'package:cockpit/core/theme/localized_typography.dart';
 import 'package:cockpit/core/theme/theme_controller.dart';
 import 'package:cockpit/l10n/app_localizations.dart';
 
@@ -57,6 +58,8 @@ Future<SharedPreferences> pumpApp(
           locale: ref.watch(localeControllerProvider) ?? locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
+          // Same script-aware label styles as the app (CockpitApp.builder).
+          builder: (context, app) => LocalizedTypography(child: app!),
           home: child,
         ),
       ),

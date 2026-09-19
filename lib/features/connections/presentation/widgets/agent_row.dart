@@ -1,6 +1,7 @@
 // Feature: connections · Layer: presentation
 // Agent list row (design: Connections.dc.html): icon tile, name, platform ·
-// activity line, bare LIVE / PAUSED status.
+// activity line, bare LIVE / PAUSED status. Optional [footer] / [trailing]
+// slots (Agent Triggers, flag-gated) render nothing when null.
 import 'package:flutter/material.dart';
 
 import 'package:cockpit/core/localization/formatters.dart';
@@ -14,13 +15,25 @@ import 'package:cockpit/features/connections/domain/entities/agent.dart';
 /// Card row for an [Agent].
 class AgentRow extends StatelessWidget {
   /// Creates the row.
-  const AgentRow({required this.agent, this.onTap, super.key});
+  const AgentRow({
+    required this.agent,
+    this.onTap,
+    this.footer,
+    this.trailing,
+    super.key,
+  });
 
   /// The agent shown.
   final Agent agent;
 
   /// Optional tap handler.
   final VoidCallback? onTap;
+
+  /// Optional third line under the meta line (e.g. last trigger run).
+  final Widget? footer;
+
+  /// Optional control after the status (e.g. the Run button).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +89,10 @@ class AgentRow extends StatelessWidget {
                       letterSpacing: 0,
                     ),
                   ),
+                  if (footer != null) ...[
+                    SizedBox(height: spacing.xxs),
+                    footer!,
+                  ],
                 ],
               ),
             ),
@@ -84,6 +101,10 @@ class AgentRow extends StatelessWidget {
               label: live ? l10n.statusLive : l10n.statusPaused,
               tone: live ? StatusTone.go : StatusTone.pending,
             ),
+            if (trailing != null) ...[
+              SizedBox(width: spacing.xs),
+              trailing!,
+            ],
           ],
         ),
       ),

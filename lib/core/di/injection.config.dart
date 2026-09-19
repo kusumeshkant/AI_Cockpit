@@ -85,6 +85,22 @@ import 'package:cockpit/features/notifications/presentation/local_notifier.dart'
     as _i195;
 import 'package:cockpit/features/notifications/presentation/notification_service.dart'
     as _i555;
+import 'package:cockpit/features/triggers/data/datasources/trigger_demo_ds.dart'
+    as _i750;
+import 'package:cockpit/features/triggers/data/datasources/trigger_remote_ds.dart'
+    as _i310;
+import 'package:cockpit/features/triggers/data/repositories/trigger_repository_impl.dart'
+    as _i355;
+import 'package:cockpit/features/triggers/domain/repositories/trigger_repository.dart'
+    as _i799;
+import 'package:cockpit/features/triggers/domain/usecases/configure_trigger.dart'
+    as _i172;
+import 'package:cockpit/features/triggers/domain/usecases/list_agent_triggers.dart'
+    as _i964;
+import 'package:cockpit/features/triggers/domain/usecases/run_agent.dart'
+    as _i342;
+import 'package:cockpit/features/triggers/domain/usecases/set_trigger_enabled.dart'
+    as _i952;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
@@ -114,6 +130,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i861.FcmTokenDataSource>(
       () => const _i937.FcmTokenDemoDataSource(),
+      registerFor: {_demo},
+    );
+    gh.lazySingleton<_i310.TriggerRemoteDataSource>(
+      () => _i750.TriggerDemoDataSource(),
       registerFor: {_demo},
     );
     gh.lazySingleton<_i539.AuthRemoteDataSource>(
@@ -161,6 +181,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i69.RealtimeActionChangeSource(gh<_i454.SupabaseClient>()),
       registerFor: {_live},
     );
+    gh.lazySingleton<_i310.TriggerRemoteDataSource>(
+      () => _i310.TriggerRemoteDataSourceImpl(
+        gh<_i454.SupabaseClient>(),
+        gh<_i846.DioClient>(),
+      ),
+      registerFor: {_live},
+    );
     gh.lazySingleton<_i539.AuthRemoteDataSource>(
       () => _i539.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
       registerFor: {_live},
@@ -173,8 +200,23 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       registerFor: {_live},
     );
+    gh.lazySingleton<_i799.TriggerRepository>(
+      () => _i355.TriggerRepositoryImpl(gh<_i310.TriggerRemoteDataSource>()),
+    );
     gh.lazySingleton<_i878.ActionsRepository>(
       () => _i487.ActionsRepositoryImpl(gh<_i854.ActionsRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i172.ConfigureTrigger>(
+      () => _i172.ConfigureTrigger(gh<_i799.TriggerRepository>()),
+    );
+    gh.lazySingleton<_i964.ListAgentTriggers>(
+      () => _i964.ListAgentTriggers(gh<_i799.TriggerRepository>()),
+    );
+    gh.lazySingleton<_i342.RunAgent>(
+      () => _i342.RunAgent(gh<_i799.TriggerRepository>()),
+    );
+    gh.lazySingleton<_i952.SetTriggerEnabled>(
+      () => _i952.SetTriggerEnabled(gh<_i799.TriggerRepository>()),
     );
     gh.lazySingleton<_i941.ConnectionsRemoteDataSource>(
       () => _i941.ConnectionsRemoteDataSourceImpl(

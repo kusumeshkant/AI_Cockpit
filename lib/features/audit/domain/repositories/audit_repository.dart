@@ -6,9 +6,11 @@ import 'package:cockpit/features/audit/domain/entities/audit_entry.dart';
 /// Audit log access.
 abstract interface class AuditRepository {
   /// Returns a page of entries, newest first, optionally for one [agentId].
+  /// [includeTriggerEvents] adds agent-run entries (Agent Triggers flag).
   Result<List<AuditEntry>> getAuditEntries({
     String? agentId,
     int page = 0,
     int pageSize = 50,
+    bool includeTriggerEvents = false,
   });
 }

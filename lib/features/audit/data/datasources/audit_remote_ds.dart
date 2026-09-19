@@ -10,11 +10,13 @@ import 'package:cockpit/features/audit/data/models/audit_entry_dto.dart';
 
 /// Remote audit source.
 abstract interface class AuditRemoteDataSource {
-  /// Fetches a page of entries.
+  /// Fetches a page of entries. [includeTriggerEvents] (Agent Triggers,
+  /// flag-gated) adds `trigger_fired` / `trigger_failed` rows.
   Future<List<AuditEntryDto>> fetchEntries({
     required int offset,
     required int limit,
     String? agentId,
+    bool includeTriggerEvents = false,
   });
 }
 
@@ -27,6 +29,9 @@ class AuditRemoteDataSourceImpl implements AuditRemoteDataSource {
   /// Event shown in the timeline.
   static const String decisionEvent = 'decision_made';
 
+  /// Agent Triggers events (shown only while the feature flag is on).
+  static const List<String> triggerEvents = ['trigger_fired', 'trigger_failed'];
+
   final SupabaseClient _client;
 
   @override
@@ -34,29 +39,57 @@ class AuditRemoteDataSourceImpl implements AuditRemoteDataSource {
     required int offset,
     required int limit,
     String? agentId,
+    bool includeTriggerEvents = false,
   }) async {
     final join = agentId == null ? 'action' : 'action!inner';
-    var query = _client
-        .from(DbTables.auditEntry)
-        .select(
+    final base = _client.from(DbTables.auditEntry).select(
           'id, action_id, event, decision, reason, edited_payload, created_at, '
-          '$join:action_id(title, agent_id, agent:agent_id(name, platform))',
-        )
-        .eq('event', decisionEvent);
+          '$join:action_id(title, agent_id, agent:agent_id(name, platform))'
+          '${includeTriggerEvents ? ', metadata' : ''}',
+        );
+    var query = includeTriggerEvents
+        ? base.inFilter('event', [decisionEvent, ...triggerEvents])
+        : base.eq('event', decisionEvent);
     if (agentId != null) query = query.eq('action.agent_id', agentId);
 
     final rows = await query
         .order('created_at', ascending: false)
         .range(offset, offset + limit - 1);
-    return rows.map(_toDto).toList(growable: false);
+    final agents = includeTriggerEvents ? await _agentsOfTriggerRows(rows) : const {};
+    return rows.map((row) => _toDto(row, agents)).toList(growable: false);
   }
 
-  static AuditEntryDto _toDto(Map<String, dynamic> row) {
+  /// Trigger events carry their agent in `metadata.agent_id` (no action):
+  /// resolve those agents' name / platform in one query.
+  Future<Map<String, Map<String, dynamic>>> _agentsOfTriggerRows(
+    List<Map<String, dynamic>> rows,
+  ) async {
+    final ids = {
+      for (final row in rows)
+        if (row['action'] == null && row['metadata'] is Map)
+          (row['metadata'] as Map)['agent_id'],
+    }.whereType<String>().toList(growable: false);
+    if (ids.isEmpty) return const {};
+    final agents = await _client
+        .from(DbTables.agent)
+        .select('id, name, platform')
+        .inFilter('id', ids);
+    return {for (final agent in agents) agent['id'] as String: agent};
+  }
+
+  static AuditEntryDto _toDto(
+    Map<String, dynamic> row,
+    Map<dynamic, dynamic> triggerAgents,
+  ) {
     final action = row['action'];
-    final agent = action is Map ? action['agent'] : null;
+    final metadata = row['metadata'];
+    final triggerAgentId =
+        action == null && metadata is Map ? metadata['agent_id'] as String? : null;
+    final agent = action is Map ? action['agent'] : triggerAgents[triggerAgentId];
     return AuditEntryDto.fromJson({
       ...row,
       'id': '${row['id']}',
+      'agent_id': triggerAgentId,
       'action_title': action is Map ? action['title'] : null,
       'agent_name': agent is Map ? agent['name'] : null,
       'agent_platform': agent is Map ? agent['platform'] : null,

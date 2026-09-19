@@ -2,6 +2,7 @@
 // radius 12, optional leading icon.
 import 'package:flutter/material.dart';
 
+import 'package:cockpit/core/theme/app_text_styles.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/core/widgets/section_label.dart';
@@ -22,6 +23,7 @@ class AppTextField extends StatelessWidget {
     this.onSubmitted,
     this.enabled = true,
     this.maxLines = 1,
+    this.monospace = false,
     super.key,
   });
 
@@ -61,6 +63,9 @@ class AppTextField extends StatelessWidget {
   /// Line count; values > 1 grow the field beyond the standard height.
   final int maxLines;
 
+  /// Mono input text (URLs, identifiers). Off by default.
+  final bool monospace;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -85,7 +90,12 @@ class AppTextField extends StatelessWidget {
           onChanged: onChanged,
           onSubmitted: onSubmitted,
           maxLines: maxLines,
-          style: context.textTheme.bodyLarge?.copyWith(color: colors.ink),
+          style: monospace
+              ? AppTextStyles.monoData.copyWith(
+                  fontSize: context.textTheme.bodyLarge?.fontSize,
+                  color: colors.ink,
+                )
+              : context.textTheme.bodyLarge?.copyWith(color: colors.ink),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: context.textTheme.bodyLarge?.copyWith(color: colors.muted),

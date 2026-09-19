@@ -80,7 +80,10 @@ enum AppIcons {
   grid('<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>'),
 
   /// Open arc — waiting / in progress.
-  progress('<path d="M12 3a9 9 0 1 0 9 9"/>', 2);
+  progress('<path d="M12 3a9 9 0 1 0 9 9"/>', 2),
+
+  /// Play triangle — run an agent.
+  play('<path d="M7 5v14l11-7Z"/>', 2);
 
   const AppIcons(this.body, [this.strokeWidth = 1.8]);
 

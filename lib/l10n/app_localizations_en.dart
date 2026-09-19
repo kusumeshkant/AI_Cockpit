@@ -474,4 +474,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Coming soon';
+
+  @override
+  String get triggerRunLabel => 'Run agent';
+
+  @override
+  String get triggerStarted => 'Started';
+
+  @override
+  String get triggerRunFailed => 'Run failed';
+
+  @override
+  String triggerRateLimited(int seconds) {
+    return 'Try again in ${seconds}s';
+  }
+
+  @override
+  String triggerLastRun(String ago) {
+    return 'last run · $ago';
+  }
+
+  @override
+  String get triggerSectionTitle => 'Run from app (optional)';
+
+  @override
+  String get triggerAllowRunning => 'Allow running this agent from the app';
+
+  @override
+  String get triggerUrlLabel => 'Trigger URL';
+
+  @override
+  String get triggerUrlHint => 'https://your-workflow.example/start';
+
+  @override
+  String get triggerSave => 'Save trigger';
+
+  @override
+  String get triggerShownOnce => 'Trigger secret — shown once, copy it now';
+
+  @override
+  String get triggerSecretLabel => 'Trigger secret';
+
+  @override
+  String get auditTriggerFired => 'Agent run started';
+
+  @override
+  String get auditTriggerFailed => 'Run failed';
+
+  @override
+  String get errorFeatureDisabled => 'This feature isn\'t available yet.';
+
+  @override
+  String get errorTriggerDisabled => 'Running this agent is turned off.';
 }

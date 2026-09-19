@@ -475,4 +475,57 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get comingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get triggerRunLabel => 'एजेंट चलाएँ';
+
+  @override
+  String get triggerStarted => 'शुरू हुआ';
+
+  @override
+  String get triggerRunFailed => 'चलाना विफल रहा';
+
+  @override
+  String triggerRateLimited(int seconds) {
+    return '$seconds सेकंड बाद फिर कोशिश करें';
+  }
+
+  @override
+  String triggerLastRun(String ago) {
+    return 'आख़िरी बार · $ago';
+  }
+
+  @override
+  String get triggerSectionTitle => 'ऐप से चलाएँ (वैकल्पिक)';
+
+  @override
+  String get triggerAllowRunning => 'इस एजेंट को ऐप से चलाने की अनुमति दें';
+
+  @override
+  String get triggerUrlLabel => 'ट्रिगर URL';
+
+  @override
+  String get triggerUrlHint => 'https://your-workflow.example/start';
+
+  @override
+  String get triggerSave => 'ट्रिगर सहेजें';
+
+  @override
+  String get triggerShownOnce =>
+      'ट्रिगर सीक्रेट — सिर्फ़ एक बार दिखेगा, अभी कॉपी करें';
+
+  @override
+  String get triggerSecretLabel => 'ट्रिगर सीक्रेट';
+
+  @override
+  String get auditTriggerFired => 'एजेंट चलाना शुरू हुआ';
+
+  @override
+  String get auditTriggerFailed => 'चलाना विफल रहा';
+
+  @override
+  String get errorFeatureDisabled => 'यह सुविधा अभी उपलब्ध नहीं है।';
+
+  @override
+  String get errorTriggerDisabled => 'इस एजेंट को चलाना बंद है।';
 }

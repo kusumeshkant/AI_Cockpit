@@ -48,7 +48,15 @@ Failure mapError(Object error, [StackTrace? stack]) {
 /// Maps a [DioException] (Edge Function calls) to a [Failure]. Status codes
 /// follow the backend envelope contract (product/backend/README.md).
 Failure mapDioException(DioException e) {
-  final message = _envelopeCode(e.response?.data) ?? e.message;
+  final code = _envelopeCode(e.response?.data);
+  final message = code ?? e.message;
+  // Feature-specific envelope codes that share an HTTP status with others.
+  switch (code) {
+    case 'feature_disabled':
+      return FeatureDisabledFailure(code!);
+    case 'trigger_disabled':
+      return TriggerDisabledFailure(code!);
+  }
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||
     DioExceptionType.sendTimeout ||

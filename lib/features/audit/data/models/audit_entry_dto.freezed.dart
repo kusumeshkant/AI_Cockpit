@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuditEntryDto {
 
- String get id; String get actionId; String get event; DateTime get createdAt; String? get actionTitle; String? get agentName; String? get agentPlatform; String? get actorEmail; String? get decision; String? get reason; Map<String, dynamic>? get originalPayload; Map<String, dynamic>? get editedPayload;
+ String get id; String get event; DateTime get createdAt; String? get actionId; String? get agentId; String? get actionTitle; String? get agentName; String? get agentPlatform; String? get actorEmail; String? get decision; String? get reason; Map<String, dynamic>? get originalPayload; Map<String, dynamic>? get editedPayload;
 /// Create a copy of AuditEntryDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AuditEntryDtoCopyWith<AuditEntryDto> get copyWith => _$AuditEntryDtoCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuditEntryDto&&(identical(other.id, id) || other.id == id)&&(identical(other.actionId, actionId) || other.actionId == actionId)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.actionTitle, actionTitle) || other.actionTitle == actionTitle)&&(identical(other.agentName, agentName) || other.agentName == agentName)&&(identical(other.agentPlatform, agentPlatform) || other.agentPlatform == agentPlatform)&&(identical(other.actorEmail, actorEmail) || other.actorEmail == actorEmail)&&(identical(other.decision, decision) || other.decision == decision)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other.originalPayload, originalPayload)&&const DeepCollectionEquality().equals(other.editedPayload, editedPayload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuditEntryDto&&(identical(other.id, id) || other.id == id)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.actionId, actionId) || other.actionId == actionId)&&(identical(other.agentId, agentId) || other.agentId == agentId)&&(identical(other.actionTitle, actionTitle) || other.actionTitle == actionTitle)&&(identical(other.agentName, agentName) || other.agentName == agentName)&&(identical(other.agentPlatform, agentPlatform) || other.agentPlatform == agentPlatform)&&(identical(other.actorEmail, actorEmail) || other.actorEmail == actorEmail)&&(identical(other.decision, decision) || other.decision == decision)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other.originalPayload, originalPayload)&&const DeepCollectionEquality().equals(other.editedPayload, editedPayload));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,actionId,event,createdAt,actionTitle,agentName,agentPlatform,actorEmail,decision,reason,const DeepCollectionEquality().hash(originalPayload),const DeepCollectionEquality().hash(editedPayload));
+int get hashCode => Object.hash(runtimeType,id,event,createdAt,actionId,agentId,actionTitle,agentName,agentPlatform,actorEmail,decision,reason,const DeepCollectionEquality().hash(originalPayload),const DeepCollectionEquality().hash(editedPayload));
 
 @override
 String toString() {
-  return 'AuditEntryDto(id: $id, actionId: $actionId, event: $event, createdAt: $createdAt, actionTitle: $actionTitle, agentName: $agentName, agentPlatform: $agentPlatform, actorEmail: $actorEmail, decision: $decision, reason: $reason, originalPayload: $originalPayload, editedPayload: $editedPayload)';
+  return 'AuditEntryDto(id: $id, event: $event, createdAt: $createdAt, actionId: $actionId, agentId: $agentId, actionTitle: $actionTitle, agentName: $agentName, agentPlatform: $agentPlatform, actorEmail: $actorEmail, decision: $decision, reason: $reason, originalPayload: $originalPayload, editedPayload: $editedPayload)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AuditEntryDtoCopyWith<$Res>  {
   factory $AuditEntryDtoCopyWith(AuditEntryDto value, $Res Function(AuditEntryDto) _then) = _$AuditEntryDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String actionId, String event, DateTime createdAt, String? actionTitle, String? agentName, String? agentPlatform, String? actorEmail, String? decision, String? reason, Map<String, dynamic>? originalPayload, Map<String, dynamic>? editedPayload
+ String id, String event, DateTime createdAt, String? actionId, String? agentId, String? actionTitle, String? agentName, String? agentPlatform, String? actorEmail, String? decision, String? reason, Map<String, dynamic>? originalPayload, Map<String, dynamic>? editedPayload
 });
 
 
@@ -65,13 +65,14 @@ class _$AuditEntryDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuditEntryDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? actionId = null,Object? event = null,Object? createdAt = null,Object? actionTitle = freezed,Object? agentName = freezed,Object? agentPlatform = freezed,Object? actorEmail = freezed,Object? decision = freezed,Object? reason = freezed,Object? originalPayload = freezed,Object? editedPayload = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? event = null,Object? createdAt = null,Object? actionId = freezed,Object? agentId = freezed,Object? actionTitle = freezed,Object? agentName = freezed,Object? agentPlatform = freezed,Object? actorEmail = freezed,Object? decision = freezed,Object? reason = freezed,Object? originalPayload = freezed,Object? editedPayload = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,actionId: null == actionId ? _self.actionId : actionId // ignore: cast_nullable_to_non_nullable
 as String,event: null == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,actionTitle: freezed == actionTitle ? _self.actionTitle : actionTitle // ignore: cast_nullable_to_non_nullable
+as DateTime,actionId: freezed == actionId ? _self.actionId : actionId // ignore: cast_nullable_to_non_nullable
+as String?,agentId: freezed == agentId ? _self.agentId : agentId // ignore: cast_nullable_to_non_nullable
+as String?,actionTitle: freezed == actionTitle ? _self.actionTitle : actionTitle // ignore: cast_nullable_to_non_nullable
 as String?,agentName: freezed == agentName ? _self.agentName : agentName // ignore: cast_nullable_to_non_nullable
 as String?,agentPlatform: freezed == agentPlatform ? _self.agentPlatform : agentPlatform // ignore: cast_nullable_to_non_nullable
 as String?,actorEmail: freezed == actorEmail ? _self.actorEmail : actorEmail // ignore: cast_nullable_to_non_nullable
@@ -164,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String actionId,  String event,  DateTime createdAt,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String event,  DateTime createdAt,  String? actionId,  String? agentId,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuditEntryDto() when $default != null:
-return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
+return $default(_that.id,_that.event,_that.createdAt,_that.actionId,_that.agentId,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
   return orElse();
 
 }
@@ -185,10 +186,10 @@ return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.action
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String actionId,  String event,  DateTime createdAt,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String event,  DateTime createdAt,  String? actionId,  String? agentId,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)  $default,) {final _that = this;
 switch (_that) {
 case _AuditEntryDto():
-return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
+return $default(_that.id,_that.event,_that.createdAt,_that.actionId,_that.agentId,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +206,10 @@ return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.action
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String actionId,  String event,  DateTime createdAt,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String event,  DateTime createdAt,  String? actionId,  String? agentId,  String? actionTitle,  String? agentName,  String? agentPlatform,  String? actorEmail,  String? decision,  String? reason,  Map<String, dynamic>? originalPayload,  Map<String, dynamic>? editedPayload)?  $default,) {final _that = this;
 switch (_that) {
 case _AuditEntryDto() when $default != null:
-return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
+return $default(_that.id,_that.event,_that.createdAt,_that.actionId,_that.agentId,_that.actionTitle,_that.agentName,_that.agentPlatform,_that.actorEmail,_that.decision,_that.reason,_that.originalPayload,_that.editedPayload);case _:
   return null;
 
 }
@@ -220,13 +221,14 @@ return $default(_that.id,_that.actionId,_that.event,_that.createdAt,_that.action
 @JsonSerializable()
 
 class _AuditEntryDto extends AuditEntryDto {
-  const _AuditEntryDto({required this.id, required this.actionId, required this.event, required this.createdAt, this.actionTitle, this.agentName, this.agentPlatform, this.actorEmail, this.decision, this.reason, final  Map<String, dynamic>? originalPayload, final  Map<String, dynamic>? editedPayload}): _originalPayload = originalPayload,_editedPayload = editedPayload,super._();
+  const _AuditEntryDto({required this.id, required this.event, required this.createdAt, this.actionId, this.agentId, this.actionTitle, this.agentName, this.agentPlatform, this.actorEmail, this.decision, this.reason, final  Map<String, dynamic>? originalPayload, final  Map<String, dynamic>? editedPayload}): _originalPayload = originalPayload,_editedPayload = editedPayload,super._();
   factory _AuditEntryDto.fromJson(Map<String, dynamic> json) => _$AuditEntryDtoFromJson(json);
 
 @override final  String id;
-@override final  String actionId;
 @override final  String event;
 @override final  DateTime createdAt;
+@override final  String? actionId;
+@override final  String? agentId;
 @override final  String? actionTitle;
 @override final  String? agentName;
 @override final  String? agentPlatform;
@@ -265,16 +267,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuditEntryDto&&(identical(other.id, id) || other.id == id)&&(identical(other.actionId, actionId) || other.actionId == actionId)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.actionTitle, actionTitle) || other.actionTitle == actionTitle)&&(identical(other.agentName, agentName) || other.agentName == agentName)&&(identical(other.agentPlatform, agentPlatform) || other.agentPlatform == agentPlatform)&&(identical(other.actorEmail, actorEmail) || other.actorEmail == actorEmail)&&(identical(other.decision, decision) || other.decision == decision)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other._originalPayload, _originalPayload)&&const DeepCollectionEquality().equals(other._editedPayload, _editedPayload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuditEntryDto&&(identical(other.id, id) || other.id == id)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.actionId, actionId) || other.actionId == actionId)&&(identical(other.agentId, agentId) || other.agentId == agentId)&&(identical(other.actionTitle, actionTitle) || other.actionTitle == actionTitle)&&(identical(other.agentName, agentName) || other.agentName == agentName)&&(identical(other.agentPlatform, agentPlatform) || other.agentPlatform == agentPlatform)&&(identical(other.actorEmail, actorEmail) || other.actorEmail == actorEmail)&&(identical(other.decision, decision) || other.decision == decision)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other._originalPayload, _originalPayload)&&const DeepCollectionEquality().equals(other._editedPayload, _editedPayload));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,actionId,event,createdAt,actionTitle,agentName,agentPlatform,actorEmail,decision,reason,const DeepCollectionEquality().hash(_originalPayload),const DeepCollectionEquality().hash(_editedPayload));
+int get hashCode => Object.hash(runtimeType,id,event,createdAt,actionId,agentId,actionTitle,agentName,agentPlatform,actorEmail,decision,reason,const DeepCollectionEquality().hash(_originalPayload),const DeepCollectionEquality().hash(_editedPayload));
 
 @override
 String toString() {
-  return 'AuditEntryDto(id: $id, actionId: $actionId, event: $event, createdAt: $createdAt, actionTitle: $actionTitle, agentName: $agentName, agentPlatform: $agentPlatform, actorEmail: $actorEmail, decision: $decision, reason: $reason, originalPayload: $originalPayload, editedPayload: $editedPayload)';
+  return 'AuditEntryDto(id: $id, event: $event, createdAt: $createdAt, actionId: $actionId, agentId: $agentId, actionTitle: $actionTitle, agentName: $agentName, agentPlatform: $agentPlatform, actorEmail: $actorEmail, decision: $decision, reason: $reason, originalPayload: $originalPayload, editedPayload: $editedPayload)';
 }
 
 
@@ -285,7 +287,7 @@ abstract mixin class _$AuditEntryDtoCopyWith<$Res> implements $AuditEntryDtoCopy
   factory _$AuditEntryDtoCopyWith(_AuditEntryDto value, $Res Function(_AuditEntryDto) _then) = __$AuditEntryDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String actionId, String event, DateTime createdAt, String? actionTitle, String? agentName, String? agentPlatform, String? actorEmail, String? decision, String? reason, Map<String, dynamic>? originalPayload, Map<String, dynamic>? editedPayload
+ String id, String event, DateTime createdAt, String? actionId, String? agentId, String? actionTitle, String? agentName, String? agentPlatform, String? actorEmail, String? decision, String? reason, Map<String, dynamic>? originalPayload, Map<String, dynamic>? editedPayload
 });
 
 
@@ -302,13 +304,14 @@ class __$AuditEntryDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuditEntryDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? actionId = null,Object? event = null,Object? createdAt = null,Object? actionTitle = freezed,Object? agentName = freezed,Object? agentPlatform = freezed,Object? actorEmail = freezed,Object? decision = freezed,Object? reason = freezed,Object? originalPayload = freezed,Object? editedPayload = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? event = null,Object? createdAt = null,Object? actionId = freezed,Object? agentId = freezed,Object? actionTitle = freezed,Object? agentName = freezed,Object? agentPlatform = freezed,Object? actorEmail = freezed,Object? decision = freezed,Object? reason = freezed,Object? originalPayload = freezed,Object? editedPayload = freezed,}) {
   return _then(_AuditEntryDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,actionId: null == actionId ? _self.actionId : actionId // ignore: cast_nullable_to_non_nullable
 as String,event: null == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,actionTitle: freezed == actionTitle ? _self.actionTitle : actionTitle // ignore: cast_nullable_to_non_nullable
+as DateTime,actionId: freezed == actionId ? _self.actionId : actionId // ignore: cast_nullable_to_non_nullable
+as String?,agentId: freezed == agentId ? _self.agentId : agentId // ignore: cast_nullable_to_non_nullable
+as String?,actionTitle: freezed == actionTitle ? _self.actionTitle : actionTitle // ignore: cast_nullable_to_non_nullable
 as String?,agentName: freezed == agentName ? _self.agentName : agentName // ignore: cast_nullable_to_non_nullable
 as String?,agentPlatform: freezed == agentPlatform ? _self.agentPlatform : agentPlatform // ignore: cast_nullable_to_non_nullable
 as String?,actorEmail: freezed == actorEmail ? _self.actorEmail : actorEmail // ignore: cast_nullable_to_non_nullable

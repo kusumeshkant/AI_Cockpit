@@ -30,6 +30,15 @@ void main() {
       expect(server.message, 'not_found', reason: 'envelope code is kept for diagnostics');
     });
 
+    test('feature-specific envelope codes map to their failures', () {
+      expect(mapError(edgeError(404, 'feature_disabled')), isA<FeatureDisabledFailure>());
+      expect(mapError(edgeError(409, 'trigger_disabled')), isA<TriggerDisabledFailure>());
+      // Same statuses with other codes keep their existing mapping.
+      expect(mapError(edgeError(404, 'not_found')), isA<ServerFailure>());
+      expect(mapError(edgeError(409, 'conflict')), isA<ConflictFailure>());
+      expect(mapError(edgeError(429, 'rate_limited')), isA<RateLimitedFailure>());
+    });
+
     test('PostgREST errors map to auth / server failures', () {
       expect(
         mapError(const supa.PostgrestException(message: 'JWT expired', code: 'PGRST301')),

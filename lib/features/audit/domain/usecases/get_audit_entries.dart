@@ -15,6 +15,15 @@ class GetAuditEntries {
   final AuditRepository _repository;
 
   /// Returns page [page] of entries, optionally filtered by [agentId].
-  Result<List<AuditEntry>> call({String? agentId, int page = 0}) =>
-      _repository.getAuditEntries(agentId: agentId, page: page);
+  /// [includeTriggerEvents] adds agent-run entries (Agent Triggers flag).
+  Result<List<AuditEntry>> call({
+    String? agentId,
+    int page = 0,
+    bool includeTriggerEvents = false,
+  }) =>
+      _repository.getAuditEntries(
+        agentId: agentId,
+        page: page,
+        includeTriggerEvents: includeTriggerEvents,
+      );
 }

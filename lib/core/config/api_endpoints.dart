@@ -17,6 +17,12 @@ abstract final class ApiEndpoints {
 
   /// App → insert a sample action for an agent.
   static const String agentsTestAction = '/agents-test-action';
+
+  /// App → start an agent through its trigger (Agent Triggers, flag-gated).
+  static const String agentsTrigger = '/agents-trigger';
+
+  /// App → configure / enable an agent's trigger (Agent Triggers, flag-gated).
+  static const String agentsConfigureTrigger = '/agents-configure-trigger';
 }
 
 /// Postgres table names (accessed through Supabase with RLS).
@@ -35,4 +41,10 @@ abstract final class DbTables {
 
   /// Append-only audit trail.
   static const String auditEntry = 'audit_entry';
+
+  /// Agent triggers (Agent Triggers, flag-gated).
+  static const String agentTrigger = 'agent_trigger';
+
+  /// Trigger runs (Agent Triggers, flag-gated).
+  static const String triggerRun = 'trigger_run';
 }

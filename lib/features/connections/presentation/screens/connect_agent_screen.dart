@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cockpit/core/config/feature_flags.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/localization/formatters.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
@@ -26,6 +27,7 @@ import 'package:cockpit/core/widgets/section_label.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
 import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 import 'package:cockpit/features/connections/presentation/widgets/credentials_panel.dart';
+import 'package:cockpit/features/triggers/presentation/widgets/trigger_config_section.dart';
 
 /// Connect-agent screen.
 class ConnectAgentScreen extends ConsumerStatefulWidget {
@@ -115,6 +117,7 @@ class _ConnectAgentScreenState extends ConsumerState<ConnectAgentScreen> {
     final spacing = context.spacing;
     final credentials = _credentials;
     final created = credentials != null;
+    final triggersOn = ref.watch(agentTriggersProvider);
 
     return AppScaffold(
       topBar: AppTopBar.back(title: l10n.connectAgentTitle, onBack: _close),
@@ -174,6 +177,11 @@ class _ConnectAgentScreenState extends ConsumerState<ConnectAgentScreen> {
             )
           else ...[
             CredentialsPanel(credentials: credentials),
+            // Agent Triggers (flag-gated): nothing added while the flag is off.
+            if (triggersOn) ...[
+              SizedBox(height: spacing.lg),
+              TriggerConfigSection(agentId: credentials.agent.id),
+            ],
             SizedBox(height: spacing.lg),
             _FirstActionBanner(
               agentId: credentials.agent.id,

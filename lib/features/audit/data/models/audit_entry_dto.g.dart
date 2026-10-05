@@ -9,9 +9,10 @@ part of 'audit_entry_dto.dart';
 _AuditEntryDto _$AuditEntryDtoFromJson(Map<String, dynamic> json) =>
     _AuditEntryDto(
       id: json['id'] as String,
-      actionId: json['action_id'] as String,
       event: json['event'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
+      actionId: json['action_id'] as String?,
+      agentId: json['agent_id'] as String?,
       actionTitle: json['action_title'] as String?,
       agentName: json['agent_name'] as String?,
       agentPlatform: json['agent_platform'] as String?,
@@ -25,9 +26,10 @@ _AuditEntryDto _$AuditEntryDtoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AuditEntryDtoToJson(_AuditEntryDto instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'action_id': instance.actionId,
       'event': instance.event,
       'created_at': instance.createdAt.toIso8601String(),
+      'action_id': instance.actionId,
+      'agent_id': instance.agentId,
       'action_title': instance.actionTitle,
       'agent_name': instance.agentName,
       'agent_platform': instance.agentPlatform,

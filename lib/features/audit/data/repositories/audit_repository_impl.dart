@@ -21,12 +21,14 @@ class AuditRepositoryImpl implements AuditRepository {
     String? agentId,
     int page = 0,
     int pageSize = 50,
+    bool includeTriggerEvents = false,
   }) =>
       guard(() async {
         final dtos = await _remote.fetchEntries(
           offset: page * pageSize,
           limit: pageSize,
           agentId: agentId,
+          includeTriggerEvents: includeTriggerEvents,
         );
         return dtos.map((dto) => dto.toEntity()).toList(growable: false);
       });

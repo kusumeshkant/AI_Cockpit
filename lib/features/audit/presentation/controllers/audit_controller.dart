@@ -2,6 +2,7 @@
 // Audit timeline: decision entries, filterable by outcome.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cockpit/core/config/feature_flags.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/features/audit/domain/entities/audit_entry.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
@@ -25,12 +26,17 @@ class AuditController extends AsyncNotifier<List<AuditEntry>> {
   Future<List<AuditEntry>> build() async {
     // Reload for a different signed-in user (tabs stay alive in the shell).
     ref.watch(authControllerProvider.select((auth) => auth.value?.id));
-    final result = await getIt<GetAuditEntries>()();
+    // Agent Triggers (flag-gated): off → decisions only, exactly as before.
+    final triggers = ref.watch(agentTriggersProvider);
+    final result = await getIt<GetAuditEntries>()(includeTriggerEvents: triggers);
     // TODO(feature/audit): paging (loadMore), agent filter, callback events.
     return result.fold(
       (failure) => throw failure,
       (entries) => entries
-          .where((entry) => entry.event == AuditEvent.decisionMade)
+          .where(
+            (entry) =>
+                entry.event == AuditEvent.decisionMade || (triggers && entry.isTriggerEvent),
+          )
           .toList(growable: false),
     );
   }
@@ -63,8 +69,9 @@ final filteredAuditEntriesProvider = Provider<AsyncValue<List<AuditEntry>>>((ref
   return ref.watch(auditControllerProvider).whenData(
         (entries) => switch (filter) {
           AuditFilter.all => entries,
-          AuditFilter.approved =>
-            entries.where((entry) => !entry.isRejection).toList(growable: false),
+          AuditFilter.approved => entries
+              .where((entry) => entry.event == AuditEvent.decisionMade && !entry.isRejection)
+              .toList(growable: false),
           AuditFilter.rejected =>
             entries.where((entry) => entry.isRejection).toList(growable: false),
         },

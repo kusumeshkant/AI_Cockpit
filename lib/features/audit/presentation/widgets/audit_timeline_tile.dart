@@ -1,6 +1,8 @@
 // Feature: audit · Layer: presentation
 // Timeline row (design: Audit.dc.html): colored dot with a connector line to
 // the next entry, "Decision · title", time on the right, source · note below.
+// Agent Triggers entries (flag-gated upstream) read "Agent run started" /
+// "Run failed" with an accent / stop dot.
 import 'package:flutter/material.dart';
 
 import 'package:cockpit/core/localization/formatters.dart';
@@ -30,10 +32,22 @@ class AuditTimelineTile extends StatelessWidget {
       letterSpacing: 0,
     );
 
-    final outcome = entry.isRejection ? l10n.statusRejected : l10n.statusApproved;
-    final title = entry.actionTitle == null
-        ? outcome
-        : l10n.metaPair(outcome, entry.actionTitle!);
+    final String title;
+    final Color dotColor;
+    switch (entry.event) {
+      case AuditEvent.triggerFired:
+        title = l10n.auditTriggerFired;
+        dotColor = colors.accent;
+      case AuditEvent.triggerFailed:
+        title = l10n.auditTriggerFailed;
+        dotColor = colors.stop;
+      default:
+        final outcome = entry.isRejection ? l10n.statusRejected : l10n.statusApproved;
+        title = entry.actionTitle == null
+            ? outcome
+            : l10n.metaPair(outcome, entry.actionTitle!);
+        dotColor = entry.isRejection ? colors.stop : colors.go;
+    }
 
     var meta = context.sourceLabel(entry.agentPlatform, entry.agentName);
     final reason = entry.reason;
@@ -55,7 +69,7 @@ class AuditTimelineTile extends StatelessWidget {
                 dimension: spacing.dotLg,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: entry.isRejection ? colors.stop : colors.go,
+                    color: dotColor,
                     shape: BoxShape.circle,
                   ),
                 ),

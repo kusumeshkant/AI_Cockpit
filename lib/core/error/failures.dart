@@ -71,6 +71,19 @@ final class RateLimitedFailure extends Failure {
   final Duration? retryAfter;
 }
 
+/// The feature is switched off on the backend (HTTP 404 `feature_disabled`),
+/// e.g. Agent Triggers while FEATURE_AGENT_TRIGGERS is unset.
+final class FeatureDisabledFailure extends Failure {
+  /// Creates a feature-disabled failure.
+  const FeatureDisabledFailure([super.message = 'feature_disabled']);
+}
+
+/// The agent's trigger exists but is disabled (HTTP 409 `trigger_disabled`).
+final class TriggerDisabledFailure extends Failure {
+  /// Creates a trigger-disabled failure.
+  const TriggerDisabledFailure([super.message = 'trigger_disabled']);
+}
+
 /// Anything not anticipated; always reported to Sentry.
 final class UnexpectedFailure extends Failure {
   /// Creates an unexpected failure.

@@ -66,6 +66,33 @@ class AuditDemoDataSource implements AuditRemoteDataSource {
     required int offset,
     required int limit,
     String? agentId,
-  }) async =>
-      _seed(DateTime.now()).skip(offset).take(limit).toList(growable: false);
+    bool includeTriggerEvents = false,
+  }) async {
+    final now = DateTime.now();
+    final entries = [
+      ..._seed(now),
+      if (includeTriggerEvents) ..._triggerSeed(now),
+    ]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return entries.skip(offset).take(limit).toList(growable: false);
+  }
+
+  /// Agent Triggers entries (only while the feature flag is on).
+  static List<AuditEntryDto> _triggerSeed(DateTime now) => [
+        AuditEntryDto(
+          id: 'aud_trigger_run_1',
+          event: 'trigger_fired',
+          createdAt: now.subtract(const Duration(minutes: 12)),
+          agentId: 'agt_email',
+          agentName: 'Email agent',
+          agentPlatform: 'n8n',
+        ),
+        AuditEntryDto(
+          id: 'aud_trigger_run_0',
+          event: 'trigger_failed',
+          createdAt: now.subtract(const Duration(hours: 26)),
+          agentId: 'agt_email',
+          agentName: 'Email agent',
+          agentPlatform: 'n8n',
+        ),
+      ];
 }

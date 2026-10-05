@@ -142,5 +142,21 @@
   "notificationChannelDescription": "जब कोई एजेंट ऐसा कार्य प्रस्तावित करे जिस पर आपका निर्णय चाहिए, तब सूचना।",
   "errorRateLimited": "बहुत सारे अनुरोध। कृपया थोड़ी देर रुककर फिर कोशिश करें।",
   "errorValidation": "कुछ जानकारी सही नहीं है। कृपया जाँचकर फिर से कोशिश करें।",
-  "comingSoon": "जल्द आ रहा है"
+  "comingSoon": "जल्द आ रहा है",
+  "triggerRunLabel": "एजेंट चलाएँ",
+  "triggerStarted": "शुरू हुआ",
+  "triggerRunFailed": "चलाना विफल रहा",
+  "triggerRateLimited": "{seconds} सेकंड बाद फिर कोशिश करें",
+  "triggerLastRun": "आख़िरी बार · {ago}",
+  "triggerSectionTitle": "ऐप से चलाएँ (वैकल्पिक)",
+  "triggerAllowRunning": "इस एजेंट को ऐप से चलाने की अनुमति दें",
+  "triggerUrlLabel": "ट्रिगर URL",
+  "triggerUrlHint": "https://your-workflow.example/start",
+  "triggerSave": "ट्रिगर सहेजें",
+  "triggerShownOnce": "ट्रिगर सीक्रेट — सिर्फ़ एक बार दिखेगा, अभी कॉपी करें",
+  "triggerSecretLabel": "ट्रिगर सीक्रेट",
+  "auditTriggerFired": "एजेंट चलाना शुरू हुआ",
+  "auditTriggerFailed": "चलाना विफल रहा",
+  "errorFeatureDisabled": "यह सुविधा अभी उपलब्ध नहीं है।",
+  "errorTriggerDisabled": "इस एजेंट को चलाना बंद है।"
 }

@@ -14,9 +14,10 @@ abstract class AuditEntryDto with _$AuditEntryDto {
   /// Creates a DTO.
   const factory AuditEntryDto({
     required String id,
-    required String actionId,
     required String event,
     required DateTime createdAt,
+    String? actionId,
+    String? agentId,
     String? actionTitle,
     String? agentName,
     String? agentPlatform,
@@ -37,6 +38,7 @@ abstract class AuditEntryDto with _$AuditEntryDto {
   AuditEntry toEntity() => AuditEntry(
         id: id,
         actionId: actionId,
+        agentId: agentId,
         event: AuditEvent.values.firstWhere(
           (e) => _toSnake(e.name) == event,
           orElse: () => AuditEvent.actionReceived,

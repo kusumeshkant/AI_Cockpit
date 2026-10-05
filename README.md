@@ -79,6 +79,15 @@ Notes:
 - `--force-jit` is required for `build_runner`: some transitive dependencies use build hooks that the AOT build-script compile does not support.
 - `android/gradle.properties` sets `kotlin.incremental=false` to avoid Kotlin cache failures on Windows when the project and the pub cache are on different drives.
 
+## Golden tests
+
+`test/goldens/` holds pixel goldens: the Agent Triggers UI, and flag-off regression screens whose images were rendered from `main` before that feature, so any unintended change shows up. They are checked on the dev machine and **skipped on CI** (`CI=true`), because CI's Linux runner with an unpinned Flutter rasterizes slightly differently.
+
+```bash
+flutter test test/goldens                    # compare
+flutter test --update-goldens test/goldens   # re-render after an intended UI change
+```
+
 ## Layout
 
 ```text

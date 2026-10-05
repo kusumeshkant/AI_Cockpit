@@ -895,6 +895,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get comingSoon;
+
+  /// Run button tooltip / semantics (Agent Triggers)
+  ///
+  /// In en, this message translates to:
+  /// **'Run agent'**
+  String get triggerRunLabel;
+
+  /// Status pill after a successful run
+  ///
+  /// In en, this message translates to:
+  /// **'Started'**
+  String get triggerStarted;
+
+  /// Inline note when a run fails
+  ///
+  /// In en, this message translates to:
+  /// **'Run failed'**
+  String get triggerRunFailed;
+
+  /// Inline note when runs are too frequent
+  ///
+  /// In en, this message translates to:
+  /// **'Try again in {seconds}s'**
+  String triggerRateLimited(int seconds);
+
+  /// Last run time in the agent row
+  ///
+  /// In en, this message translates to:
+  /// **'last run · {ago}'**
+  String triggerLastRun(String ago);
+
+  /// Collapsible section on the connect-agent screen
+  ///
+  /// In en, this message translates to:
+  /// **'Run from app (optional)'**
+  String get triggerSectionTitle;
+
+  /// Switch label
+  ///
+  /// In en, this message translates to:
+  /// **'Allow running this agent from the app'**
+  String get triggerAllowRunning;
+
+  /// Trigger URL field label
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger URL'**
+  String get triggerUrlLabel;
+
+  /// Trigger URL placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-workflow.example/start'**
+  String get triggerUrlHint;
+
+  /// Save the trigger configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Save trigger'**
+  String get triggerSave;
+
+  /// Warning above the one-time trigger secret
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger secret — shown once, copy it now'**
+  String get triggerShownOnce;
+
+  /// Trigger secret field label
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger secret'**
+  String get triggerSecretLabel;
+
+  /// Audit entry for trigger_fired
+  ///
+  /// In en, this message translates to:
+  /// **'Agent run started'**
+  String get auditTriggerFired;
+
+  /// Audit entry for trigger_failed
+  ///
+  /// In en, this message translates to:
+  /// **'Run failed'**
+  String get auditTriggerFailed;
+
+  /// feature_disabled error
+  ///
+  /// In en, this message translates to:
+  /// **'This feature isn\'t available yet.'**
+  String get errorFeatureDisabled;
+
+  /// trigger_disabled error
+  ///
+  /// In en, this message translates to:
+  /// **'Running this agent is turned off.'**
+  String get errorTriggerDisabled;
 }
 
 class _AppLocalizationsDelegate

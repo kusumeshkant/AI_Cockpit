@@ -22,6 +22,12 @@ enum AuditEvent {
 
   /// Callback retries were exhausted.
   callbackFailed,
+
+  /// A user started the agent (Agent Triggers).
+  triggerFired,
+
+  /// Starting the agent failed (Agent Triggers).
+  triggerFailed,
 }
 
 /// Wire values of `audit_entry.decision`.
@@ -42,9 +48,12 @@ abstract class AuditEntry with _$AuditEntry {
   /// Creates an [AuditEntry].
   const factory AuditEntry({
     required String id,
-    required String actionId,
     required AuditEvent event,
     required DateTime createdAt,
+    /// The action decided; `null` for trigger events, which concern an agent.
+    String? actionId,
+    /// The agent a trigger event concerns.
+    String? agentId,
     String? actionTitle,
     String? agentName,
     AgentPlatform? agentPlatform,
@@ -56,6 +65,10 @@ abstract class AuditEntry with _$AuditEntry {
   }) = _AuditEntry;
 
   const AuditEntry._();
+
+  /// Whether this entry records an agent run (Agent Triggers).
+  bool get isTriggerEvent =>
+      event == AuditEvent.triggerFired || event == AuditEvent.triggerFailed;
 
   /// Whether this entry records a rejection.
   bool get isRejection => decision == AuditDecisions.rejected;

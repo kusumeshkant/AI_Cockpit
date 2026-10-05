@@ -36,6 +36,8 @@ extension FormattersContextX on BuildContext {
         ExpiredFailure() => l10n.errorExpired,
         ValidationFailure() => l10n.errorValidation,
         RateLimitedFailure() => l10n.errorRateLimited,
+        FeatureDisabledFailure() => l10n.errorFeatureDisabled,
+        TriggerDisabledFailure() => l10n.errorTriggerDisabled,
         _ => l10n.errorGeneric,
       };
 

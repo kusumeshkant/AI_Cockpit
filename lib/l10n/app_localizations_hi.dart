@@ -518,7 +518,46 @@ class AppLocalizationsHi extends AppLocalizations {
   String get triggerSecretLabel => 'ट्रिगर सीक्रेट';
 
   @override
-  String get auditTriggerFired => 'एजेंट चलाना शुरू हुआ';
+  String get triggerManageTitle => 'ऐप से चलाएँ';
+
+  @override
+  String get triggerManageOpen => 'ऐप से चलाना प्रबंधित करें';
+
+  @override
+  String get triggerStatusNotSetUp => 'सेट नहीं है';
+
+  @override
+  String get triggerStatusOn => 'चालू';
+
+  @override
+  String get triggerStatusOff => 'बंद';
+
+  @override
+  String triggerSecretHint(String hint) {
+    return 'सीक्रेट के आख़िरी अक्षर $hint';
+  }
+
+  @override
+  String get triggerRotate => 'सीक्रेट बदलें';
+
+  @override
+  String get triggerRotateTitle => 'नया ट्रिगर सीक्रेट जारी करें?';
+
+  @override
+  String get triggerRotateBody =>
+      'मौजूदा सीक्रेट तुरंत काम करना बंद कर देगा। अपने एजेंट के verify स्टेप में नया सीक्रेट डालें।';
+
+  @override
+  String get triggerRotateConfirm => 'जारी रखें';
+
+  @override
+  String get triggerNoInternet => 'इंटरनेट कनेक्शन नहीं है';
+
+  @override
+  String get triggerAgentRejected => 'एजेंट ने अनुरोध स्वीकार नहीं किया';
+
+  @override
+  String get auditTriggerFired => 'चलाने का अनुरोध किया गया';
 
   @override
   String get auditTriggerFailed => 'चलाना विफल रहा';

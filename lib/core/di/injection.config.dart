@@ -89,12 +89,20 @@ import 'package:cockpit/features/triggers/data/datasources/trigger_demo_ds.dart'
     as _i750;
 import 'package:cockpit/features/triggers/data/datasources/trigger_remote_ds.dart'
     as _i310;
+import 'package:cockpit/features/triggers/data/datasources/workspace_role_ds.dart'
+    as _i1038;
 import 'package:cockpit/features/triggers/data/repositories/trigger_repository_impl.dart'
     as _i355;
+import 'package:cockpit/features/triggers/data/repositories/workspace_role_repository_impl.dart'
+    as _i949;
 import 'package:cockpit/features/triggers/domain/repositories/trigger_repository.dart'
     as _i799;
+import 'package:cockpit/features/triggers/domain/repositories/workspace_role_repository.dart'
+    as _i975;
 import 'package:cockpit/features/triggers/domain/usecases/configure_trigger.dart'
     as _i172;
+import 'package:cockpit/features/triggers/domain/usecases/get_is_workspace_owner.dart'
+    as _i190;
 import 'package:cockpit/features/triggers/domain/usecases/list_agent_triggers.dart'
     as _i964;
 import 'package:cockpit/features/triggers/domain/usecases/run_agent.dart'
@@ -132,6 +140,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => const _i937.FcmTokenDemoDataSource(),
       registerFor: {_demo},
     );
+    gh.lazySingleton<_i1038.WorkspaceRoleDataSource>(
+      () => const _i1038.WorkspaceRoleDemoDataSource(),
+      registerFor: {_demo},
+    );
     gh.lazySingleton<_i310.TriggerRemoteDataSource>(
       () => _i750.TriggerDemoDataSource(),
       registerFor: {_demo},
@@ -163,6 +175,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i476.AuthInterceptor>(
       () => _i476.AuthInterceptor(gh<_i454.SupabaseClient>()),
+      registerFor: {_live},
+    );
+    gh.lazySingleton<_i1038.WorkspaceRoleDataSource>(
+      () => _i1038.WorkspaceRoleDataSourceImpl(gh<_i454.SupabaseClient>()),
       registerFor: {_live},
     );
     gh.lazySingleton<_i850.AuditRemoteDataSource>(
@@ -202,6 +218,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i799.TriggerRepository>(
       () => _i355.TriggerRepositoryImpl(gh<_i310.TriggerRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i975.WorkspaceRoleRepository>(
+      () => _i949.WorkspaceRoleRepositoryImpl(
+        gh<_i1038.WorkspaceRoleDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i190.GetIsWorkspaceOwner>(
+      () => _i190.GetIsWorkspaceOwner(gh<_i975.WorkspaceRoleRepository>()),
     );
     gh.lazySingleton<_i878.ActionsRepository>(
       () => _i487.ActionsRepositoryImpl(gh<_i854.ActionsRemoteDataSource>()),

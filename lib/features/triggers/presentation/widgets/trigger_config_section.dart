@@ -183,7 +183,7 @@ class _TriggerConfigSectionState extends ConsumerState<TriggerConfigSection> {
                 ],
                 if (credentials != null) ...[
                   SizedBox(height: spacing.md),
-                  _TriggerSecret(credentials: credentials),
+                  TriggerSecretPanel(credentials: credentials),
                 ],
               ],
             ),
@@ -193,10 +193,13 @@ class _TriggerConfigSectionState extends ConsumerState<TriggerConfigSection> {
   }
 }
 
-/// The one-time trigger secret (same pattern as CredentialsPanel).
-class _TriggerSecret extends StatelessWidget {
-  const _TriggerSecret({required this.credentials});
+/// The one-time trigger secret (same pattern as CredentialsPanel). Reused by
+/// the manage-trigger sheet when a secret is issued or rotated.
+class TriggerSecretPanel extends StatelessWidget {
+  /// Creates the panel for [credentials].
+  const TriggerSecretPanel({required this.credentials, super.key});
 
+  /// The trigger and its one-time secret.
   final TriggerCredentials credentials;
 
   @override

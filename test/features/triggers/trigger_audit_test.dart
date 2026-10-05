@@ -102,9 +102,9 @@ void main() {
             .decoration as BoxDecoration)
         .color!;
 
-    testWidgets('trigger_fired: "Agent run started", accent dot, agent source', (tester) async {
+    testWidgets('trigger_fired: "Run requested" (not "started": it may still fail), accent dot, agent source', (tester) async {
       await pumpApp(tester, AuditTimelineTile(entry: _fired, isLast: true));
-      expect(find.text('Agent run started'), findsOneWidget);
+      expect(find.text('Run requested'), findsOneWidget);
       expect(find.text('n8n · Email agent'), findsOneWidget);
       final context = tester.element(find.byType(AuditTimelineTile));
       expect(dotColor(tester), context.colors.accent);
@@ -126,7 +126,7 @@ void main() {
 
     testWidgets('Hindi trigger labels', (tester) async {
       await pumpApp(tester, AuditTimelineTile(entry: _fired, isLast: true), locale: const Locale('hi'));
-      expect(find.text('एजेंट चलाना शुरू हुआ'), findsOneWidget);
+      expect(find.text('चलाने का अनुरोध किया गया'), findsOneWidget);
     });
   });
 }

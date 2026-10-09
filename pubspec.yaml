@@ -60,7 +60,34 @@ dev_dependencies:
   riverpod_generator: any
   flutter_lints: any
   mocktail: any
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/branding/
+
+# Launcher icons: `dart run flutter_launcher_icons` (ADR-010).
+# Android keeps the `ic_launcher` name, so the manifest is unchanged.
+# No web/windows/macos targets in this project yet.
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/branding/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0A0E1F"
+  adaptive_icon_foreground: "assets/branding/ic_launcher_foreground.png"
+  adaptive_icon_monochrome: "assets/branding/ic_launcher_monochrome.png"
+  remove_alpha_ios: true
+  # The pack's foreground already sits inside the 66/108 safe zone.
+  adaptive_icon_foreground_inset: 0
+
+# Native splash: `dart run flutter_native_splash:create` (ADR-010).
+flutter_native_splash:
+  color: "#0A0E1F"
+  image: assets/branding/logo_symbol.png
+  android_12:
+    color: "#0A0E1F"
+    image: assets/branding/splash-android12-padded-1152.png

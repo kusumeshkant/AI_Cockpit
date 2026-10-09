@@ -9,7 +9,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'कॉकपिट';
+  String get appTitle => 'AI Cockpit';
 
   @override
   String get navFeed => 'कार्य';
@@ -323,6 +323,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get brandTagline => 'AI एजेंटों का कंट्रोल पैनल';
+
+  @override
+  String get brandMarkLabel => 'AI Cockpit';
 
   @override
   String get signInHeadline =>

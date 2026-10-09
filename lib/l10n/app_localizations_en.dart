@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Cockpit';
+  String get appTitle => 'AI Cockpit';
 
   @override
   String get navFeed => 'Actions';
@@ -323,6 +323,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get brandTagline => 'Control panel for AI agents';
+
+  @override
+  String get brandMarkLabel => 'AI Cockpit';
 
   @override
   String get signInHeadline => 'Approve what your agents do — from your phone.';

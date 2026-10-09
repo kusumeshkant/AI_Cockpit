@@ -1,7 +1,7 @@
 {
   "@@locale": "hi",
 
-  "appTitle": "कॉकपिट",
+  "appTitle": "AI Cockpit",
 
   "navFeed": "कार्य",
   "navConnections": "कनेक्शन",
@@ -97,6 +97,7 @@
   "email": "ईमेल",
   "sendMagicLink": "मैजिक लिंक भेजें",
   "brandTagline": "AI एजेंटों का कंट्रोल पैनल",
+  "brandMarkLabel": "AI Cockpit",
   "signInHeadline": "अपने एजेंटों के काम मंज़ूर करें — अपने फ़ोन से।",
   "signInBody": "अपने ईमेल से साइन इन करें। हम आपको एक सुरक्षित मैजिक लिंक भेजेंगे — कोई पासवर्ड याद रखने की ज़रूरत नहीं।",
   "emailHint": "you@company.com",

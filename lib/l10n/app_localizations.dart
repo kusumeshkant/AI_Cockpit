@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// Application name
   ///
   /// In en, this message translates to:
-  /// **'Cockpit'**
+  /// **'AI Cockpit'**
   String get appTitle;
 
   /// Navigation label for the pending actions feed
@@ -631,6 +631,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Control panel for AI agents'**
   String get brandTagline;
+
+  /// Screen-reader label for the logo mark (brand name, not translated)
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit'**
+  String get brandMarkLabel;
 
   /// Sign-in headline
   ///

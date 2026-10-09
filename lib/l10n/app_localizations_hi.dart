@@ -567,4 +567,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get errorTriggerDisabled => 'इस एजेंट को चलाना बंद है।';
+
+  @override
+  String get errorForbidden => 'यह सिर्फ़ वर्कस्पेस के मालिक कर सकते हैं।';
+
+  @override
+  String get noAgentsApproverMessage =>
+      'किसी एजेंट को जोड़ने के लिए अपने वर्कस्पेस के मालिक से कहें। उसके कार्य आप यहाँ देखेंगे।';
 }

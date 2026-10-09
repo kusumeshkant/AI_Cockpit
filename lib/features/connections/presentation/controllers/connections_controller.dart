@@ -13,6 +13,8 @@ import 'package:cockpit/features/connections/domain/repositories/connections_rep
 import 'package:cockpit/features/connections/domain/usecases/create_agent.dart';
 import 'package:cockpit/features/connections/domain/usecases/list_agents.dart';
 import 'package:cockpit/features/connections/domain/usecases/send_test_action.dart';
+import 'package:cockpit/features/triggers/presentation/controllers/trigger_controllers.dart'
+    show getIsWorkspaceOwnerProvider;
 
 /// Agents list controller.
 class ConnectionsController extends AsyncNotifier<List<Agent>> {
@@ -53,6 +55,27 @@ final agentHasActionsProvider = Provider.family<bool, String>((ref, agentId) {
   final items = ref.watch(actionsFeedControllerProvider).value ?? const [];
   return items.any((item) => item.agentId == agentId);
 });
+
+/// The signed-in user's ownership, independent of any feature flag: `true`
+/// owner, `false` known non-owner (approver), `null` not known (loading,
+/// error, or no role source, e.g. widget tests).
+final _isAgentManagerProvider = FutureProvider<bool?>((ref) async {
+  ref.watch(authControllerProvider.select((auth) => auth.value?.id));
+  try {
+    final result = await ref.watch(getIsWorkspaceOwnerProvider)();
+    return result.fold((_) => null, (isOwner) => isOwner);
+  } on Object {
+    return null;
+  }
+});
+
+/// Whether agent-management entry points (Connect / Connect agent) are shown.
+/// Agent management is owner-only on the backend; the UI hides it only once
+/// the user is known not to be the owner, so an unknown role never blocks an
+/// owner (the backend still answers 403 `forbidden`). Demo mode is the owner.
+final canManageAgentsProvider = Provider<bool>(
+  (ref) => ref.watch(_isAgentManagerProvider).value ?? true,
+);
 
 /// Whether "Send a test action" is offered: live backend only, since the
 /// demo source has nothing to create the action in.

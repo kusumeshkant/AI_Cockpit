@@ -56,6 +56,9 @@ Failure mapDioException(DioException e) {
       return FeatureDisabledFailure(code!);
     case 'trigger_disabled':
       return TriggerDisabledFailure(code!);
+    // 403 is shared with lost sessions; the role check must not read as one.
+    case 'forbidden':
+      return ForbiddenFailure(code!);
   }
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||

@@ -1,6 +1,8 @@
 // Feature: actions · Layer: presentation
 // Loads one action and submits decisions. A decision attempt keeps the same
 // idempotency key until it succeeds, so retries never double-decide (TR-3).
+// When the backend answers expired (410) the action is shown as expired
+// right away; already decided (409) reloads it to show the real decision.
 import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,11 +46,31 @@ class ActionDetailController extends AsyncNotifier<ActionItem> {
         reason: reason,
       ),
     );
-    return result.fold((failure) => failure, (_) {
+    return result.fold((failure) {
+      switch (failure) {
+        case ExpiredFailure():
+          _attemptKey = null;
+          markExpired();
+        case ConflictFailure():
+          _attemptKey = null;
+          ref.invalidateSelf();
+        default:
+          break;
+      }
+      return failure;
+    }, (_) {
       _attemptKey = null;
       ref.invalidateSelf();
       return null;
     });
+  }
+
+  /// Shows the loaded action as expired (its expiry passed, or the backend
+  /// refused a decision with 410). No-op unless it is still pending.
+  void markExpired() {
+    final item = state.value;
+    if (item == null || item.status != ActionStatus.pending) return;
+    state = AsyncData(item.copyWith(status: ActionStatus.expired));
   }
 
   static String _newIdempotencyKey() {

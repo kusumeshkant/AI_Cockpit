@@ -19,8 +19,8 @@ class ActionStatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final (label, tone) = switch ((item.status, item.decision)) {
+      _ when item.isExpired => (l10n.statusExpired, StatusTone.stop),
       (ActionStatus.pending, _) => (l10n.statusPending, StatusTone.pending),
-      (ActionStatus.expired, _) => (l10n.statusExpired, StatusTone.stop),
       (_, DecisionType.rejected) => (l10n.statusRejected, StatusTone.stop),
       (_, _) => (l10n.statusApproved, StatusTone.go),
     };

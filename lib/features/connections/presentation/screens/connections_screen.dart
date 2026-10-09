@@ -36,27 +36,33 @@ class ConnectionsScreen extends ConsumerWidget {
     final agents = ref.watch(connectionsControllerProvider);
     // Agent Triggers (flag-gated): off → rows render exactly as before.
     final triggersOn = ref.watch(agentTriggersProvider);
+    // Connecting an agent is owner-only: approvers see no entry point.
+    final canManage = ref.watch(canManageAgentsProvider);
     void openConnect() => context.goNamed(RouteNames.connectAgent);
 
     return AppScaffold(
       topBar: AppTopBar(
         title: l10n.connectionsTitle,
-        trailing: AppButton(
-          label: l10n.connect,
-          icon: AppIcons.plus,
-          onPressed: openConnect,
-        ),
+        trailing: canManage
+            ? AppButton(
+                label: l10n.connect,
+                icon: AppIcons.plus,
+                onPressed: openConnect,
+              )
+            : null,
       ),
       body: switch (agents) {
         AsyncData(:final value) when value.isEmpty => AppEmptyView(
             icon: AppIcons.link,
             title: l10n.noAgentsTitle,
-            message: l10n.noAgentsMessage,
-            action: AppButton(
-              label: l10n.connectAgent,
-              icon: AppIcons.plus,
-              onPressed: openConnect,
-            ),
+            message: canManage ? l10n.noAgentsMessage : l10n.noAgentsApproverMessage,
+            action: canManage
+                ? AppButton(
+                    label: l10n.connectAgent,
+                    icon: AppIcons.plus,
+                    onPressed: openConnect,
+                  )
+                : null,
           ),
         AsyncData(:final value) => RefreshIndicator(
             color: context.colors.accent,

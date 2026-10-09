@@ -23,6 +23,7 @@ class DecisionBar extends StatelessWidget {
     this.onCancelEdit,
     this.editing = false,
     this.isSubmitting = false,
+    this.enabled = true,
     this.wide = false,
     super.key,
   });
@@ -57,6 +58,10 @@ class DecisionBar extends StatelessWidget {
   /// Disables the bar while a decision is in flight.
   final bool isSubmitting;
 
+  /// `false` shows the bar with every button disabled (e.g. the action has
+  /// expired and can no longer be decided).
+  final bool enabled;
+
   /// Right-aligned intrinsic layout for wide panes.
   final bool wide;
 
@@ -65,26 +70,27 @@ class DecisionBar extends StatelessWidget {
     final l10n = context.l10n;
     final spacing = context.spacing;
     final busy = isSubmitting;
+    final locked = busy || !enabled;
 
     final leading = editing
         ? AppButton(
             label: l10n.cancel,
             variant: AppButtonVariant.secondary,
-            onPressed: busy ? null : onCancelEdit,
+            onPressed: locked ? null : onCancelEdit,
             expand: !wide,
           )
         : AppButton(
             label: l10n.reject,
             icon: AppIcons.close,
             variant: AppButtonVariant.danger,
-            onPressed: busy ? null : onReject,
+            onPressed: locked ? null : onReject,
             expand: !wide,
           );
     final edit = !editing && onEdit != null
         ? AppButton(
             label: l10n.edit,
             variant: AppButtonVariant.secondary,
-            onPressed: busy ? null : onEdit,
+            onPressed: locked ? null : onEdit,
           )
         : null;
     final approve = AppButton(
@@ -92,7 +98,7 @@ class DecisionBar extends StatelessWidget {
       icon: AppIcons.check,
       variant: AppButtonVariant.success,
       isLoading: busy,
-      onPressed: onApprove,
+      onPressed: enabled ? onApprove : null,
       expand: !wide,
     );
 

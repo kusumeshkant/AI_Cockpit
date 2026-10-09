@@ -1063,6 +1063,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Running this agent is turned off.'**
   String get errorTriggerDisabled;
+
+  /// forbidden error: the user's role may not do this (e.g. an approver connecting an agent)
+  ///
+  /// In en, this message translates to:
+  /// **'Only the workspace owner can do this.'**
+  String get errorForbidden;
+
+  /// Empty connections message for an approver, who can't connect agents
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your workspace owner to connect an agent. You\'ll review its actions here.'**
+  String get noAgentsApproverMessage;
 }
 
 class _AppLocalizationsDelegate

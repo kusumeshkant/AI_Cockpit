@@ -170,5 +170,7 @@
   "auditTriggerFired": "चलाने का अनुरोध किया गया",
   "auditTriggerFailed": "चलाना विफल रहा",
   "errorFeatureDisabled": "यह सुविधा अभी उपलब्ध नहीं है।",
-  "errorTriggerDisabled": "इस एजेंट को चलाना बंद है।"
+  "errorTriggerDisabled": "इस एजेंट को चलाना बंद है।",
+  "errorForbidden": "यह सिर्फ़ वर्कस्पेस के मालिक कर सकते हैं।",
+  "noAgentsApproverMessage": "किसी एजेंट को जोड़ने के लिए अपने वर्कस्पेस के मालिक से कहें। उसके कार्य आप यहाँ देखेंगे।"
 }

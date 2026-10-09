@@ -2,6 +2,10 @@
 // Review surface shared by the phone detail screen and the tablet detail
 // pane: scrollable body (title, "What it wants to do", renderer) above the
 // decision bar. Owns edit mode, the reject sheet and decision submission.
+// An expired action keeps the bar, disabled; the screen rebuilds the moment
+// a pending action passes its expiry.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,19 +53,42 @@ class _ActionReviewState extends ConsumerState<ActionReview> {
   final Map<String, TextEditingController> _controllers = {};
   bool _editing = false;
   bool _submitting = false;
+  Timer? _expiryTimer;
 
   ActionItem get _item => widget.item;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleExpiry();
+  }
 
   @override
   void didUpdateWidget(covariant ActionReview oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.item.id != widget.item.id) _stopEditing();
+    if (oldWidget.item != widget.item) _scheduleExpiry();
   }
 
   @override
   void dispose() {
+    _expiryTimer?.cancel();
     _disposeControllers();
     super.dispose();
+  }
+
+  /// Rebuilds when a pending action reaches its expiry, so the bar locks and
+  /// the pill turns to Expired without waiting for the next refresh.
+  void _scheduleExpiry() {
+    _expiryTimer?.cancel();
+    final expiresAt = _item.expiresAt;
+    if (!_item.isPending || expiresAt == null) return;
+    _expiryTimer = Timer(expiresAt.difference(DateTime.now()), () {
+      if (!mounted) return;
+      _stopEditing();
+      ref.read(actionDetailControllerProvider(_item.id).notifier).markExpired();
+      setState(() {});
+    });
   }
 
   void _disposeControllers() {
@@ -169,11 +196,12 @@ class _ActionReviewState extends ConsumerState<ActionReview> {
             ],
           ),
         ),
-        if (_item.isPending)
+        if (_item.isPending || _item.isExpired)
           DecisionBar(
             wide: widget.wide,
             editing: _editing,
             isSubmitting: _submitting,
+            enabled: _item.isPending,
             onReject: _reject,
             onEdit: _item.editableFields.isEmpty ? null : _startEditing,
             onCancelEdit: _stopEditing,

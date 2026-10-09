@@ -84,6 +84,13 @@ final class TriggerDisabledFailure extends Failure {
   const TriggerDisabledFailure([super.message = 'trigger_disabled']);
 }
 
+/// The signed-in user's role may not do this (HTTP 403 `forbidden`), e.g. an
+/// approver connecting an agent. Agent management is owner-only.
+final class ForbiddenFailure extends Failure {
+  /// Creates a forbidden failure.
+  const ForbiddenFailure([super.message = 'forbidden']);
+}
+
 /// Anything not anticipated; always reported to Sentry.
 final class UnexpectedFailure extends Failure {
   /// Creates an unexpected failure.

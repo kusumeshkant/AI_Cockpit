@@ -1,6 +1,7 @@
 // Feature: connections · Layer: presentation
 // Loads agents and runs create / test-action commands.
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cockpit/core/di/injection.dart';
@@ -74,8 +75,16 @@ final _isAgentManagerProvider = FutureProvider<bool?>((ref) async {
 /// the user is known not to be the owner, so an unknown role never blocks an
 /// owner (the backend still answers 403 `forbidden`). Demo mode is the owner.
 final canManageAgentsProvider = Provider<bool>(
-  (ref) => ref.watch(_isAgentManagerProvider).value ?? true,
+  (ref) => canManageAgentsFrom(ref.watch(_isAgentManagerProvider)),
 );
+
+/// Maps the role read to [canManageAgentsProvider]. While the role is
+/// (re)loading the previous user's value is ignored: after switching from an
+/// approver to an owner on one device, the owner must not inherit the
+/// approver's hidden entry points.
+@visibleForTesting
+bool canManageAgentsFrom(AsyncValue<bool?> role) =>
+    role.isLoading ? true : (role.value ?? true);
 
 /// Whether "Send a test action" is offered: live backend only, since the
 /// demo source has nothing to create the action in.

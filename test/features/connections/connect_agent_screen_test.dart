@@ -14,6 +14,7 @@ import '../../helpers/pump_app.dart';
 class _FakeConnectionsController extends ConnectionsController {
   final List<(String, String, AgentPlatform)> created = [];
   final List<String> tests = [];
+  Failure? testFailure;
 
   @override
   Future<List<Agent>> build() async => const [];
@@ -42,7 +43,7 @@ class _FakeConnectionsController extends ConnectionsController {
   @override
   Future<Failure?> sendTestAction(String agentId) async {
     tests.add(agentId);
-    return null;
+    return testFailure;
   }
 }
 
@@ -58,6 +59,7 @@ void main() {
       ThemeMode themeMode = ThemeMode.light,
       Locale locale = const Locale('en'),
       bool received = false,
+      bool testActions = true,
     }) =>
         pumpApp(
           tester,
@@ -68,6 +70,7 @@ void main() {
           overrides: [
             connectionsControllerProvider.overrideWith(() => controller),
             agentHasActionsProvider.overrideWith((ref, agentId) => received),
+            testActionsSupportedProvider.overrideWithValue(testActions),
           ],
         );
 
@@ -122,6 +125,40 @@ void main() {
 
       expect(controller.tests, ['agt_9fk2']);
       expect(find.text('Test action sent — check your Actions feed.'), findsOneWidget);
+    });
+
+    testWidgets('a failed test action shows the mapped error', (tester) async {
+      controller.testFailure = const NetworkFailure();
+      await pumpConnect(tester);
+      await fillAndCreate(tester);
+
+      await tester.tap(find.text('Send a test action'));
+      await tester.pumpAndSettle();
+
+      expect(controller.tests, ['agt_9fk2']);
+      expect(find.text('You appear to be offline. Check your connection.'), findsOneWidget);
+      expect(find.text('Test action sent — check your Actions feed.'), findsNothing);
+      expect(find.text('Send a test action'), findsOneWidget, reason: 'can retry');
+    });
+
+    testWidgets('demo mode: no test action button once created', (tester) async {
+      await pumpConnect(tester, testActions: false);
+      expect(find.text('Create connection'), findsOneWidget);
+
+      await fillAndCreate(tester);
+
+      expect(find.byType(CredentialsPanel), findsOneWidget);
+      expect(find.text('Send a test action'), findsNothing);
+      expect(find.text('Create connection'), findsNothing);
+      expect(controller.tests, isEmpty);
+    });
+
+    testWidgets('live mode: the test action button replaces Create', (tester) async {
+      await pumpConnect(tester);
+      await fillAndCreate(tester);
+
+      expect(find.text('Send a test action'), findsOneWidget);
+      expect(find.text('Create connection'), findsNothing);
     });
 
     testWidgets('confirms once the first action from the agent arrives', (tester) async {

@@ -132,6 +132,8 @@ void main() {
         overrides: [
           agentTriggersOverride(enabled: true),
           connectionsControllerProvider.overrideWith(_NewAgent.new),
+          // Live mode: the golden shows the "Send a test action" bar.
+          testActionsSupportedProvider.overrideWithValue(true),
           configureTriggerProvider.overrideWithValue(configure),
           listAgentTriggersProvider.overrideWithValue(listTriggers),
         ],

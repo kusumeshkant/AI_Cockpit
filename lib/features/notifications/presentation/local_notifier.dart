@@ -46,6 +46,10 @@ class FlutterLocalNotifier implements LocalNotifier {
   /// `_shared/fcm.ts` and the default channel in AndroidManifest.xml.
   static const String channelId = 'actions_high';
 
+  /// Monochrome status-bar icon; the manifest names the same drawable as
+  /// FCM's default, so background and foreground pushes look alike.
+  static const String smallIcon = '@drawable/ic_stat_notification';
+
   final FlutterLocalNotificationsPlugin _plugin;
   NotificationChannelText? _channel;
   int _nextId = 0;
@@ -56,14 +60,13 @@ class FlutterLocalNotifier implements LocalNotifier {
     required void Function(PushMessage message) onTap,
   }) async {
     _channel = channel;
-    void handle(NotificationResponse response) {
-      final message = decodePayload(response.payload);
-      if (message != null) onTap(message);
-    }
+    // A garbage payload still counts as a tap: PushRouter sends it home.
+    void handle(NotificationResponse response) =>
+        onTap(decodePayload(response.payload) ?? const PushMessage());
 
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings(smallIcon),
         // FCM asks for permission; don't prompt twice.
         iOS: DarwinInitializationSettings(
           requestAlertPermission: false,

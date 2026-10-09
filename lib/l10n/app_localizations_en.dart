@@ -325,6 +325,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get brandTagline => 'Control panel for AI agents';
 
   @override
+  String get brandMarkLabel => 'AI Cockpit';
+
+  @override
   String get signInHeadline => 'Approve what your agents do — from your phone.';
 
   @override

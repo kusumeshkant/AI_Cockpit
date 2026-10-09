@@ -225,6 +225,8 @@
   "@sendMagicLink": { "description": "Request a sign-in link" },
   "brandTagline": "Control panel for AI agents",
   "@brandTagline": { "description": "Tagline under the wordmark (rendered uppercase)" },
+  "brandMarkLabel": "AI Cockpit",
+  "@brandMarkLabel": { "description": "Screen-reader label for the logo mark (brand name, not translated)" },
   "signInHeadline": "Approve what your agents do — from your phone.",
   "@signInHeadline": { "description": "Sign-in headline" },
   "signInBody": "Sign in with your email. We'll send you a secure magic link — no password to remember.",

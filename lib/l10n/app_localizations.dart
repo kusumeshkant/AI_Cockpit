@@ -632,6 +632,12 @@ abstract class AppLocalizations {
   /// **'Control panel for AI agents'**
   String get brandTagline;
 
+  /// Screen-reader label for the logo mark (brand name, not translated)
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit'**
+  String get brandMarkLabel;
+
   /// Sign-in headline
   ///
   /// In en, this message translates to:

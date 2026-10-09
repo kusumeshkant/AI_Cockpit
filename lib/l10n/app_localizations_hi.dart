@@ -325,6 +325,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get brandTagline => 'AI एजेंटों का कंट्रोल पैनल';
 
   @override
+  String get brandMarkLabel => 'AI Cockpit';
+
+  @override
   String get signInHeadline =>
       'अपने एजेंटों के काम मंज़ूर करें — अपने फ़ोन से।';
 

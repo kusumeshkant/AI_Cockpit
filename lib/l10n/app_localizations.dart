@@ -968,10 +968,82 @@ abstract class AppLocalizations {
   /// **'Trigger secret'**
   String get triggerSecretLabel;
 
+  /// Title of the manage-trigger sheet (Agent Triggers)
+  ///
+  /// In en, this message translates to:
+  /// **'Run from app'**
+  String get triggerManageTitle;
+
+  /// Semantics label of an agent row that opens the manage-trigger sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Manage run from app'**
+  String get triggerManageOpen;
+
+  /// Trigger status pill: no trigger configured
+  ///
+  /// In en, this message translates to:
+  /// **'Not set up'**
+  String get triggerStatusNotSetUp;
+
+  /// Trigger status pill: enabled
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get triggerStatusOn;
+
+  /// Trigger status pill: disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get triggerStatusOff;
+
+  /// Last characters of the trigger secret (never the secret)
+  ///
+  /// In en, this message translates to:
+  /// **'Secret ends in {hint}'**
+  String triggerSecretHint(String hint);
+
+  /// Button: issue a new trigger secret
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate secret'**
+  String get triggerRotate;
+
+  /// Confirm dialog title before rotating / re-saving a trigger
+  ///
+  /// In en, this message translates to:
+  /// **'Issue a new trigger secret?'**
+  String get triggerRotateTitle;
+
+  /// Confirm dialog body before rotating / re-saving a trigger
+  ///
+  /// In en, this message translates to:
+  /// **'The current secret stops working immediately. Update your agent\'s verify step with the new secret.'**
+  String get triggerRotateBody;
+
+  /// Confirm dialog action
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get triggerRotateConfirm;
+
+  /// Run error: the app couldn't reach Cockpit
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get triggerNoInternet;
+
+  /// Run error: Cockpit reached the agent but it didn't accept the trigger
+  ///
+  /// In en, this message translates to:
+  /// **'Agent didn\'t accept the run'**
+  String get triggerAgentRejected;
+
   /// Audit entry for trigger_fired
   ///
   /// In en, this message translates to:
-  /// **'Agent run started'**
+  /// **'Run requested'**
   String get auditTriggerFired;
 
   /// Audit entry for trigger_failed

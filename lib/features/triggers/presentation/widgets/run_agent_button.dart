@@ -2,7 +2,8 @@
 // Run control for the Connections row (Agent Triggers, flag-gated by the
 // caller). States: idle → running (spinner, disabled) → success (brief
 // STARTED pill, fades) / error (retry, stop-tinted). TriggerStatusLine shows
-// "last run · Xm ago" (mono muted), or the error note.
+// "last run · Xm ago" (mono muted), or the error note — which tells "no
+// internet" (app couldn't reach Cockpit) apart from "agent didn't accept".
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -99,14 +100,17 @@ class TriggerStatusLine extends ConsumerWidget {
 
     final String? text;
     final Color color;
-    if (state case RunAgentError(:final failure)) {
+    if (state case RunAgentError(:final failure, :final agentRejected)) {
       color = colors.stop;
-      text = switch (failure) {
-        RateLimitedFailure(:final retryAfter) when retryAfter != null =>
-          l10n.triggerRateLimited(retryAfter.inSeconds.clamp(1, 1 << 16)),
-        TriggerDisabledFailure() || FeatureDisabledFailure() => context.failureMessage(failure),
-        _ => l10n.triggerRunFailed,
-      };
+      text = agentRejected
+          ? l10n.triggerAgentRejected
+          : switch (failure) {
+              RateLimitedFailure(:final retryAfter) when retryAfter != null =>
+                l10n.triggerRateLimited(retryAfter.inSeconds.clamp(1, 1 << 16)),
+              NetworkFailure() => l10n.triggerNoInternet,
+              TriggerDisabledFailure() || FeatureDisabledFailure() => context.failureMessage(failure),
+              _ => l10n.triggerRunFailed,
+            };
     } else {
       color = colors.muted;
       final lastRunAt = trigger.lastRunAt;

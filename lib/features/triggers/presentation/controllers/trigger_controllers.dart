@@ -10,11 +10,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cockpit/core/config/feature_flags.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/triggers/domain/entities/agent_trigger.dart';
 import 'package:cockpit/features/triggers/domain/usecases/configure_trigger.dart';
+import 'package:cockpit/features/triggers/domain/usecases/get_is_workspace_owner.dart';
 import 'package:cockpit/features/triggers/domain/usecases/list_agent_triggers.dart';
 import 'package:cockpit/features/triggers/domain/usecases/run_agent.dart';
 import 'package:cockpit/features/triggers/domain/usecases/set_trigger_enabled.dart';
@@ -31,6 +33,30 @@ final configureTriggerProvider = Provider<ConfigureTrigger>((ref) => getIt<Confi
 /// [SetTriggerEnabled] use case.
 final setTriggerEnabledProvider = Provider<SetTriggerEnabled>((ref) => getIt<SetTriggerEnabled>());
 
+/// [GetIsWorkspaceOwner] use case.
+final getIsWorkspaceOwnerProvider =
+    Provider<GetIsWorkspaceOwner>((ref) => getIt<GetIsWorkspaceOwner>());
+
+/// Whether the signed-in user owns the workspace. Read only while the flag is
+/// on; any failure (or a missing role) reads as `false` — not the owner.
+final isWorkspaceOwnerProvider = FutureProvider<bool>((ref) async {
+  if (!ref.watch(agentTriggersProvider)) return false;
+  ref.watch(authControllerProvider.select((auth) => auth.value?.id));
+  try {
+    final result = await ref.watch(getIsWorkspaceOwnerProvider)();
+    return result.getOrElse(() => false);
+  } on Object {
+    return false;
+  }
+});
+
+/// Whether the trigger management sheet is available: flag on AND owner.
+final canManageTriggersProvider = Provider<bool>(
+  (ref) =>
+      ref.watch(agentTriggersProvider) &&
+      ref.watch(isWorkspaceOwnerProvider.select((owner) => owner.value ?? false)),
+);
+
 /// Workspace triggers keyed by agent id.
 class AgentTriggersController extends AsyncNotifier<Map<String, AgentTrigger>> {
   @override
@@ -41,6 +67,19 @@ class AgentTriggersController extends AsyncNotifier<Map<String, AgentTrigger>> {
       (failure) => throw failure,
       (triggers) => {for (final trigger in triggers) trigger.agentId: trigger},
     );
+  }
+
+  /// Applies a trigger returned by configure / set_enabled right away (e.g.
+  /// the Run button disappears as soon as a trigger is disabled), keeping the
+  /// known last run time.
+  void upsert(AgentTrigger trigger) {
+    final current = state.value;
+    if (current == null) return;
+    final lastRunAt = trigger.lastRunAt ?? current[trigger.agentId]?.lastRunAt;
+    state = AsyncData({
+      ...current,
+      trigger.agentId: trigger.copyWith(lastRunAt: lastRunAt),
+    });
   }
 }
 
@@ -88,10 +127,15 @@ final class RunAgentSuccess extends RunAgentState {
 /// The run failed or was refused ([failure]).
 final class RunAgentError extends RunAgentState {
   /// Creates the state.
-  const RunAgentError(this.failure);
+  const RunAgentError(this.failure, {this.agentRejected = false});
 
   /// Why it failed.
   final Failure failure;
+
+  /// The request reached Cockpit but the agent didn't accept the trigger
+  /// (non-2xx, timeout or unreachable agent) — as opposed to the app failing
+  /// to reach Cockpit at all.
+  final bool agentRejected;
 }
 
 /// Runs one agent.
@@ -128,7 +172,7 @@ class RunAgentController extends Notifier<RunAgentState> {
         // The run is recorded either way; refresh "last run".
         ref.invalidate(agentTriggersControllerProvider);
         if (!run.delivered) {
-          state = RunAgentError(ServerFailure(run.detail));
+          state = RunAgentError(ServerFailure(run.detail), agentRejected: true);
           return;
         }
         state = RunAgentSuccess(run);

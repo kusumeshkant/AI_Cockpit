@@ -516,7 +516,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get triggerSecretLabel => 'Trigger secret';
 
   @override
-  String get auditTriggerFired => 'Agent run started';
+  String get triggerManageTitle => 'Run from app';
+
+  @override
+  String get triggerManageOpen => 'Manage run from app';
+
+  @override
+  String get triggerStatusNotSetUp => 'Not set up';
+
+  @override
+  String get triggerStatusOn => 'On';
+
+  @override
+  String get triggerStatusOff => 'Off';
+
+  @override
+  String triggerSecretHint(String hint) {
+    return 'Secret ends in $hint';
+  }
+
+  @override
+  String get triggerRotate => 'Rotate secret';
+
+  @override
+  String get triggerRotateTitle => 'Issue a new trigger secret?';
+
+  @override
+  String get triggerRotateBody =>
+      'The current secret stops working immediately. Update your agent\'s verify step with the new secret.';
+
+  @override
+  String get triggerRotateConfirm => 'Continue';
+
+  @override
+  String get triggerNoInternet => 'No internet connection';
+
+  @override
+  String get triggerAgentRejected => 'Agent didn\'t accept the run';
+
+  @override
+  String get auditTriggerFired => 'Run requested';
 
   @override
   String get auditTriggerFailed => 'Run failed';

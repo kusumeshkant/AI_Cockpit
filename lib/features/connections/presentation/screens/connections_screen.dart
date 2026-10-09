@@ -21,6 +21,7 @@ import 'package:cockpit/features/connections/domain/entities/agent.dart';
 import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 import 'package:cockpit/features/connections/presentation/widgets/agent_row.dart';
 import 'package:cockpit/features/triggers/presentation/controllers/trigger_controllers.dart';
+import 'package:cockpit/features/triggers/presentation/widgets/manage_trigger_sheet.dart';
 import 'package:cockpit/features/triggers/presentation/widgets/run_agent_button.dart';
 
 /// Connections screen.
@@ -89,7 +90,9 @@ class ConnectionsScreen extends ConsumerWidget {
 }
 
 /// Agent row with the Run control when the agent has an enabled trigger
-/// (Agent Triggers; only built while the flag is on).
+/// (Agent Triggers; only built while the flag is on). For the workspace owner
+/// the row also opens the manage-trigger sheet (chevron); for everyone else it
+/// renders exactly as before.
 class _TriggerAwareAgentRow extends ConsumerWidget {
   const _TriggerAwareAgentRow({required this.agent, super.key});
 
@@ -98,11 +101,35 @@ class _TriggerAwareAgentRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final trigger = ref.watch(enabledTriggerProvider(agent.id));
-    if (trigger == null) return AgentRow(agent: agent);
-    return AgentRow(
-      agent: agent,
-      footer: TriggerStatusLine(trigger: trigger),
-      trailing: RunAgentButton(key: Key('run.${agent.id}'), agentId: agent.id),
+    final canManage = ref.watch(canManageTriggersProvider);
+    final run = trigger == null
+        ? null
+        : RunAgentButton(key: Key('run.${agent.id}'), agentId: agent.id);
+
+    if (!canManage) {
+      if (trigger == null) return AgentRow(agent: agent);
+      return AgentRow(
+        agent: agent,
+        footer: TriggerStatusLine(trigger: trigger),
+        trailing: run,
+      );
+    }
+
+    final spacing = context.spacing;
+    final chevron = ExcludeSemantics(
+      key: Key('manage.${agent.id}'),
+      child: AppIcon(AppIcons.chevronRight, size: spacing.iconSm, color: context.colors.muted),
+    );
+    return Semantics(
+      hint: context.l10n.triggerManageOpen,
+      child: AgentRow(
+        agent: agent,
+        onTap: () => showManageTriggerSheet(context, agent: agent),
+        footer: trigger == null ? null : TriggerStatusLine(trigger: trigger),
+        trailing: run == null
+            ? chevron
+            : Row(mainAxisSize: MainAxisSize.min, children: [run, chevron]),
+      ),
     );
   }
 }

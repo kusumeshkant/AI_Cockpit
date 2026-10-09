@@ -146,14 +146,14 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('undelivered run shows "Run failed"', (tester) async {
+  testWidgets("undelivered run: \"Agent didn't accept the run\"", (tester) async {
     when(() => runAgent('g_email'))
         .thenAnswer((_) async => const Right(TriggerRun(runId: 'r3', delivered: false, detail: 'http_500')));
     await pumpConnections(tester, flag: true);
 
     await tester.tap(find.byTooltip('Run agent'));
     await tester.pumpAndSettle();
-    expect(find.text('Run failed'), findsOneWidget);
+    expect(find.text("Agent didn't accept the run"), findsOneWidget);
   });
 
   for (final (label, locale) in [('en', const Locale('en')), ('hi', const Locale('hi'))]) {

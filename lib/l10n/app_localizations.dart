@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// Application name
   ///
   /// In en, this message translates to:
-  /// **'Cockpit'**
+  /// **'AI Cockpit'**
   String get appTitle;
 
   /// Navigation label for the pending actions feed

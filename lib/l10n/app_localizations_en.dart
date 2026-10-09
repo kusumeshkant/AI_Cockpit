@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Cockpit';
+  String get appTitle => 'AI Cockpit';
 
   @override
   String get navFeed => 'Actions';

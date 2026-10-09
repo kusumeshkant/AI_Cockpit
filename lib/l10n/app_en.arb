@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Cockpit",
+  "appTitle": "AI Cockpit",
   "@appTitle": { "description": "Application name" },
 
   "navFeed": "Actions",

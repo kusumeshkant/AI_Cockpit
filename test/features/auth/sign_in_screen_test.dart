@@ -13,7 +13,7 @@ void main() {
     testWidgets('renders brand, headline, email field and CTA', (tester) async {
       await pumpApp(tester, const SignInScreen());
 
-      expect(find.text('Cockpit'), findsOneWidget);
+      expect(find.text('AI Cockpit'), findsOneWidget);
       expect(find.text('CONTROL PANEL FOR AI AGENTS'), findsOneWidget);
       expect(find.text('EMAIL'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);

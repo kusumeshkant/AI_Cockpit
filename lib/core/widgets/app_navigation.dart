@@ -146,6 +146,53 @@ class _BottomNavButton extends StatelessWidget {
   }
 }
 
+/// Rail header: mark + product name. The name is shown only when it fits on
+/// one line at the current text scale; otherwise just the mark is shown (its
+/// semantics label still names the product), never a truncated name.
+class _RailBrand extends StatelessWidget {
+  const _RailBrand({required this.brandName});
+
+  final String brandName;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.spacing;
+    final style = context.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
+    final mark = BrandMark(size: spacing.brandMarkSmall);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final available = constraints.maxWidth - spacing.brandMarkSmall - spacing.sm;
+        final painter = TextPainter(
+          text: TextSpan(text: brandName, style: style),
+          maxLines: 1,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.maybeLocaleOf(context),
+        )..layout(maxWidth: available > 0 ? available : 0);
+        final fits = available > 0 && !painter.didExceedMaxLines;
+        painter.dispose();
+
+        if (!fits) return Row(children: [mark]);
+        return Row(
+          children: [
+            mark,
+            SizedBox(width: spacing.sm),
+            Flexible(
+              child: Text(
+                brandName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: style,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 /// Tablet left rail: brand + destinations; active = accentWash pill.
 class AppNavRail extends StatelessWidget {
   /// Creates the rail.
@@ -193,22 +240,7 @@ class AppNavRail extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: spacing.xs + spacing.xxs),
-                  child: Row(
-                    children: [
-                      BrandMark(size: spacing.brandMarkSmall),
-                      SizedBox(width: spacing.sm),
-                      Flexible(
-                        child: Text(
-                          brandName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: _RailBrand(brandName: brandName),
                 ),
                 SizedBox(height: spacing.xl + spacing.xs),
                 for (var i = 0; i < items.length; i++) ...[

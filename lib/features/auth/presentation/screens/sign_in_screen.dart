@@ -128,7 +128,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l10n.appTitle, style: text.displayMedium),
+                              // One line on every width: scales down on
+                              // narrow phones / large text instead of wrapping.
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: AlignmentDirectional.centerStart,
+                                child: Text(
+                                  l10n.appTitle,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: text.displayMedium,
+                                ),
+                              ),
                               Text(
                                 context.labelCase(l10n.brandTagline),
                                 style: text.labelMedium?.copyWith(

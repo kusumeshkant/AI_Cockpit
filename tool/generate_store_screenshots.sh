@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Generates the "Sky & Niko" reel screenshots from the real app screens.
+# Generates the Play Store phone screenshots from the real app screens.
 #
-#   tool/generate_reel_screenshots.sh [output-dir]
+#   tool/generate_store_screenshots.sh [output-dir]
 #
 # Default output is the marketing assets folder outside this repo, so nothing
 # generated here can be committed by accident.
@@ -9,14 +9,14 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-OUT_DIR="${1:-D:/projects/AI_Cockpit/product/marketing_assets/reel_sky_niko}"
+OUT_DIR="${1:-D:/projects/AI_Cockpit/product/marketing_assets/play_store/screenshots}"
 
 bash "$(dirname "$0")/fetch_brand_fonts.sh"
 
 echo "==> Rendering"
 mkdir -p "$OUT_DIR"
-flutter test test/marketing/reel_screenshots_test.dart \
-  --dart-define=REEL_OUT="$OUT_DIR"
+flutter test test/marketing/store_screenshots_test.dart \
+  --dart-define=STORE_OUT="$OUT_DIR"
 
 echo
 echo "==> Done. Files in $OUT_DIR:"

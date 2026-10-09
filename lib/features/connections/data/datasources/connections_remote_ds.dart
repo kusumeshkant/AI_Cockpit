@@ -22,6 +22,9 @@ abstract interface class ConnectionsRemoteDataSource {
     required AgentPlatform platform,
   });
 
+  /// Whether [sendTestAction] creates a real action (a live backend).
+  bool get supportsTestActions;
+
   /// Calls `agents-test-action`.
   Future<void> sendTestAction(String agentId);
 }
@@ -65,6 +68,9 @@ class ConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataSource {
       inboundSecret: data['signing_secret'] as String,
     );
   }
+
+  @override
+  bool get supportsTestActions => true;
 
   @override
   Future<void> sendTestAction(String agentId) async {

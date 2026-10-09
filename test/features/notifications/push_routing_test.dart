@@ -95,5 +95,25 @@ void main() {
       expect(handled, isFalse);
       expect(find.text('feed'), findsOneWidget);
     });
+
+    testWidgets('a push with a missing id or garbage payload opens home', (tester) async {
+      await pump(tester);
+      final pushRouter = PushRouter(router);
+
+      for (final message in [
+        const PushMessage(data: {'type': 'action'}),
+        const PushMessage(data: {'type': 'action', 'action_id': ''}),
+        FlutterLocalNotifier.decodePayload('not json') ?? const PushMessage(),
+        const PushMessage(),
+      ]) {
+        router.goNamed(RouteNames.actionDetail, pathParameters: {'id': 'a-1'});
+        await tester.pumpAndSettle();
+        expect(find.text('detail a-1'), findsOneWidget);
+
+        expect(pushRouter.handle(message), isFalse);
+        await tester.pumpAndSettle();
+        expect(find.text('feed'), findsOneWidget, reason: '${message.data}');
+      }
+    });
   });
 }

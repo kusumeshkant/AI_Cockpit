@@ -40,6 +40,9 @@ class ConnectionsRepositoryImpl implements ConnectionsRepository {
       });
 
   @override
+  bool get supportsTestActions => _remote.supportsTestActions;
+
+  @override
   Result<Unit> sendTestAction(String agentId) => guard(() async {
         await _remote.sendTestAction(agentId);
         return unit;

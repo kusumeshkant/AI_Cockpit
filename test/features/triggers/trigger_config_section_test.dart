@@ -75,6 +75,7 @@ void main() {
       overrides: [
         agentTriggersOverride(enabled: flag),
         connectionsControllerProvider.overrideWith(_FakeConnectionsController.new),
+        testActionsSupportedProvider.overrideWithValue(true),
         configureTriggerProvider.overrideWithValue(configure),
         listAgentTriggersProvider.overrideWithValue(listTriggers),
       ],

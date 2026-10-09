@@ -16,10 +16,14 @@ class PushRouter {
   final GoRouter _router;
 
   /// Opens the action a push points at (`{type: action, action_id}`).
-  /// Returns `false` when the message has no destination.
+  /// A message with no destination (unknown type, missing or garbage
+  /// payload) opens the home feed instead and returns `false`.
   bool handle(PushMessage message) {
     final actionId = message.actionId;
-    if (actionId == null) return false;
+    if (actionId == null) {
+      _router.goNamed(RouteNames.feed);
+      return false;
+    }
     _router.goNamed(RouteNames.actionDetail, pathParameters: {'id': actionId});
     return true;
   }

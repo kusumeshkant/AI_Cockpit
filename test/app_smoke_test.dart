@@ -92,7 +92,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Shown once — copy it now'), findsOneWidget);
-    expect(find.text('Send a test action'), findsOneWidget);
+    // Demo mode has no backend to create a sample action in.
+    expect(find.text('Send a test action'), findsNothing);
   });
 
   testWidgets('tablet shows rail and master–detail feed', (tester) async {

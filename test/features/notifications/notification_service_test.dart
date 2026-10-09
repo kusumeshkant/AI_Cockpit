@@ -1,28 +1,41 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:cockpit/core/error/failures.dart';
+import 'package:cockpit/core/router/routes.dart';
 import 'package:cockpit/features/notifications/domain/entities/push_message.dart';
 import 'package:cockpit/features/notifications/domain/repositories/push_repository.dart';
 import 'package:cockpit/features/notifications/domain/usecases/register_device.dart';
 import 'package:cockpit/features/notifications/presentation/local_notifier.dart';
 import 'package:cockpit/features/notifications/presentation/notification_service.dart';
+import 'package:cockpit/features/notifications/presentation/push_router.dart';
 
 class _MockPushRepository extends Mock implements PushRepository {}
 
 class _FakeNotifier implements LocalNotifier {
   NotificationChannelText? channel;
+  void Function(PushMessage message)? onTap;
   final List<PushMessage> shown = [];
 
   @override
   Future<void> initialize({
     required NotificationChannelText channel,
     required void Function(PushMessage message) onTap,
-  }) async =>
-      this.channel = channel;
+  }) async {
+    this.channel = channel;
+    this.onTap = onTap;
+  }
+
+  /// Simulates tapping the [index]th shown notification: the plugin hands
+  /// back the JSON payload FlutterLocalNotifier stored with it.
+  void tap(int index) =>
+      onTap!(FlutterLocalNotifier.decodePayload(jsonEncode(shown[index].data))!);
 
   @override
   Future<void> show(PushMessage message) async => shown.add(message);
@@ -122,6 +135,49 @@ void main() {
 
     expect(service.isRunning, isFalse);
     expect(openedMessages, isEmpty);
+  });
+
+  test('a token rotation re-registers through the repository stream', () async {
+    await start();
+    verify(() => repository.registerOnTokenRefresh()).called(1);
+    refreshes.add(const Right(unit));
+    await pumpEventQueue();
+    expect(service.isRunning, isTrue);
+  });
+
+  testWidgets('tapping a foreground notification opens /actions/:id', (tester) async {
+    final router = GoRouter(
+      initialLocation: RoutePaths.feed,
+      routes: [
+        GoRoute(
+          name: RouteNames.feed,
+          path: RoutePaths.feed,
+          builder: (_, _) => const Text('feed'),
+          routes: [
+            GoRoute(
+              name: RouteNames.actionDetail,
+              path: RoutePaths.actionDetail,
+              builder: (_, state) => Text('detail ${state.pathParameters['id']}'),
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    await tester.runAsync(
+      () => service.start(channel: _channel, onOpen: PushRouter(router).handle),
+    );
+    foreground.add(_incoming);
+    await tester.runAsync(pumpEventQueue);
+    expect(notifier.shown, [_incoming]);
+
+    notifier.tap(0);
+    await tester.pumpAndSettle();
+
+    expect(router.state.uri.path, '/actions/a-2');
+    expect(find.text('detail a-2'), findsOneWidget);
   });
 
   test('with push unavailable, start does nothing', () async {

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/features/notifications/data/datasources/fcm_message_ds.dart';
 import 'package:cockpit/features/notifications/data/datasources/fcm_token_ds.dart';
+import 'package:cockpit/features/notifications/data/datasources/push_demo_ds.dart';
 import 'package:cockpit/features/notifications/data/repositories/push_repository_impl.dart';
 import 'package:cockpit/features/notifications/domain/entities/push_message.dart';
 
@@ -90,5 +91,15 @@ void main() {
   test('isAvailable follows the token source', () {
     when(() => tokens.isAvailable).thenReturn(false);
     expect(repository.isAvailable, isFalse);
+  });
+
+  test('demo mode: push is unavailable and nothing is registered or delivered', () async {
+    const demo = PushRepositoryImpl(FcmTokenDemoDataSource(), FcmMessageDemoDataSource());
+
+    expect(demo.isAvailable, isFalse);
+    expect(await demo.requestPermission(), isFalse);
+    expect(await demo.registerOnTokenRefresh().toList(), isEmpty);
+    expect(await demo.foregroundMessages().toList(), isEmpty);
+    expect(await demo.openedMessages().toList(), isEmpty);
   });
 }

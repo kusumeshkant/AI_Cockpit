@@ -9,6 +9,7 @@ import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/features/actions/presentation/controllers/actions_feed_controller.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/repositories/connections_repository.dart';
 import 'package:cockpit/features/connections/domain/usecases/create_agent.dart';
 import 'package:cockpit/features/connections/domain/usecases/list_agents.dart';
 import 'package:cockpit/features/connections/domain/usecases/send_test_action.dart';
@@ -52,6 +53,11 @@ final agentHasActionsProvider = Provider.family<bool, String>((ref, agentId) {
   final items = ref.watch(actionsFeedControllerProvider).value ?? const [];
   return items.any((item) => item.agentId == agentId);
 });
+
+/// Whether "Send a test action" is offered: live backend only, since the
+/// demo source has nothing to create the action in.
+final testActionsSupportedProvider =
+    Provider<bool>((ref) => getIt<ConnectionsRepository>().supportsTestActions);
 
 /// Agents in the current workspace.
 final connectionsControllerProvider =

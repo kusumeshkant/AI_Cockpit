@@ -5,7 +5,7 @@
 //     the post-creation state only.)
 //  2. Created: credentials panel shown once (TR-8), a banner that waits for
 //     the agent's first action (live via the feed stream),
-//     "Send a test action".
+//     "Send a test action" (live backend only; hidden in demo mode).
 // The secret lives only in this widget's state and is never re-fetched.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,17 +118,21 @@ class _ConnectAgentScreenState extends ConsumerState<ConnectAgentScreen> {
     final credentials = _credentials;
     final created = credentials != null;
     final triggersOn = ref.watch(agentTriggersProvider);
+    // Demo mode can't create a sample action: no button once created.
+    final testActions = ref.watch(testActionsSupportedProvider);
 
     return AppScaffold(
       topBar: AppTopBar.back(title: l10n.connectAgentTitle, onBack: _close),
-      bottomBar: AppBottomBar(
-        child: AppButton(
-          label: created ? l10n.sendTestAction : l10n.createConnection,
-          isLoading: _busy,
-          expand: true,
-          onPressed: created ? _sendTest : _create,
-        ),
-      ),
+      bottomBar: created && !testActions
+          ? null
+          : AppBottomBar(
+              child: AppButton(
+                label: created ? l10n.sendTestAction : l10n.createConnection,
+                isLoading: _busy,
+                expand: true,
+                onPressed: created ? _sendTest : _create,
+              ),
+            ),
       body: ListView(
         padding: EdgeInsets.all(spacing.lg),
         children: [

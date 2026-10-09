@@ -72,6 +72,10 @@ class ConnectionsDemoDataSource implements ConnectionsRemoteDataSource {
     );
   }
 
+  /// There is no backend to create a sample action, so the UI hides it.
+  @override
+  bool get supportsTestActions => false;
+
   @override
   Future<void> sendTestAction(String agentId) async {}
 

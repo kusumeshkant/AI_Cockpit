@@ -18,6 +18,9 @@ abstract interface class ConnectionsRepository {
     required AgentPlatform platform,
   });
 
+  /// Whether [sendTestAction] is available (false in demo mode).
+  bool get supportsTestActions;
+
   /// Inserts a sample pending action for [agentId].
   Result<Unit> sendTestAction(String agentId);
 }

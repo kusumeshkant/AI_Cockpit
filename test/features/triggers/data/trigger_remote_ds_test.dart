@@ -128,7 +128,7 @@ void main() {
     (404, 'feature_disabled', FeatureDisabledFailure),
     (409, 'trigger_disabled', TriggerDisabledFailure),
     (429, 'rate_limited', RateLimitedFailure),
-    (404, 'not_found', ServerFailure),
+    (404, 'not_found', NotFoundFailure),
   ]) {
     test('repository maps $status $code to $type', () async {
       when(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')))

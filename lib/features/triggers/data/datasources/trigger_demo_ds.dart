@@ -42,7 +42,7 @@ class TriggerDemoDataSource implements TriggerRemoteDataSource {
   @override
   Future<TriggerRunDto> runAgent(String agentId) async {
     final trigger = _triggers[agentId];
-    if (trigger == null) throw const ServerFailure('not_found', 404);
+    if (trigger == null) throw const NotFoundFailure();
     if (!trigger.enabled) throw const TriggerDisabledFailure();
     final last = _lastRuns[agentId];
     final wait = last == null
@@ -79,7 +79,7 @@ class TriggerDemoDataSource implements TriggerRemoteDataSource {
     required bool enabled,
   }) async {
     final trigger = _triggers[agentId];
-    if (trigger == null) throw const ServerFailure('trigger_not_found', 404);
+    if (trigger == null) throw const NotFoundFailure('trigger_not_found');
     return _triggers[agentId] = trigger.copyWith(enabled: enabled);
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/features/auth/domain/entities/auth_user.dart';
+import 'package:cockpit/features/auth/domain/usecases/delete_account.dart';
 import 'package:cockpit/features/auth/domain/usecases/sign_in.dart';
 import 'package:cockpit/features/auth/domain/usecases/sign_out.dart';
 import 'package:cockpit/features/auth/domain/usecases/verify_otp.dart';
@@ -25,6 +26,13 @@ class AuthController extends StreamNotifier<AuthUser?> {
   /// the signed-in user. Returns `null` on success.
   Future<Failure?> verifyOtp(String email, String code) async {
     final result = await getIt<VerifyOtp>()(email: email, code: code);
+    return result.fold((failure) => failure, (_) => null);
+  }
+
+  /// Permanently deletes the account. On success the auth stream emits
+  /// `null` (signed out). Returns `null` on success.
+  Future<Failure?> deleteAccount() async {
+    final result = await getIt<DeleteAccount>()();
     return result.fold((failure) => failure, (_) => null);
   }
 

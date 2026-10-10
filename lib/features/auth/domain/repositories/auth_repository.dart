@@ -16,6 +16,9 @@ abstract interface class AuthRepository {
   /// Signs the current user out and clears the session.
   Result<Unit> signOut();
 
+  /// Permanently deletes the signed-in user's account and ends the session.
+  Result<Unit> deleteAccount();
+
   /// Emits the current user, or `null` when signed out.
   Stream<AuthUser?> watchAuthState();
 }

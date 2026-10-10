@@ -94,7 +94,7 @@ keyPassword=…
 
 Keep the keystore outside the repo. On Windows write the path with forward slashes (`D:/secure/cockpit-upload.jks`) or escaped backslashes (`D:\\secure\\cockpit-upload.jks`): a single `\` is an escape character in `.properties` files.
 
-**2. Backend config.** Copy `env/prod.example.json` to `env/prod.json` (git-ignored) and set `SUPABASE_URL` and `SUPABASE_ANON_KEY` (plus `SENTRY_DSN` if used). Then:
+**2. Backend config and legal pages.** Copy `env/prod.example.json` to `env/prod.json` (git-ignored) and set `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `TERMS_URL` and `PRIVACY_URL` (the last two must be `https://` links), plus `SUPPORT_EMAIL` and `SENTRY_DSN` if used. Then:
 
 ```bash
 flutter build appbundle --release --flavor prod --dart-define-from-file=env/prod.json
@@ -103,6 +103,11 @@ flutter build appbundle --release --flavor prod --dart-define-from-file=env/prod
 The output is `build/app/outputs/bundle/prodRelease/app-prod-release.aab`. To check which key signed it, without printing any secret: `keytool -printcert -jarfile build/app/outputs/bundle/prodRelease/app-prod-release.aab` (shows the certificate owner and fingerprint; it must not be `CN=Android Debug`).
 
 A prod build that somehow starts without the backend config shows a "This build can't start" screen instead of running on demo data (`AppConfig.blocksStartup`).
+
+## Legal links and account deletion
+
+- **Terms / Privacy (F03).** `TERMS_URL` and `PRIVACY_URL` (dart-defines, read by `AppConfig`) drive the links under the sign-in notice and the **Settings → Legal** section. A link with an empty or non-`https` URL is hidden, so dev builds without them show no links. Prod release builds fail without them (Gradle check). Links open in the external browser (`url_launcher`, ADR-011).
+- **Delete account (F02).** **Settings → Account → Delete account** explains what is deleted and asks the user to type their account email. The app then calls the backend's `account-delete` Edge Function (`{"confirm": true}`), clears the local session and returns to sign-in. A failure keeps the session and the same button retries (the backend is idempotent). In demo mode it just clears the demo session. Backend details: `product/backend` README, *Account deletion*.
 
 ## Golden tests
 

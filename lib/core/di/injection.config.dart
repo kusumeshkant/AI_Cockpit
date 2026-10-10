@@ -48,6 +48,8 @@ import 'package:cockpit/features/auth/data/repositories/auth_repository_impl.dar
     as _i295;
 import 'package:cockpit/features/auth/domain/repositories/auth_repository.dart'
     as _i90;
+import 'package:cockpit/features/auth/domain/usecases/delete_account.dart'
+    as _i1031;
 import 'package:cockpit/features/auth/domain/usecases/sign_in.dart' as _i238;
 import 'package:cockpit/features/auth/domain/usecases/sign_out.dart' as _i1004;
 import 'package:cockpit/features/auth/domain/usecases/verify_otp.dart' as _i477;
@@ -205,7 +207,10 @@ extension GetItInjectableX on _i174.GetIt {
       registerFor: {_live},
     );
     gh.lazySingleton<_i539.AuthRemoteDataSource>(
-      () => _i539.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+      () => _i539.AuthRemoteDataSourceImpl(
+        gh<_i454.SupabaseClient>(),
+        gh<_i846.DioClient>(),
+      ),
       registerFor: {_live},
     );
     gh.lazySingleton<_i854.ActionsRemoteDataSource>(
@@ -265,6 +270,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i470.ConnectionsRepositoryImpl(
         gh<_i941.ConnectionsRemoteDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i1031.DeleteAccount>(
+      () => _i1031.DeleteAccount(gh<_i90.AuthRepository>()),
     );
     gh.lazySingleton<_i238.SignIn>(
       () => _i238.SignIn(gh<_i90.AuthRepository>()),

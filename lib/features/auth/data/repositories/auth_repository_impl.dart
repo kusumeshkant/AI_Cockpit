@@ -39,6 +39,12 @@ class AuthRepositoryImpl implements AuthRepository {
       });
 
   @override
+  Result<Unit> deleteAccount() => guard(() async {
+        await _remote.deleteAccount();
+        return unit;
+      });
+
+  @override
   Stream<AuthUser?> watchAuthState() => _remote
       .watchAuthState()
       .map((dto) => dto?.toEntity())

@@ -1,12 +1,13 @@
 // Feature: auth · Layer: data
-// Supabase Auth: email OTP sign-in, sign-out, and the signed-in user's
-// profile (app_user + workspace plan, read under RLS). Throws; never returns
-// failures.
+// Supabase Auth: email OTP sign-in, sign-out, account deletion, and the
+// signed-in user's profile (app_user + workspace plan, read under RLS).
+// Throws; never returns failures.
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:cockpit/core/config/api_endpoints.dart';
 import 'package:cockpit/core/di/environments.dart';
+import 'package:cockpit/core/network/dio_client.dart';
 import 'package:cockpit/features/auth/data/models/auth_user_dto.dart';
 
 /// Remote authentication source.
@@ -20,6 +21,10 @@ abstract interface class AuthRemoteDataSource {
   /// Signs out.
   Future<void> signOut();
 
+  /// Deletes the signed-in user's account on the server, then ends the local
+  /// session. Safe to call again after a failure (the backend is idempotent).
+  Future<void> deleteAccount();
+
   /// Emits the current user DTO or `null`.
   Stream<AuthUserDto?> watchAuthState();
 }
@@ -28,9 +33,10 @@ abstract interface class AuthRemoteDataSource {
 @LazySingleton(as: AuthRemoteDataSource, env: [AppEnvironments.live])
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// Creates the datasource.
-  const AuthRemoteDataSourceImpl(this._client);
+  const AuthRemoteDataSourceImpl(this._client, this._functions);
 
   final SupabaseClient _client;
+  final DioClient _functions;
 
   @override
   Future<void> signIn({required String email}) =>
@@ -42,6 +48,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() => _client.auth.signOut();
+
+  @override
+  Future<void> deleteAccount() async {
+    await _functions.postFunction(ApiEndpoints.accountDelete, {'confirm': true});
+    // The server already revoked every session; only clear this device's.
+    await _client.auth.signOut(scope: SignOutScope.local);
+  }
 
   @override
   Stream<AuthUserDto?> watchAuthState() => _client.auth.onAuthStateChange

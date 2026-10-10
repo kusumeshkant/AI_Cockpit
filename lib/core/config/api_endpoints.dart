@@ -23,6 +23,9 @@ abstract final class ApiEndpoints {
 
   /// App → configure / enable an agent's trigger (Agent Triggers, flag-gated).
   static const String agentsConfigureTrigger = '/agents-configure-trigger';
+
+  /// App → delete the signed-in user's account (`{"confirm": true}`).
+  static const String accountDelete = '/account-delete';
 }
 
 /// Postgres table names (accessed through Supabase with RLS).

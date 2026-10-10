@@ -35,6 +35,12 @@ class FakeAuthController extends AuthController {
   /// Number of sign-out calls.
   int signOutCalls = 0;
 
+  /// Failure returned by [deleteAccount] (`null` = success).
+  Failure? deleteFailure;
+
+  /// Number of delete-account calls.
+  int deleteCalls = 0;
+
   @override
   Stream<AuthUser?> build() => Stream.value(initial);
 
@@ -54,5 +60,12 @@ class FakeAuthController extends AuthController {
   Future<void> signOut() async {
     signOutCalls++;
     state = const AsyncData<AuthUser?>(null);
+  }
+
+  @override
+  Future<Failure?> deleteAccount() async {
+    deleteCalls++;
+    if (deleteFailure == null) state = const AsyncData<AuthUser?>(null);
+    return deleteFailure;
   }
 }

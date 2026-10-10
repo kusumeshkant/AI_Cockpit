@@ -23,6 +23,7 @@ import 'package:cockpit/features/auth/presentation/controllers/auth_controller.d
 import 'package:cockpit/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:cockpit/features/connections/presentation/screens/connect_agent_screen.dart';
 import 'package:cockpit/features/connections/presentation/screens/connections_screen.dart';
+import 'package:cockpit/features/settings/presentation/screens/delete_account_screen.dart';
 import 'package:cockpit/features/settings/presentation/screens/settings_screen.dart';
 
 /// The app's [GoRouter].
@@ -102,6 +103,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: RouteNames.settings,
                 path: RoutePaths.settings,
                 builder: (context, state) => const SettingsScreen(),
+                routes: [
+                  GoRoute(
+                    name: RouteNames.deleteAccount,
+                    path: RoutePaths.deleteAccount,
+                    parentNavigatorKey: rootKey,
+                    builder: (context, state) => const DeleteAccountScreen(),
+                  ),
+                ],
               ),
             ],
           ),

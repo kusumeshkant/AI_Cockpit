@@ -42,7 +42,11 @@ class AccountCard extends ConsumerWidget {
     }
 
     final signOut = _SignOutButton(
-      onPressed: () => ref.read(settingsControllerProvider).signOut(),
+      onPressed: () async {
+        if (await _confirmSignOut(context)) {
+          await ref.read(settingsControllerProvider).signOut();
+        }
+      },
     );
 
     return AppCard(
@@ -81,6 +85,37 @@ class AccountCard extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Asks before signing out (F24). Resolves `true` only on an explicit confirm.
+Future<bool> _confirmSignOut(BuildContext context) async {
+  final l10n = context.l10n;
+  final spacing = context.spacing;
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      backgroundColor: context.colors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(spacing.radiusCard)),
+      title: Text(l10n.signOutConfirmTitle, style: context.textTheme.titleMedium),
+      content: Text(l10n.signOutConfirmBody, style: context.textTheme.bodyMedium),
+      actionsOverflowButtonSpacing: spacing.sm,
+      actions: [
+        AppButton(
+          key: const Key('signOut.cancel'),
+          label: l10n.cancel,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+        ),
+        AppButton(
+          key: const Key('signOut.confirm'),
+          label: l10n.signOut,
+          variant: AppButtonVariant.danger,
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+        ),
+      ],
+    ),
+  );
+  return confirmed ?? false;
 }
 
 class _Avatar extends StatelessWidget {

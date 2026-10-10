@@ -347,6 +347,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOut => 'Sign out';
 
   @override
+  String get signOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get signOutConfirmBody =>
+      'You\'ll need a new code from your email to sign back in, and this device stops getting notifications.';
+
+  @override
   String get email => 'Email';
 
   @override

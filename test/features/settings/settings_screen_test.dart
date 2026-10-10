@@ -68,14 +68,41 @@ void main() {
       expect(prefs.getString(ThemeController.storageKey), 'light');
     });
 
-    testWidgets('sign out calls the auth controller', (tester) async {
+    testWidgets('sign out asks first; Cancel keeps the session (F24)', (tester) async {
       await pumpSettings(tester);
 
       await tester.tap(find.text('Sign out'));
       await tester.pumpAndSettle();
+      expect(find.text('Sign out?'), findsOneWidget);
+      expect(auth.signOutCalls, 0, reason: 'nothing happens before confirming');
+
+      await tester.tap(find.byKey(const Key('signOut.cancel')));
+      await tester.pumpAndSettle();
+      expect(find.text('Sign out?'), findsNothing);
+      expect(auth.signOutCalls, 0);
+      expect(find.text('Meera Rao'), findsOneWidget);
+    });
+
+    testWidgets('confirming signs out (F24)', (tester) async {
+      await pumpSettings(tester);
+
+      await tester.tap(find.text('Sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('signOut.confirm')));
+      await tester.pumpAndSettle();
 
       expect(auth.signOutCalls, 1);
       expect(find.text('Sign in'), findsOneWidget);
+    });
+
+    testWidgets('sign-out dialog fits 320dp (hi)', (tester) async {
+      await pumpSettings(tester, size: narrowPhoneSize, locale: const Locale('hi'));
+
+      await tester.tap(find.text('साइन आउट करें'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('साइन आउट करें?'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     for (final (label, themeMode, locale) in [

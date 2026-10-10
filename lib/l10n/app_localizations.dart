@@ -662,6 +662,18 @@ abstract class AppLocalizations {
   /// **'Sign out'**
   String get signOut;
 
+  /// Sign-out confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get signOutConfirmTitle;
+
+  /// Sign-out confirmation body
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need a new code from your email to sign back in, and this device stops getting notifications.'**
+  String get signOutConfirmBody;
+
   /// Email field label
   ///
   /// In en, this message translates to:

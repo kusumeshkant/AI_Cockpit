@@ -347,6 +347,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get signOut => 'साइन आउट करें';
 
   @override
+  String get signOutConfirmTitle => 'साइन आउट करें?';
+
+  @override
+  String get signOutConfirmBody =>
+      'वापस साइन इन करने के लिए आपको ईमेल से नया कोड चाहिए होगा, और इस डिवाइस पर सूचनाएँ आना बंद हो जाएँगी।';
+
+  @override
   String get email => 'ईमेल';
 
   @override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dev flavor only: amber adaptive-icon background, so the dev build is easy
+     to tell apart from prod on a phone. Same logo; prod keeps #0A0E1F. -->
+<resources>
+    <color name="ic_launcher_background">#B45309</color>
+</resources>

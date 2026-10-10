@@ -27,6 +27,8 @@ import 'package:cockpit/features/actions/presentation/controllers/selected_actio
 import 'package:cockpit/features/actions/presentation/widgets/action_card.dart';
 import 'package:cockpit/features/actions/presentation/widgets/action_review.dart';
 import 'package:cockpit/features/actions/presentation/widgets/action_status_pill.dart';
+import 'package:cockpit/features/actions/presentation/widgets/first_agent_empty_view.dart';
+import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 
 /// Pending actions feed.
 class ActionsFeedScreen extends StatelessWidget {
@@ -52,12 +54,8 @@ class _FeedStates extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
     return switch (ref.watch(actionsFeedControllerProvider)) {
-      AsyncData(:final value) when value.isEmpty => AppEmptyView(
-          title: l10n.emptyPendingTitle,
-          message: l10n.emptyPendingMessage,
-        ),
+      AsyncData(:final value) when value.isEmpty => const _EmptyFeed(),
       AsyncData(:final value) => builder(value),
       AsyncError(:final error) => AppErrorView(
           message: context.failureMessage(error),
@@ -65,6 +63,28 @@ class _FeedStates extends ConsumerWidget {
         ),
       _ => const AppLoader(),
     };
+  }
+}
+
+/// Empty feed: a first-agent next step when the workspace has no agents
+/// (F13), otherwise "All clear". If the agents can't be read, the plain
+/// "All clear" is shown rather than guessing.
+class _EmptyFeed extends ConsumerWidget {
+  const _EmptyFeed();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final noAgents = ref.watch(
+      connectionsControllerProvider.select((agents) => agents.hasValue && agents.value!.isEmpty),
+    );
+    if (noAgents) {
+      return FirstAgentEmptyView(canConnect: ref.watch(canManageAgentsProvider));
+    }
+    final l10n = context.l10n;
+    return AppEmptyView(
+      title: l10n.emptyPendingTitle,
+      message: l10n.emptyPendingMessage,
+    );
   }
 }
 

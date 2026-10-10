@@ -123,6 +123,37 @@ class AppLocalizationsEn extends AppLocalizations {
       'When an agent proposes an action, it will appear here.';
 
   @override
+  String get firstAgentTitle => 'Connect your first agent';
+
+  @override
+  String get firstAgentMessage =>
+      'AI Cockpit shows what your AI agents want to do, so you can approve it first.';
+
+  @override
+  String get firstAgentStepConnect =>
+      'Connect an agent (n8n, Make, Zapier or your own).';
+
+  @override
+  String get firstAgentStepPropose =>
+      'It sends each action here before doing it.';
+
+  @override
+  String get firstAgentStepDecide =>
+      'You approve, edit or reject it from your phone.';
+
+  @override
+  String get connectFirstAgent => 'Connect an agent';
+
+  @override
+  String get firstAgentAskOwner =>
+      'No agents are connected yet. Ask your workspace owner to connect one.';
+
+  @override
+  String stepNumber(int number) {
+    return '$number';
+  }
+
+  @override
   String get actionDetailTitle => 'Review action';
 
   @override

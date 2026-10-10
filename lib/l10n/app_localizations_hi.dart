@@ -123,6 +123,37 @@ class AppLocalizationsHi extends AppLocalizations {
       'जब कोई एजेंट कोई कार्य प्रस्तावित करेगा, वह यहाँ दिखेगा।';
 
   @override
+  String get firstAgentTitle => 'अपना पहला एजेंट जोड़ें';
+
+  @override
+  String get firstAgentMessage =>
+      'AI Cockpit दिखाता है कि आपके AI एजेंट क्या करना चाहते हैं, ताकि आप पहले उसे मंज़ूर कर सकें।';
+
+  @override
+  String get firstAgentStepConnect =>
+      'एक एजेंट जोड़ें (n8n, Make, Zapier या अपना)।';
+
+  @override
+  String get firstAgentStepPropose =>
+      'वह हर काम करने से पहले उसे यहाँ भेजता है।';
+
+  @override
+  String get firstAgentStepDecide =>
+      'आप अपने फ़ोन से उसे मंज़ूर, बदलते या अस्वीकार करते हैं।';
+
+  @override
+  String get connectFirstAgent => 'एजेंट जोड़ें';
+
+  @override
+  String get firstAgentAskOwner =>
+      'अभी कोई एजेंट नहीं जुड़ा है। अपने वर्कस्पेस के मालिक से एक एजेंट जोड़ने को कहें।';
+
+  @override
+  String stepNumber(int number) {
+    return '$number';
+  }
+
+  @override
   String get actionDetailTitle => 'कार्य की समीक्षा करें';
 
   @override

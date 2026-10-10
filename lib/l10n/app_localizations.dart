@@ -248,6 +248,54 @@ abstract class AppLocalizations {
   /// **'When an agent proposes an action, it will appear here.'**
   String get emptyPendingMessage;
 
+  /// Empty feed title when the workspace has no agents
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your first agent'**
+  String get firstAgentTitle;
+
+  /// Empty feed explainer for owners (no agents yet)
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit shows what your AI agents want to do, so you can approve it first.'**
+  String get firstAgentMessage;
+
+  /// How it works, step 1
+  ///
+  /// In en, this message translates to:
+  /// **'Connect an agent (n8n, Make, Zapier or your own).'**
+  String get firstAgentStepConnect;
+
+  /// How it works, step 2
+  ///
+  /// In en, this message translates to:
+  /// **'It sends each action here before doing it.'**
+  String get firstAgentStepPropose;
+
+  /// How it works, step 3
+  ///
+  /// In en, this message translates to:
+  /// **'You approve, edit or reject it from your phone.'**
+  String get firstAgentStepDecide;
+
+  /// Empty feed CTA (owners only)
+  ///
+  /// In en, this message translates to:
+  /// **'Connect an agent'**
+  String get connectFirstAgent;
+
+  /// Empty feed message for approvers (no agents yet)
+  ///
+  /// In en, this message translates to:
+  /// **'No agents are connected yet. Ask your workspace owner to connect one.'**
+  String get firstAgentAskOwner;
+
+  /// Number in a how-it-works step badge
+  ///
+  /// In en, this message translates to:
+  /// **'{number}'**
+  String stepNumber(int number);
+
   /// Title of the action detail screen
   ///
   /// In en, this message translates to:

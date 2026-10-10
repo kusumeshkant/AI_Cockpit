@@ -353,6 +353,58 @@ class AppLocalizationsHi extends AppLocalizations {
       'आगे बढ़कर आप शर्तों और गोपनीयता नीति से सहमत होते हैं।';
 
   @override
+  String get termsOfService => 'सेवा की शर्तें';
+
+  @override
+  String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get sectionLegal => 'कानूनी';
+
+  @override
+  String get linkOpenFailed => 'पेज नहीं खुल सका। बाद में फिर कोशिश करें।';
+
+  @override
+  String get deleteAccount => 'अकाउंट डिलीट करें';
+
+  @override
+  String get deleteAccountWarningTitle => 'इसे वापस नहीं किया जा सकता';
+
+  @override
+  String get deleteAccountWarningAccount =>
+      'आपका अकाउंट, प्रोफ़ाइल और साइन-इन तुरंत डिलीट हो जाते हैं।';
+
+  @override
+  String get deleteAccountWarningDevice =>
+      'इस डिवाइस पर सूचनाएँ आना बंद हो जाएँगी।';
+
+  @override
+  String get deleteAccountWarningOwner =>
+      'अगर आप वर्कस्पेस के मालिक हैं, तो उसके एजेंट, एक्शन और ऑडिट इतिहास भी डिलीट हो जाते हैं। बाकी सदस्यों के अकाउंट रहते हैं, हर एक नए वर्कस्पेस में।';
+
+  @override
+  String get deleteAccountWarningApprover =>
+      'अगर आप अप्रूवर हैं, तो आपके पुराने फ़ैसले वर्कस्पेस इतिहास में बिना आपके नाम के रहते हैं।';
+
+  @override
+  String get deleteAccountConfirmLabel => 'पुष्टि के लिए अपना ईमेल लिखें';
+
+  @override
+  String get deleteAccountConfirmMismatch =>
+      'यह आपके अकाउंट के ईमेल से मेल नहीं खाता।';
+
+  @override
+  String get deleteAccountButton => 'मेरा अकाउंट डिलीट करें';
+
+  @override
+  String deleteAccountFailed(String reason) {
+    return 'आपका अकाउंट डिलीट नहीं हुआ। $reason';
+  }
+
+  @override
+  String get deleteAccountDone => 'आपका अकाउंट डिलीट हो गया।';
+
+  @override
   String get back => 'वापस';
 
   @override

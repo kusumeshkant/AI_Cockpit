@@ -15,6 +15,7 @@ import 'package:cockpit/core/widgets/app_button.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/core/widgets/app_text_field.dart';
 import 'package:cockpit/core/widgets/brand_mark.dart';
+import 'package:cockpit/core/widgets/legal_links.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 
 /// Sign-in screen.
@@ -219,6 +220,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       textAlign: TextAlign.center,
                       style: text.bodySmall?.copyWith(color: colors.muted),
                     ),
+                    const LegalLinks(),
                   ],
                 ),
               ),

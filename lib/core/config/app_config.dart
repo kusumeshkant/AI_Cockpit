@@ -14,6 +14,9 @@ class AppConfig {
     required this.sentryDsn,
     required this.posthogKey,
     required this.firebaseEnabled,
+    this.termsUrl = '',
+    this.privacyUrl = '',
+    this.supportEmail = '',
   });
 
   /// Reads configuration from compile-time environment declarations.
@@ -27,6 +30,9 @@ class AppConfig {
         sentryDsn: const String.fromEnvironment('SENTRY_DSN'),
         posthogKey: const String.fromEnvironment('POSTHOG_KEY'),
         firebaseEnabled: const bool.fromEnvironment('FIREBASE_ENABLED', defaultValue: true),
+        termsUrl: const String.fromEnvironment('TERMS_URL'),
+        privacyUrl: const String.fromEnvironment('PRIVACY_URL'),
+        supportEmail: const String.fromEnvironment('SUPPORT_EMAIL'),
       );
 
   /// The native build flavor (`--flavor`, exposed as [appFlavor]) wins over
@@ -58,6 +64,27 @@ class AppConfig {
   /// quietly when the platform config file is absent. `FIREBASE_ENABLED=false`
   /// opts out.
   final bool firebaseEnabled;
+
+  /// Terms of Service page; empty hides the link (prod release builds
+  /// require it, see android/app/build.gradle.kts).
+  final String termsUrl;
+
+  /// Privacy Policy page; empty hides the link (required for prod releases).
+  final String privacyUrl;
+
+  /// Support contact, e.g. for email-based account deletion requests.
+  final String supportEmail;
+
+  /// [termsUrl] as an https URI, or `null` when unset or not https.
+  Uri? get termsUri => _httpsUri(termsUrl);
+
+  /// [privacyUrl] as an https URI, or `null` when unset or not https.
+  Uri? get privacyUri => _httpsUri(privacyUrl);
+
+  static Uri? _httpsUri(String value) {
+    final uri = Uri.tryParse(value.trim());
+    return uri != null && uri.scheme == 'https' && uri.host.isNotEmpty ? uri : null;
+  }
 
   /// True when Supabase credentials are provided.
   bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;

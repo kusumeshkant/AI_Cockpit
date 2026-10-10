@@ -117,14 +117,19 @@ dependencies {
 // Flutter hands dart-defines to Gradle as base64 "KEY=value" entries in the
 // `dart-defines` property. That is a Flutter-tool detail, so the app checks
 // the same thing at startup too (AppConfig.blocksStartup).
-val requiredProdDefines = listOf("SUPABASE_URL", "SUPABASE_ANON_KEY")
+val requiredProdDefines = listOf("SUPABASE_URL", "SUPABASE_ANON_KEY", "TERMS_URL", "PRIVACY_URL")
+// Legal pages must be real https links: the app hides a link it can't open.
+val httpsProdDefines = setOf("TERMS_URL", "PRIVACY_URL")
 fun missingProdDefines(): List<String> {
     val defines = (project.findProperty("dart-defines") as String?).orEmpty()
         .split(',')
         .filter { it.isNotBlank() }
         .mapNotNull { runCatching { String(Base64.getDecoder().decode(it)) }.getOrNull() }
         .associate { it.substringBefore('=') to it.substringAfter('=', "") }
-    return requiredProdDefines.filter { defines[it].isNullOrBlank() }
+    return requiredProdDefines.filter { key ->
+        val value = defines[key]
+        value.isNullOrBlank() || (key in httpsProdDefines && !value.trim().startsWith("https://"))
+    }
 }
 val prodReleaseTasks = setOf("bundleProdRelease", "assembleProdRelease")
 gradle.taskGraph.whenReady {
@@ -143,7 +148,7 @@ gradle.taskGraph.whenReady {
     val problems = listOfNotNull(
         signingProblem?.let { "Prod release signing is not configured. $it" },
         missingDefines.takeIf { it.isNotEmpty() }?.let {
-            "Prod release is missing dart-defines: ${it.joinToString()}. " +
+            "Prod release is missing (or has a non-https) dart-define: ${it.joinToString()}. " +
                 "Build with --dart-define-from-file=env/prod.json (see env/prod.example.json)."
         },
     )

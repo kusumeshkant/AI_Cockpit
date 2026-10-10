@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^2.3.0
   http: ^1.6.0
   marionette_flutter: ^0.6.0
+  url_launcher: ^6.3.2 # ADR-011: Terms / Privacy links
 
 dev_dependencies:
   flutter_test:

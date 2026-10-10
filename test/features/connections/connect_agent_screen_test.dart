@@ -97,6 +97,35 @@ void main() {
       expect(controller.created, isEmpty);
     });
 
+    testWidgets('the Create button stays above the open keyboard (F16)', (tester) async {
+      await pumpConnect(tester);
+      const keyboard = 320.0;
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.tap(find.byType(TextField).at(1));
+      await tester.pumpAndSettle();
+
+      final button = find.text('Create connection');
+      expect(button, findsOneWidget);
+      final screenHeight = tester.view.physicalSize.height / tester.view.devicePixelRatio;
+      expect(tester.getBottomLeft(button).dy, lessThanOrEqualTo(screenHeight - keyboard));
+      await tester.tap(button);
+      await tester.pump();
+      expect(find.text('Enter a name (1–60 characters).'), findsOneWidget,
+          reason: 'the button is tappable with the keyboard open');
+    });
+
+    testWidgets('Enter on the callback URL creates the connection (F16)', (tester) async {
+      await pumpConnect(tester);
+      await tester.enterText(find.byType(TextField).at(0), 'Email agent');
+      await tester.enterText(find.byType(TextField).at(1), 'https://n8n.example.com/hook');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+      expect(controller.created, hasLength(1));
+      expect(find.byType(CredentialsPanel), findsOneWidget);
+    });
+
     testWidgets('creates the agent and shows credentials once', (tester) async {
       await pumpConnect(tester);
       await fillAndCreate(tester);

@@ -25,15 +25,18 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The bar is part of the body column, not Scaffold.bottomNavigationBar:
+    // the body is resized above the keyboard, the navigation-bar slot is not,
+    // so a CTA there would hide behind the keyboard (F16).
     return Scaffold(
       backgroundColor: context.colors.paper,
       body: Column(
         children: [
           ?topBar,
           Expanded(child: body),
+          ?bottomBar,
         ],
       ),
-      bottomNavigationBar: bottomBar,
     );
   }
 }

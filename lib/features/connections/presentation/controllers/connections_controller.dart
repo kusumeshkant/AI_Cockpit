@@ -70,6 +70,14 @@ final _isAgentManagerProvider = FutureProvider<bool?>((ref) async {
   }
 });
 
+/// The signed-in user's role for display (F12): `true` owner, `false`
+/// approver, `null` while loading or unknown, so nothing is shown rather than
+/// a guess (e.g. the previous user's role during a reload).
+final workspaceOwnerRoleProvider = Provider<bool?>((ref) {
+  final role = ref.watch(_isAgentManagerProvider);
+  return role.isLoading ? null : role.value;
+});
+
 /// Whether agent-management entry points (Connect / Connect agent) are shown.
 /// Agent management is owner-only on the backend; the UI hides it only once
 /// the user is known not to be the owner, so an unknown role never blocks an

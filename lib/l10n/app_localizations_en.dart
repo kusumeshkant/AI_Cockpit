@@ -553,6 +553,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
+  String get contactSupport => 'Email support';
+
+  @override
+  String get roleOwner => 'Owner';
+
+  @override
+  String get roleApprover => 'Approver';
+
+  @override
   String versionLabel(String version) {
     return 'Version $version';
   }

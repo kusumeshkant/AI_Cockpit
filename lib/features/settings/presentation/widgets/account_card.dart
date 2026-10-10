@@ -14,6 +14,7 @@ import 'package:cockpit/core/widgets/app_card.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/features/auth/domain/entities/auth_user.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 import 'package:cockpit/features/settings/presentation/controllers/settings_controller.dart';
 
 /// Account summary with sign-out.
@@ -145,14 +146,14 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _Identity extends StatelessWidget {
+class _Identity extends ConsumerWidget {
   const _Identity({required this.user, required this.showEmail});
 
   final AuthUser user;
   final bool showEmail;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final colors = context.colors;
     final plan = switch (user.plan) {
@@ -161,6 +162,12 @@ class _Identity extends StatelessWidget {
       WorkspacePlan.consultant => l10n.planConsultant,
     };
     var meta = l10n.metaPair(l10n.workspaceCount(1), plan);
+    final role = switch (ref.watch(workspaceOwnerRoleProvider)) {
+      true => l10n.roleOwner,
+      false => l10n.roleApprover,
+      null => null,
+    };
+    if (role != null) meta = l10n.metaPair(meta, role);
     if (showEmail) meta = l10n.metaPair(meta, user.email);
 
     return Column(

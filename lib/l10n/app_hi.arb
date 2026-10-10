@@ -162,6 +162,9 @@
   "planConsultant": "कंसल्टेंट प्लान",
   "workspaceCount": "{count, plural, =1{1 वर्कस्पेस} other{{count} वर्कस्पेस}}",
   "about": "जानकारी",
+  "contactSupport": "सपोर्ट को ईमेल करें",
+  "roleOwner": "मालिक",
+  "roleApprover": "अप्रूवर",
   "versionLabel": "संस्करण {version}",
 
   "loading": "लोड हो रहा है",

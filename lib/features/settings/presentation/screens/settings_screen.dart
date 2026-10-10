@@ -2,7 +2,8 @@
 // Settings.
 //  * phone (Settings.dc.html): labelled sections stacked — Appearance
 //    (theme segmented) → Language (segmented) → Account (Sign out, Delete
-//    account) → Legal (Terms, Privacy; only when configured).
+//    account) → Legal (Terms, Privacy; only when configured) → About
+//    (version, support email).
 //  * wide content (TabletSettings.dc.html): two-column grid of cards with
 //    the label inside each card; the account card spans both columns with
 //    Sign out inline.
@@ -16,6 +17,7 @@ import 'package:cockpit/core/widgets/app_card.dart';
 import 'package:cockpit/core/widgets/app_scaffold.dart';
 import 'package:cockpit/core/widgets/app_top_bar.dart';
 import 'package:cockpit/core/widgets/section_label.dart';
+import 'package:cockpit/features/settings/presentation/widgets/about_card.dart';
 import 'package:cockpit/features/settings/presentation/widgets/account_card.dart';
 import 'package:cockpit/features/settings/presentation/widgets/language_tile.dart';
 import 'package:cockpit/features/settings/presentation/widgets/legal_card.dart';
@@ -68,6 +70,8 @@ class _PhoneSettings extends StatelessWidget {
         SizedBox(height: spacing.sectionGap),
         _Section(label: l10n.sectionAccount, child: const AccountCard()),
         LegalSection(topGap: spacing.sectionGap),
+        SizedBox(height: spacing.sectionGap),
+        _Section(label: l10n.about, child: const AboutCard()),
       ],
     );
   }
@@ -116,6 +120,8 @@ class _WideSettings extends StatelessWidget {
         SizedBox(height: spacing.sectionGap),
         const AccountCard(inlineSignOut: true),
         LegalSection(topGap: spacing.sectionGap),
+        SizedBox(height: spacing.sectionGap),
+        _Section(label: l10n.about, child: const AboutCard()),
       ],
     );
   }

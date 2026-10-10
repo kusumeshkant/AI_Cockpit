@@ -553,6 +553,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get about => 'जानकारी';
 
   @override
+  String get contactSupport => 'सपोर्ट को ईमेल करें';
+
+  @override
+  String get roleOwner => 'मालिक';
+
+  @override
+  String get roleApprover => 'अप्रूवर';
+
+  @override
   String versionLabel(String version) {
     return 'संस्करण $version';
   }

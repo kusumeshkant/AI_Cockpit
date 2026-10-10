@@ -1016,6 +1016,24 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// Settings → About: opens a mail to SUPPORT_EMAIL
+  ///
+  /// In en, this message translates to:
+  /// **'Email support'**
+  String get contactSupport;
+
+  /// Workspace role shown on the account card
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get roleOwner;
+
+  /// Workspace role shown on the account card
+  ///
+  /// In en, this message translates to:
+  /// **'Approver'**
+  String get roleApprover;
+
   /// App version
   ///
   /// In en, this message translates to:

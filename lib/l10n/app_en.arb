@@ -379,6 +379,12 @@
   },
   "about": "About",
   "@about": { "description": "Settings section: about" },
+  "contactSupport": "Email support",
+  "@contactSupport": { "description": "Settings → About: opens a mail to SUPPORT_EMAIL" },
+  "roleOwner": "Owner",
+  "@roleOwner": { "description": "Workspace role shown on the account card" },
+  "roleApprover": "Approver",
+  "@roleApprover": { "description": "Workspace role shown on the account card" },
   "versionLabel": "Version {version}",
   "@versionLabel": {
     "description": "App version",

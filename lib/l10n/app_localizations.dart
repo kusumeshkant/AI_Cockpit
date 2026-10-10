@@ -638,6 +638,18 @@ abstract class AppLocalizations {
   /// **'AI Cockpit'**
   String get brandMarkLabel;
 
+  /// Title of the screen shown when a production build is missing its server settings
+  ///
+  /// In en, this message translates to:
+  /// **'This build can\'t start'**
+  String get configErrorTitle;
+
+  /// Body of the missing-server-settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s missing its server settings. Please install AI Cockpit from the Play Store, or contact support.'**
+  String get configErrorBody;
+
   /// Sign-in headline
   ///
   /// In en, this message translates to:

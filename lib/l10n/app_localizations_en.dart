@@ -328,6 +328,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get brandMarkLabel => 'AI Cockpit';
 
   @override
+  String get configErrorTitle => 'This build can\'t start';
+
+  @override
+  String get configErrorBody =>
+      'It\'s missing its server settings. Please install AI Cockpit from the Play Store, or contact support.';
+
+  @override
   String get signInHeadline => 'Approve what your agents do — from your phone.';
 
   @override

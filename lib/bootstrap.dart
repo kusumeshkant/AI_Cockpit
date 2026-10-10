@@ -17,6 +17,7 @@ import 'package:cockpit/core/config/app_config.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/core/testing/marionette_config.dart';
 import 'package:cockpit/core/utils/logger.dart';
+import 'package:cockpit/core/widgets/config_error_app.dart';
 
 /// Initialises Firebase (push only) from the platform config files
 /// (google-services.json / GoogleService-Info.plist). Missing config is not an
@@ -47,6 +48,14 @@ Future<void> bootstrap(RootBuilder builder) async {
         WidgetsFlutterBinding.ensureInitialized();
       }
       final config = AppConfig.fromEnvironment();
+
+      // Fail closed: a prod release without backend config shows an error
+      // screen instead of silently running on demo data.
+      if (config.blocksStartup(debugBuild: kDebugMode)) {
+        AppLogger.error('Prod build without SUPABASE_URL / SUPABASE_ANON_KEY; not starting');
+        runApp(const ConfigErrorApp());
+        return;
+      }
 
       await _initFirebase(config);
       if (config.hasSupabase) {

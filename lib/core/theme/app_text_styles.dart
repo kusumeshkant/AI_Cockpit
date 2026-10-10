@@ -54,6 +54,10 @@ abstract final class AppFonts {
 /// | labelMedium | Plex Mono 500 10 | Section labels, sources, timestamps |
 /// | labelSmall | Plex Mono 600 9.5 | Status pills, nav labels |
 abstract final class AppTextStyles {
+  /// Smallest font size for bottom-navigation labels (F25 accessibility):
+  /// the 9.5 sp label style is too small for the app's main navigation.
+  static const double navLabelMinFontSize = 11;
+
   /// Full text theme, merged into [ThemeData.textTheme].
   static TextTheme get textTheme => TextTheme(
         displayLarge: AppFonts.archivo(

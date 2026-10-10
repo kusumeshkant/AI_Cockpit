@@ -123,6 +123,37 @@ class AppLocalizationsEn extends AppLocalizations {
       'When an agent proposes an action, it will appear here.';
 
   @override
+  String get firstAgentTitle => 'Connect your first agent';
+
+  @override
+  String get firstAgentMessage =>
+      'AI Cockpit shows what your AI agents want to do, so you can approve it first.';
+
+  @override
+  String get firstAgentStepConnect =>
+      'Connect an agent (n8n, Make, Zapier or your own).';
+
+  @override
+  String get firstAgentStepPropose =>
+      'It sends each action here before doing it.';
+
+  @override
+  String get firstAgentStepDecide =>
+      'You approve, edit or reject it from your phone.';
+
+  @override
+  String get connectFirstAgent => 'Connect an agent';
+
+  @override
+  String get firstAgentAskOwner =>
+      'No agents are connected yet. Ask your workspace owner to connect one.';
+
+  @override
+  String stepNumber(int number) {
+    return '$number';
+  }
+
+  @override
   String get actionDetailTitle => 'Review action';
 
   @override
@@ -316,10 +347,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOut => 'Sign out';
 
   @override
+  String get signOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get signOutConfirmBody =>
+      'You\'ll need a new code from your email to sign back in, and this device stops getting notifications.';
+
+  @override
   String get email => 'Email';
 
   @override
-  String get sendMagicLink => 'Send magic link';
+  String get sendCode => 'Email me a code';
 
   @override
   String get brandTagline => 'Control panel for AI agents';
@@ -338,8 +376,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInHeadline => 'Approve what your agents do — from your phone.';
 
   @override
-  String get signInBody =>
-      'Sign in with your email. We\'ll send you a secure magic link — no password to remember.';
+  String signInBody(int digits) {
+    return 'Sign in with your email. We\'ll send you a $digits-digit code — no password to remember.';
+  }
 
   @override
   String get emailHint => 'you@company.com';
@@ -407,8 +446,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String otpSentTo(String email) {
-    return 'We sent a sign-in email to $email. Enter the 6-digit code from it.';
+  String otpSentTo(String email, int digits, int minutes) {
+    return 'We sent a $digits-digit code to $email. It\'s valid for $minutes minutes.';
   }
 
   @override
@@ -421,10 +460,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyCode => 'Verify code';
 
   @override
-  String get useDifferentEmail => 'Use a different email';
+  String get changeEmail => 'Change email';
 
   @override
-  String get invalidOtp => 'Enter the 6-digit code from the email.';
+  String otpIncomplete(int digits) {
+    return 'Enter all $digits digits.';
+  }
+
+  @override
+  String get otpWrongOrExpired =>
+      'That code is wrong or has expired. Check the latest email or send a new code.';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendCodeIn(String time) {
+    return 'Resend code in $time';
+  }
+
+  @override
+  String get codeResent => 'We sent a new code.';
+
+  @override
+  String get otpTooManyRequests =>
+      'Too many codes requested. Try again in a few minutes.';
 
   @override
   String get settingsTitle => 'Settings';
@@ -491,6 +551,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get about => 'About';
+
+  @override
+  String get notificationsOffTitle => 'Notifications are off';
+
+  @override
+  String get notificationsOffBody =>
+      'AI Cockpit can\'t tell you about new actions. Turn notifications on for AI Cockpit in your phone\'s settings.';
+
+  @override
+  String get contactSupport => 'Email support';
+
+  @override
+  String get roleOwner => 'Owner';
+
+  @override
+  String get roleApprover => 'Approver';
 
   @override
   String versionLabel(String version) {
@@ -630,6 +706,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorForbidden => 'Only the workspace owner can do this.';
+
+  @override
+  String get errorAgentDisabled =>
+      'This agent is turned off. Turn it back on to use it.';
+
+  @override
+  String get errorNotFound =>
+      'This item no longer exists. Refresh and try again.';
 
   @override
   String get noAgentsApproverMessage =>

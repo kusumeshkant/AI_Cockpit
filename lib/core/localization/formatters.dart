@@ -39,6 +39,8 @@ extension FormattersContextX on BuildContext {
         FeatureDisabledFailure() => l10n.errorFeatureDisabled,
         TriggerDisabledFailure() => l10n.errorTriggerDisabled,
         ForbiddenFailure() => l10n.errorForbidden,
+        AgentDisabledFailure() => l10n.errorAgentDisabled,
+        NotFoundFailure() => l10n.errorNotFound,
         _ => l10n.errorGeneric,
       };
 

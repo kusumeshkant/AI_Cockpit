@@ -1,6 +1,7 @@
 // Text input: mono uppercase label above, 48px field with lineStrong border,
 // radius 12, optional leading icon.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show TextInputFormatter;
 
 import 'package:cockpit/core/theme/app_text_styles.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
@@ -24,6 +25,7 @@ class AppTextField extends StatelessWidget {
     this.enabled = true,
     this.maxLines = 1,
     this.monospace = false,
+    this.inputFormatters,
     super.key,
   });
 
@@ -66,6 +68,9 @@ class AppTextField extends StatelessWidget {
   /// Mono input text (URLs, identifiers). Off by default.
   final bool monospace;
 
+  /// Input formatters (e.g. digits-only for a one-time code).
+  final List<TextInputFormatter>? inputFormatters;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -87,6 +92,7 @@ class AppTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           autofillHints: autofillHints,
+          inputFormatters: inputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
           maxLines: maxLines,
@@ -100,6 +106,8 @@ class AppTextField extends StatelessWidget {
             hintText: hint,
             hintStyle: context.textTheme.bodyLarge?.copyWith(color: colors.muted),
             errorText: errorText,
+            // Messages can be a sentence (e.g. a rejected sign-in code).
+            errorMaxLines: 3,
             errorStyle:
                 context.textTheme.bodySmall?.copyWith(color: colors.stop),
             filled: true,

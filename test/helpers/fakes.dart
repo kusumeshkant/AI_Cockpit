@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cockpit/core/error/failures.dart';
@@ -26,6 +28,9 @@ class FakeAuthController extends AuthController {
   /// Failure returned by [verifyOtp] (`null` = success).
   Failure? verifyFailure;
 
+  /// When set, [verifyOtp] waits for it (to test in-flight states).
+  Completer<void>? verifyGate;
+
   /// Emails passed to [signIn].
   final List<String> signInEmails = [];
 
@@ -53,6 +58,7 @@ class FakeAuthController extends AuthController {
   @override
   Future<Failure?> verifyOtp(String email, String code) async {
     verifiedCodes.add((email, code));
+    await verifyGate?.future;
     return verifyFailure;
   }
 

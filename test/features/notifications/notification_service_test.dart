@@ -92,6 +92,26 @@ void main() {
     ]);
   });
 
+  test('remembers the permission answer for Settings (F11)', () async {
+    expect(service.permissionGranted.value, isNull, reason: 'not asked yet');
+
+    when(() => repository.requestPermission()).thenAnswer((_) async => false);
+    await start();
+    expect(service.permissionGranted.value, isFalse);
+
+    await service.stop();
+    when(() => repository.requestPermission()).thenAnswer((_) async => true);
+    await start();
+    expect(service.permissionGranted.value, isTrue);
+  });
+
+  test('push unavailable (demo): the permission is never asked or reported', () async {
+    when(() => repository.isAvailable).thenReturn(false);
+    await start();
+    expect(service.permissionGranted.value, isNull);
+    verifyNever(() => repository.requestPermission());
+  });
+
   test('a registration failure does not stop push from starting', () async {
     when(() => repository.registerDevice()).thenAnswer((_) async => const Left(NetworkFailure()));
     await start();

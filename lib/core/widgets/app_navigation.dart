@@ -1,7 +1,10 @@
 // Primary navigation: bottom nav (phones) and left rail (≥ medium width).
 // Both take the same [AppNavItem] list so the shell can swap them.
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import 'package:cockpit/core/theme/app_text_styles.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/core/widgets/brand_mark.dart';
@@ -109,10 +112,13 @@ class _BottomNavButton extends StatelessWidget {
     final colors = context.colors;
     final spacing = context.spacing;
     final color = selected ? colors.accent : colors.muted;
-    final labelStyle = context.textTheme.labelSmall?.copyWith(
+    final base = context.textTheme.labelSmall;
+    final labelStyle = base?.copyWith(
       color: color,
       letterSpacing: 0,
       fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+      // Never below 11 sp; a larger localized size (e.g. Devanagari) stays.
+      fontSize: math.max(base.fontSize ?? 0, AppTextStyles.navLabelMinFontSize),
     );
 
     return Semantics(

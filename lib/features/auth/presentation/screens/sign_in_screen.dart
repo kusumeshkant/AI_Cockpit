@@ -1,9 +1,11 @@
 // Feature: auth · Layer: presentation
 // Sign-in (design: technical/design/SignIn.dc.html): brand mark + tagline,
-// headline, email field, "Send magic link", terms notice. Vertically centered,
-// width-capped on tablets. After the email is sent, a minimal one-time-code
-// step completes sign-in (the magic link can't open on an emulator or a
-// device that doesn't handle the link).
+// headline, email field, "Email me a code", terms notice. Vertically
+// centered, width-capped on tablets. After the email is sent, the code step
+// completes sign-in: paste/autofill, auto-verify once every digit is in,
+// "Resend code" with a cooldown, and "Change email" (F07).
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,12 +13,16 @@ import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/core/localization/formatters.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
+import 'package:cockpit/core/utils/otp_input_formatter.dart';
 import 'package:cockpit/core/widgets/app_button.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/core/widgets/app_text_field.dart';
 import 'package:cockpit/core/widgets/brand_mark.dart';
 import 'package:cockpit/core/widgets/legal_links.dart';
+import 'package:cockpit/features/auth/domain/auth_constants.dart';
+import 'package:cockpit/features/auth/domain/value_objects/email_address.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:cockpit/features/auth/presentation/controllers/otp_resend_controller.dart';
 
 /// Sign-in screen.
 class SignInScreen extends ConsumerStatefulWidget {
@@ -28,9 +34,7 @@ class SignInScreen extends ConsumerStatefulWidget {
 }
 
 class _SignInScreenState extends ConsumerState<SignInScreen> {
-  static final RegExp _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-  static final RegExp _codePattern = RegExp(r'^\d{6}$');
+  static final RegExp _codePattern = RegExp('^\\d{$otpLength}\$');
 
   final TextEditingController _email = TextEditingController();
   final TextEditingController _code = TextEditingController();
@@ -38,41 +42,95 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   bool _submitting = false;
   bool _codeSent = false;
   String? _codeError;
+  Timer? _ticker;
 
   @override
   void dispose() {
+    _ticker?.cancel();
     _email.dispose();
     _code.dispose();
     super.dispose();
   }
 
-  bool get _isValid => _emailPattern.hasMatch(_email.text.trim());
+  String get _address => _email.text.trim();
 
-  void _showFailure(Failure failure) => ScaffoldMessenger.of(context)
+  Duration get _cooldown => ref.read(otpResendControllerProvider.notifier).remaining(_address);
+
+  /// Rebuilds once a second while the resend cooldown runs.
+  void _startTicker() {
+    _ticker?.cancel();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return timer.cancel();
+      setState(() {});
+      if (_cooldown == Duration.zero) timer.cancel();
+    });
+  }
+
+  String _sendFailureMessage(Failure failure) => failure is RateLimitedFailure
+      ? context.l10n.otpTooManyRequests
+      : context.failureMessage(failure);
+
+  void _showMessage(String message) => ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(context.failureMessage(failure))));
+    ..showSnackBar(SnackBar(content: Text(message)));
+
+  bool get _isValid => EmailAddress.isValid(_email.text);
 
   Future<void> _submit() async {
     if (!_isValid) {
       setState(() => _showError = true);
       return;
     }
+    if (_submitting) return;
     FocusScope.of(context).unfocus();
+    // Same address within the cooldown: a code is already on its way.
+    if (_cooldown > Duration.zero) {
+      setState(() => _codeSent = true);
+      _startTicker();
+      return;
+    }
     setState(() => _submitting = true);
-    final failure =
-        await ref.read(authControllerProvider.notifier).signIn(_email.text.trim());
+    final result = await ref.read(otpResendControllerProvider.notifier).send(_address);
     if (!mounted) return;
     setState(() {
       _submitting = false;
-      _codeSent = failure == null;
+      _codeSent = result is OtpSent;
     });
-    if (failure != null) _showFailure(failure);
+    _startTicker();
+    if (result case OtpSendFailed(:final failure)) _showMessage(_sendFailureMessage(failure));
+  }
+
+  Future<void> _resend() async {
+    final result = await ref.read(otpResendControllerProvider.notifier).send(_address);
+    if (!mounted) return;
+    setState(() {
+      if (result is OtpSent) {
+        _code.clear();
+        _codeError = null;
+      }
+    });
+    _startTicker();
+    switch (result) {
+      case OtpSent():
+        _showMessage(context.l10n.codeResent);
+      case OtpSendFailed(:final failure):
+        _showMessage(_sendFailureMessage(failure));
+      case OtpSendIgnored():
+        break;
+    }
+  }
+
+  void _onCodeChanged(String value) {
+    if (_codeError != null) setState(() => _codeError = null);
+    // Auto-verify once every digit is in (typed, pasted or autofilled).
+    if (_codePattern.hasMatch(value) && !_submitting) _verify();
   }
 
   Future<void> _verify() async {
     final l10n = context.l10n;
+    if (_submitting) return;
     if (!_codePattern.hasMatch(_code.text.trim())) {
-      setState(() => _codeError = l10n.invalidOtp);
+      setState(() => _codeError = l10n.otpIncomplete(otpLength));
       return;
     }
     FocusScope.of(context).unfocus();
@@ -88,9 +146,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     if (!mounted) return;
     setState(() {
       _submitting = false;
-      if (failure is ValidationFailure) _codeError = l10n.invalidOtp;
+      if (failure is ValidationFailure) {
+        _codeError = l10n.otpWrongOrExpired;
+        // A full field would swallow the next code (it's length-capped).
+        _code.clear();
+      }
     });
-    if (failure != null && failure is! ValidationFailure) _showFailure(failure);
+    if (failure != null && failure is! ValidationFailure) {
+      _showMessage(context.failureMessage(failure));
+    }
   }
 
   void _changeEmail() => setState(() {
@@ -157,7 +221,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     Text(l10n.signInHeadline, style: text.headlineSmall),
                     SizedBox(height: spacing.sm + spacing.xxs),
                     Text(
-                      l10n.signInBody,
+                      l10n.signInBody(otpLength),
                       style: text.bodyMedium?.copyWith(color: colors.muted),
                     ),
                     SizedBox(height: spacing.xl + spacing.xs),
@@ -179,18 +243,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     SizedBox(height: spacing.lg),
                     if (_codeSent) ...[
                       Text(
-                        l10n.otpSentTo(_email.text.trim()),
+                        l10n.otpSentTo(_address, otpLength, otpValidity.inMinutes),
                         style: text.bodySmall?.copyWith(color: colors.muted),
                       ),
                       SizedBox(height: spacing.md),
                       AppTextField(
+                        key: const ValueKey('sign_in_code'),
                         label: l10n.otpCodeLabel,
                         hint: l10n.otpCodeHint,
                         controller: _code,
+                        enabled: !_submitting,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.done,
                         autofillHints: const [AutofillHints.oneTimeCode],
+                        inputFormatters: const [OtpInputFormatter(otpLength)],
                         errorText: _codeError,
+                        onChanged: _onCodeChanged,
                         onSubmitted: (_) => _verify(),
                       ),
                       SizedBox(height: spacing.lg),
@@ -201,15 +269,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         expand: true,
                       ),
                       SizedBox(height: spacing.sm),
+                      _ResendButton(
+                        remaining: _cooldown,
+                        sending: ref.watch(otpResendControllerProvider.select((s) => s.sending)),
+                        onPressed: _submitting ? null : _resend,
+                      ),
+                      SizedBox(height: spacing.sm),
                       AppButton(
-                        label: l10n.useDifferentEmail,
+                        label: l10n.changeEmail,
                         variant: AppButtonVariant.secondary,
                         onPressed: _submitting ? null : _changeEmail,
                         expand: true,
                       ),
                     ] else
                       AppButton(
-                        label: l10n.sendMagicLink,
+                        label: l10n.sendCode,
                         onPressed: _submit,
                         isLoading: _submitting,
                         expand: true,
@@ -228,6 +302,32 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// "Resend code", or "Resend code in m:ss" (disabled) during the cooldown.
+class _ResendButton extends StatelessWidget {
+  const _ResendButton({required this.remaining, required this.sending, required this.onPressed});
+
+  final Duration remaining;
+  final bool sending;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final waiting = remaining > Duration.zero;
+    // Round up so the label never shows 0:00 while still waiting.
+    final seconds = (remaining.inMilliseconds + 999) ~/ 1000;
+    final time = '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+    return AppButton(
+      key: const ValueKey('sign_in_resend'),
+      label: waiting ? l10n.resendCodeIn(time) : l10n.resendCode,
+      variant: AppButtonVariant.secondary,
+      isLoading: sending,
+      onPressed: waiting || sending ? null : onPressed,
+      expand: true,
     );
   }
 }

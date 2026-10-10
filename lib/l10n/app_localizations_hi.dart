@@ -123,6 +123,37 @@ class AppLocalizationsHi extends AppLocalizations {
       'जब कोई एजेंट कोई कार्य प्रस्तावित करेगा, वह यहाँ दिखेगा।';
 
   @override
+  String get firstAgentTitle => 'अपना पहला एजेंट जोड़ें';
+
+  @override
+  String get firstAgentMessage =>
+      'AI Cockpit दिखाता है कि आपके AI एजेंट क्या करना चाहते हैं, ताकि आप पहले उसे मंज़ूर कर सकें।';
+
+  @override
+  String get firstAgentStepConnect =>
+      'एक एजेंट जोड़ें (n8n, Make, Zapier या अपना)।';
+
+  @override
+  String get firstAgentStepPropose =>
+      'वह हर काम करने से पहले उसे यहाँ भेजता है।';
+
+  @override
+  String get firstAgentStepDecide =>
+      'आप अपने फ़ोन से उसे मंज़ूर, बदलते या अस्वीकार करते हैं।';
+
+  @override
+  String get connectFirstAgent => 'एजेंट जोड़ें';
+
+  @override
+  String get firstAgentAskOwner =>
+      'अभी कोई एजेंट नहीं जुड़ा है। अपने वर्कस्पेस के मालिक से एक एजेंट जोड़ने को कहें।';
+
+  @override
+  String stepNumber(int number) {
+    return '$number';
+  }
+
+  @override
   String get actionDetailTitle => 'कार्य की समीक्षा करें';
 
   @override
@@ -316,10 +347,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get signOut => 'साइन आउट करें';
 
   @override
+  String get signOutConfirmTitle => 'साइन आउट करें?';
+
+  @override
+  String get signOutConfirmBody =>
+      'वापस साइन इन करने के लिए आपको ईमेल से नया कोड चाहिए होगा, और इस डिवाइस पर सूचनाएँ आना बंद हो जाएँगी।';
+
+  @override
   String get email => 'ईमेल';
 
   @override
-  String get sendMagicLink => 'मैजिक लिंक भेजें';
+  String get sendCode => 'मुझे कोड ईमेल करें';
 
   @override
   String get brandTagline => 'AI एजेंटों का कंट्रोल पैनल';
@@ -339,8 +377,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'अपने एजेंटों के काम मंज़ूर करें — अपने फ़ोन से।';
 
   @override
-  String get signInBody =>
-      'अपने ईमेल से साइन इन करें। हम आपको एक सुरक्षित मैजिक लिंक भेजेंगे — कोई पासवर्ड याद रखने की ज़रूरत नहीं।';
+  String signInBody(int digits) {
+    return 'अपने ईमेल से साइन इन करें। हम आपको $digits अंकों का कोड भेजेंगे — कोई पासवर्ड याद रखने की ज़रूरत नहीं।';
+  }
 
   @override
   String get emailHint => 'you@company.com';
@@ -408,8 +447,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get back => 'वापस';
 
   @override
-  String otpSentTo(String email) {
-    return 'हमने $email पर साइन-इन ईमेल भेजा है। उसमें दिया 6 अंकों का कोड दर्ज करें।';
+  String otpSentTo(String email, int digits, int minutes) {
+    return 'हमने $email पर $digits अंकों का कोड भेजा है। यह $minutes मिनट तक मान्य है।';
   }
 
   @override
@@ -422,10 +461,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get verifyCode => 'कोड सत्यापित करें';
 
   @override
-  String get useDifferentEmail => 'दूसरा ईमेल इस्तेमाल करें';
+  String get changeEmail => 'ईमेल बदलें';
 
   @override
-  String get invalidOtp => 'ईमेल में दिया 6 अंकों का कोड दर्ज करें।';
+  String otpIncomplete(int digits) {
+    return 'सभी $digits अंक दर्ज करें।';
+  }
+
+  @override
+  String get otpWrongOrExpired =>
+      'यह कोड गलत है या इसकी अवधि खत्म हो गई है। नया ईमेल देखें या नया कोड मँगाएँ।';
+
+  @override
+  String get resendCode => 'कोड दोबारा भेजें';
+
+  @override
+  String resendCodeIn(String time) {
+    return '$time में कोड दोबारा भेजें';
+  }
+
+  @override
+  String get codeResent => 'हमने नया कोड भेज दिया है।';
+
+  @override
+  String get otpTooManyRequests =>
+      'बहुत सारे कोड माँगे गए। कुछ मिनट बाद फिर कोशिश करें।';
 
   @override
   String get settingsTitle => 'सेटिंग्स';
@@ -491,6 +551,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get about => 'जानकारी';
+
+  @override
+  String get notificationsOffTitle => 'सूचनाएँ बंद हैं';
+
+  @override
+  String get notificationsOffBody =>
+      'AI Cockpit आपको नए एक्शन के बारे में नहीं बता सकता। अपने फ़ोन की सेटिंग्स में AI Cockpit के लिए सूचनाएँ चालू करें।';
+
+  @override
+  String get contactSupport => 'सपोर्ट को ईमेल करें';
+
+  @override
+  String get roleOwner => 'मालिक';
+
+  @override
+  String get roleApprover => 'अप्रूवर';
 
   @override
   String versionLabel(String version) {
@@ -632,6 +708,14 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get errorForbidden => 'यह सिर्फ़ वर्कस्पेस के मालिक कर सकते हैं।';
+
+  @override
+  String get errorAgentDisabled =>
+      'यह एजेंट बंद है। इस्तेमाल करने के लिए इसे फिर से चालू करें।';
+
+  @override
+  String get errorNotFound =>
+      'यह आइटम अब मौजूद नहीं है। रीफ़्रेश करके फिर कोशिश करें।';
 
   @override
   String get noAgentsApproverMessage =>

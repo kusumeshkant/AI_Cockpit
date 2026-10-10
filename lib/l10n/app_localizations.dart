@@ -248,6 +248,54 @@ abstract class AppLocalizations {
   /// **'When an agent proposes an action, it will appear here.'**
   String get emptyPendingMessage;
 
+  /// Empty feed title when the workspace has no agents
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your first agent'**
+  String get firstAgentTitle;
+
+  /// Empty feed explainer for owners (no agents yet)
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit shows what your AI agents want to do, so you can approve it first.'**
+  String get firstAgentMessage;
+
+  /// How it works, step 1
+  ///
+  /// In en, this message translates to:
+  /// **'Connect an agent (n8n, Make, Zapier or your own).'**
+  String get firstAgentStepConnect;
+
+  /// How it works, step 2
+  ///
+  /// In en, this message translates to:
+  /// **'It sends each action here before doing it.'**
+  String get firstAgentStepPropose;
+
+  /// How it works, step 3
+  ///
+  /// In en, this message translates to:
+  /// **'You approve, edit or reject it from your phone.'**
+  String get firstAgentStepDecide;
+
+  /// Empty feed CTA (owners only)
+  ///
+  /// In en, this message translates to:
+  /// **'Connect an agent'**
+  String get connectFirstAgent;
+
+  /// Empty feed message for approvers (no agents yet)
+  ///
+  /// In en, this message translates to:
+  /// **'No agents are connected yet. Ask your workspace owner to connect one.'**
+  String get firstAgentAskOwner;
+
+  /// Number in a how-it-works step badge
+  ///
+  /// In en, this message translates to:
+  /// **'{number}'**
+  String stepNumber(int number);
+
   /// Title of the action detail screen
   ///
   /// In en, this message translates to:
@@ -614,17 +662,29 @@ abstract class AppLocalizations {
   /// **'Sign out'**
   String get signOut;
 
+  /// Sign-out confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get signOutConfirmTitle;
+
+  /// Sign-out confirmation body
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need a new code from your email to sign back in, and this device stops getting notifications.'**
+  String get signOutConfirmBody;
+
   /// Email field label
   ///
   /// In en, this message translates to:
   /// **'Email'**
   String get email;
 
-  /// Request a sign-in link
+  /// Request the emailed sign-in code
   ///
   /// In en, this message translates to:
-  /// **'Send magic link'**
-  String get sendMagicLink;
+  /// **'Email me a code'**
+  String get sendCode;
 
   /// Tagline under the wordmark (rendered uppercase)
   ///
@@ -659,8 +719,8 @@ abstract class AppLocalizations {
   /// Sign-in explanation
   ///
   /// In en, this message translates to:
-  /// **'Sign in with your email. We\'ll send you a secure magic link — no password to remember.'**
-  String get signInBody;
+  /// **'Sign in with your email. We\'ll send you a {digits}-digit code — no password to remember.'**
+  String signInBody(int digits);
 
   /// Email field placeholder
   ///
@@ -776,11 +836,11 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get back;
 
-  /// Shown after the sign-in email is sent
+  /// Shown after the sign-in code is emailed
   ///
   /// In en, this message translates to:
-  /// **'We sent a sign-in email to {email}. Enter the 6-digit code from it.'**
-  String otpSentTo(String email);
+  /// **'We sent a {digits}-digit code to {email}. It\'s valid for {minutes} minutes.'**
+  String otpSentTo(String email, int digits, int minutes);
 
   /// One-time code field label
   ///
@@ -803,14 +863,44 @@ abstract class AppLocalizations {
   /// Go back to the email step
   ///
   /// In en, this message translates to:
-  /// **'Use a different email'**
-  String get useDifferentEmail;
+  /// **'Change email'**
+  String get changeEmail;
 
-  /// One-time code is malformed, wrong or expired
+  /// The typed code is too short
   ///
   /// In en, this message translates to:
-  /// **'Enter the 6-digit code from the email.'**
-  String get invalidOtp;
+  /// **'Enter all {digits} digits.'**
+  String otpIncomplete(int digits);
+
+  /// Auth rejected the code (it can't tell wrong from expired)
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired. Check the latest email or send a new code.'**
+  String get otpWrongOrExpired;
+
+  /// Request another sign-in code
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCode;
+
+  /// Disabled resend button during the cooldown; time is m:ss
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {time}'**
+  String resendCodeIn(String time);
+
+  /// Snackbar after a code is resent
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a new code.'**
+  String get codeResent;
+
+  /// Auth refused another code email (rate limit)
+  ///
+  /// In en, this message translates to:
+  /// **'Too many codes requested. Try again in a few minutes.'**
+  String get otpTooManyRequests;
 
   /// Title of the settings screen
   ///
@@ -925,6 +1015,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'About'**
   String get about;
+
+  /// Settings banner label when the notification permission was denied
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notificationsOffTitle;
+
+  /// Settings banner when the notification permission was denied
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit can\'t tell you about new actions. Turn notifications on for AI Cockpit in your phone\'s settings.'**
+  String get notificationsOffBody;
+
+  /// Settings → About: opens a mail to SUPPORT_EMAIL
+  ///
+  /// In en, this message translates to:
+  /// **'Email support'**
+  String get contactSupport;
+
+  /// Workspace role shown on the account card
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get roleOwner;
+
+  /// Workspace role shown on the account card
+  ///
+  /// In en, this message translates to:
+  /// **'Approver'**
+  String get roleApprover;
 
   /// App version
   ///
@@ -1177,6 +1297,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only the workspace owner can do this.'**
   String get errorForbidden;
+
+  /// agent_disabled error (403): not a lost session
+  ///
+  /// In en, this message translates to:
+  /// **'This agent is turned off. Turn it back on to use it.'**
+  String get errorAgentDisabled;
+
+  /// not_found error (404), e.g. deleted elsewhere
+  ///
+  /// In en, this message translates to:
+  /// **'This item no longer exists. Refresh and try again.'**
+  String get errorNotFound;
 
   /// Empty connections message for an approver, who can't connect agents
   ///

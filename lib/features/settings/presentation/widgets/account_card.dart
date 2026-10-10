@@ -14,6 +14,7 @@ import 'package:cockpit/core/widgets/app_card.dart';
 import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/features/auth/domain/entities/auth_user.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 import 'package:cockpit/features/settings/presentation/controllers/settings_controller.dart';
 
 /// Account summary with sign-out.
@@ -42,7 +43,11 @@ class AccountCard extends ConsumerWidget {
     }
 
     final signOut = _SignOutButton(
-      onPressed: () => ref.read(settingsControllerProvider).signOut(),
+      onPressed: () async {
+        if (await _confirmSignOut(context)) {
+          await ref.read(settingsControllerProvider).signOut();
+        }
+      },
     );
 
     return AppCard(
@@ -83,6 +88,37 @@ class AccountCard extends ConsumerWidget {
   }
 }
 
+/// Asks before signing out (F24). Resolves `true` only on an explicit confirm.
+Future<bool> _confirmSignOut(BuildContext context) async {
+  final l10n = context.l10n;
+  final spacing = context.spacing;
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      backgroundColor: context.colors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(spacing.radiusCard)),
+      title: Text(l10n.signOutConfirmTitle, style: context.textTheme.titleMedium),
+      content: Text(l10n.signOutConfirmBody, style: context.textTheme.bodyMedium),
+      actionsOverflowButtonSpacing: spacing.sm,
+      actions: [
+        AppButton(
+          key: const Key('signOut.cancel'),
+          label: l10n.cancel,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+        ),
+        AppButton(
+          key: const Key('signOut.confirm'),
+          label: l10n.signOut,
+          variant: AppButtonVariant.danger,
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+        ),
+      ],
+    ),
+  );
+  return confirmed ?? false;
+}
+
 class _Avatar extends StatelessWidget {
   const _Avatar({required this.user});
 
@@ -110,14 +146,14 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _Identity extends StatelessWidget {
+class _Identity extends ConsumerWidget {
   const _Identity({required this.user, required this.showEmail});
 
   final AuthUser user;
   final bool showEmail;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final colors = context.colors;
     final plan = switch (user.plan) {
@@ -126,6 +162,12 @@ class _Identity extends StatelessWidget {
       WorkspacePlan.consultant => l10n.planConsultant,
     };
     var meta = l10n.metaPair(l10n.workspaceCount(1), plan);
+    final role = switch (ref.watch(workspaceOwnerRoleProvider)) {
+      true => l10n.roleOwner,
+      false => l10n.roleApprover,
+      null => null,
+    };
+    if (role != null) meta = l10n.metaPair(meta, role);
     if (showEmail) meta = l10n.metaPair(meta, user.email);
 
     return Column(

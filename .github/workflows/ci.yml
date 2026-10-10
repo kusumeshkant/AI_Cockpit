@@ -19,6 +19,9 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          # Pinned to the version used locally, so a new stable release (and its
+          # new lints) cannot break CI unannounced. Upgrade in its own PR.
+          flutter-version: 3.38.7
           channel: stable
           cache: true
 

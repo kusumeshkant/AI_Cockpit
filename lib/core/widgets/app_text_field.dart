@@ -106,6 +106,8 @@ class AppTextField extends StatelessWidget {
             hintText: hint,
             hintStyle: context.textTheme.bodyLarge?.copyWith(color: colors.muted),
             errorText: errorText,
+            // Messages can be a sentence (e.g. a rejected sign-in code).
+            errorMaxLines: 3,
             errorStyle:
                 context.textTheme.bodySmall?.copyWith(color: colors.stop),
             filled: true,

@@ -146,7 +146,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     if (!mounted) return;
     setState(() {
       _submitting = false;
-      if (failure is ValidationFailure) _codeError = l10n.otpWrongOrExpired;
+      if (failure is ValidationFailure) {
+        _codeError = l10n.otpWrongOrExpired;
+        // A full field would swallow the next code (it's length-capped).
+        _code.clear();
+      }
     });
     if (failure != null && failure is! ValidationFailure) {
       _showMessage(context.failureMessage(failure));

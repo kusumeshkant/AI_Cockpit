@@ -150,6 +150,9 @@ void main() {
           find.text('That code is wrong or has expired. Check the latest email or send a new code.'),
           findsOneWidget,
         );
+        final field = tester.widget<TextField>(find.descendant(of: _code, matching: find.byType(TextField)));
+        expect(field.decoration!.errorMaxLines, greaterThan(1), reason: 'the whole sentence is shown');
+        expect(field.controller!.text, isEmpty, reason: 'cleared so the next code can be typed');
       });
 
       testWidgets('resend waits for the cooldown, then sends again', (tester) async {

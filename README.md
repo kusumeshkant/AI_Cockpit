@@ -75,13 +75,38 @@ Without the file, `Firebase.initializeApp()` fails quietly at startup and push s
 Notes:
 
 - Android flavors `dev` and `prod` are defined in `android/app/build.gradle.kts`. iOS schemes for the flavors don't exist yet; see [Setup & stack](../../technical/06-setup-and-stack.md).
-- Supabase / Sentry are skipped at startup until their config is supplied via `--dart-define`; Firebase is skipped when `google-services.json` is absent (see `lib/core/config/app_config.dart`).
+- Supabase / Sentry are skipped at startup until their config is supplied via `--dart-define`; without Supabase the **dev** flavor runs on demo data. A **prod** non-debug build without it fails instead (see *Release builds* below). Firebase is skipped when `google-services.json` is absent (see `lib/core/config/app_config.dart`).
 - `--force-jit` is required for `build_runner`: some transitive dependencies use build hooks that the AOT build-script compile does not support.
 - `android/gradle.properties` sets `kotlin.incremental=false` to avoid Kotlin cache failures on Windows when the project and the pub cache are on different drives.
 
+## Release builds (prod)
+
+Prod release builds need two things that are never committed. Without either, `bundleProdRelease` / `assembleProdRelease` stop with an error that names what is missing (never the values). Debug and profile builds, and dev release builds, don't need them; dev releases are signed with the debug key.
+
+**1. Upload key.** Copy `android/key.properties.example` to `android/key.properties` (git-ignored, like `*.jks` / `*.keystore`) and fill in all four values:
+
+```properties
+storeFile=D:/secure/cockpit-upload.jks
+storePassword=…
+keyAlias=upload
+keyPassword=…
+```
+
+Keep the keystore outside the repo. On Windows write the path with forward slashes (`D:/secure/cockpit-upload.jks`) or escaped backslashes (`D:\\secure\\cockpit-upload.jks`): a single `\` is an escape character in `.properties` files.
+
+**2. Backend config.** Copy `env/prod.example.json` to `env/prod.json` (git-ignored) and set `SUPABASE_URL` and `SUPABASE_ANON_KEY` (plus `SENTRY_DSN` if used). Then:
+
+```bash
+flutter build appbundle --release --flavor prod --dart-define-from-file=env/prod.json
+```
+
+The output is `build/app/outputs/bundle/prodRelease/app-prod-release.aab`. To check which key signed it, without printing any secret: `keytool -printcert -jarfile build/app/outputs/bundle/prodRelease/app-prod-release.aab` (shows the certificate owner and fingerprint; it must not be `CN=Android Debug`).
+
+A prod build that somehow starts without the backend config shows a "This build can't start" screen instead of running on demo data (`AppConfig.blocksStartup`).
+
 ## Golden tests
 
-`test/goldens/` holds pixel goldens: the Agent Triggers UI, and flag-off regression screens whose images were rendered from `main` before that feature, so any unintended change shows up. They are checked on the dev machine and **skipped on CI** (`CI=true`), because CI's Linux runner with an unpinned Flutter rasterizes slightly differently.
+`test/goldens/` holds pixel goldens: the Agent Triggers UI, and flag-off regression screens whose images were rendered from `main` before that feature, so any unintended change shows up. They are checked on the dev machine and **skipped on CI** (`CI=true`), because CI's Linux runner rasterizes slightly differently.
 
 ```bash
 flutter test test/goldens                    # compare

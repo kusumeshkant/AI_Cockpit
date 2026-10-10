@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:cockpit/core/error/failures.dart';
+import 'package:cockpit/core/network/dio_client.dart';
 import 'package:cockpit/features/auth/data/datasources/auth_remote_ds.dart';
 import 'package:cockpit/features/auth/data/models/auth_user_dto.dart';
 import 'package:cockpit/features/auth/data/repositories/auth_repository_impl.dart';
@@ -11,6 +14,8 @@ import 'package:cockpit/features/auth/data/repositories/auth_repository_impl.dar
 import '../../../helpers/live_fakes.dart';
 
 const _userId = '11111111-1111-4111-8111-111111111111';
+
+class _MockDio extends Mock implements Dio {}
 
 Map<String, dynamic> _session() => {
       'access_token': fakeJwt(_userId),
@@ -32,14 +37,19 @@ Map<String, dynamic> _session() => {
 void main() {
   late List<Recorded> requests;
   late SupabaseClient client;
+  late _MockDio dio;
   var verifyStatus = 200;
+
+  setUpAll(registerDioFallbacks);
 
   setUp(() {
     requests = [];
     verifyStatus = 200;
+    dio = _MockDio();
     client = fakeSupabase((request) {
       final path = request.url.path;
       if (path == '/auth/v1/otp') return jsonResponse(<String, dynamic>{});
+      if (path == '/auth/v1/logout') return jsonResponse(<String, dynamic>{}, status: 204);
       if (path == '/auth/v1/verify') {
         return verifyStatus == 200
             ? jsonResponse(_session())
@@ -62,8 +72,10 @@ void main() {
 
   tearDown(() => client.dispose());
 
+  AuthRemoteDataSourceImpl build() => AuthRemoteDataSourceImpl(client, DioClient.withDio(dio));
+
   test('signIn requests an email OTP and allows sign-up', () async {
-    await AuthRemoteDataSourceImpl(client).signIn(email: 'meera@clinic.example');
+    await build().signIn(email: 'meera@clinic.example');
 
     final request = requests.single;
     expect(request.url.path, '/auth/v1/otp');
@@ -73,7 +85,7 @@ void main() {
   });
 
   test('verifyOtp starts a session and the auth stream emits the profile', () async {
-    final source = AuthRemoteDataSourceImpl(client);
+    final source = build();
     final emitted = <AuthUserDto?>[];
     final sub = source.watchAuthState().listen(emitted.add);
     await pumpEventQueue();
@@ -98,10 +110,51 @@ void main() {
 
   test('a wrong code maps to a ValidationFailure', () async {
     verifyStatus = 403;
-    final repository = AuthRepositoryImpl(AuthRemoteDataSourceImpl(client));
+    final repository = AuthRepositoryImpl(build());
 
     final result = await repository.verifyOtp(email: 'meera@clinic.example', code: '000000');
 
     expect(result.fold((failure) => failure, (_) => null), isA<ValidationFailure>());
+  });
+
+  group('deleteAccount', () {
+    Future<void> signIn(AuthRemoteDataSourceImpl source) async {
+      await source.verifyOtp(email: 'meera@clinic.example', code: '123456');
+      await pumpEventQueue(times: 20);
+      expect(client.auth.currentSession, isNotNull);
+    }
+
+    test('calls account-delete with confirm, then ends the local session', () async {
+      when(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')))
+          .thenAnswer(
+        (_) async => envelope({'outcome': 'deleted', 'workspace_deleted': false, 'members_moved': 0}),
+      );
+      final source = build();
+      await signIn(source);
+
+      await source.deleteAccount();
+
+      final captured = verify(
+        () => dio.post<Object?>(captureAny(), data: captureAny(named: 'data'), options: any(named: 'options')),
+      ).captured;
+      expect(captured[0], '/account-delete');
+      expect(captured[1], {'confirm': true});
+      expect(client.auth.currentSession, isNull);
+      final logout = requests.where((r) => r.url.path == '/auth/v1/logout');
+      expect(logout.every((r) => r.url.queryParameters['scope'] == 'local'), isTrue,
+          reason: 'the server already revoked every session');
+    });
+
+    test('a failed deletion keeps the session and maps to a failure', () async {
+      when(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')))
+          .thenThrow(edgeError(500, 'server', path: '/account-delete'));
+      final source = build();
+      await signIn(source);
+
+      final result = await AuthRepositoryImpl(source).deleteAccount();
+
+      expect(result.fold((failure) => failure, (_) => null), isA<ServerFailure>());
+      expect(client.auth.currentSession, isNotNull, reason: 'the user can retry');
+    });
   });
 }

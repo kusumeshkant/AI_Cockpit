@@ -1,6 +1,7 @@
 // Feature: settings · Layer: presentation
-// Account card: avatar initial, name, workspace/plan line, Sign out (red).
-// Signed out → a Sign in button instead.
+// Account card: avatar initial, name, workspace/plan line, Sign out (red),
+// and Delete account (opens the confirm screen). Signed out → a Sign in
+// button instead.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +70,13 @@ class AccountCard extends ConsumerWidget {
             const Divider(),
             signOut,
           ],
+          const Divider(),
+          _AccountRowButton(
+            key: const ValueKey('settings_delete_account'),
+            label: context.l10n.deleteAccount,
+            icon: AppIcons.alert,
+            onPressed: () => context.goNamed(RouteNames.deleteAccount),
+          ),
         ],
       ),
     );
@@ -151,12 +159,33 @@ class _SignOutButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
+  Widget build(BuildContext context) => _AccountRowButton(
+        label: context.l10n.signOut,
+        icon: AppIcons.logout,
+        onPressed: onPressed,
+      );
+}
+
+/// Red text row button on the account card (Sign out, Delete account).
+class _AccountRowButton extends StatelessWidget {
+  const _AccountRowButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    super.key,
+  });
+
+  final String label;
+  final AppIcons icon;
+  final VoidCallback onPressed;
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
     return Semantics(
       button: true,
-      label: context.l10n.signOut,
+      label: label,
       excludeSemantics: true,
       child: InkWell(
         onTap: onPressed,
@@ -168,14 +197,16 @@ class _SignOutButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppIcon(
-                  AppIcons.logout,
+                  icon,
                   size: spacing.iconMd - spacing.xxs,
                   color: colors.stop,
                 ),
                 SizedBox(width: spacing.sm + spacing.xxs),
-                Text(
-                  context.l10n.signOut,
-                  style: context.textTheme.titleSmall?.copyWith(color: colors.stop),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: context.textTheme.titleSmall?.copyWith(color: colors.stop),
+                  ),
                 ),
               ],
             ),

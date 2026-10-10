@@ -352,6 +352,58 @@ class AppLocalizationsEn extends AppLocalizations {
       'By continuing you agree to the Terms & Privacy Policy.';
 
   @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get sectionLegal => 'Legal';
+
+  @override
+  String get linkOpenFailed => 'Couldn\'t open the page. Try again later.';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountWarningTitle => 'This can\'t be undone';
+
+  @override
+  String get deleteAccountWarningAccount =>
+      'Your account, profile and sign-in are deleted right away.';
+
+  @override
+  String get deleteAccountWarningDevice =>
+      'This device stops getting notifications.';
+
+  @override
+  String get deleteAccountWarningOwner =>
+      'If you own the workspace, its agents, actions and audit history are deleted too. Other members keep their accounts, each in a new workspace.';
+
+  @override
+  String get deleteAccountWarningApprover =>
+      'If you\'re an approver, your past decisions stay in the workspace history without your name.';
+
+  @override
+  String get deleteAccountConfirmLabel => 'Type your email to confirm';
+
+  @override
+  String get deleteAccountConfirmMismatch =>
+      'This doesn\'t match your account email.';
+
+  @override
+  String get deleteAccountButton => 'Delete my account';
+
+  @override
+  String deleteAccountFailed(String reason) {
+    return 'Your account wasn\'t deleted. $reason';
+  }
+
+  @override
+  String get deleteAccountDone => 'Your account was deleted.';
+
+  @override
   String get back => 'Back';
 
   @override

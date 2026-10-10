@@ -42,6 +42,10 @@ class AuthDemoDataSource implements AuthRemoteDataSource {
     _changes.add(null);
   }
 
+  /// Demo deletion: there is no server data, so this clears the demo session.
+  @override
+  Future<void> deleteAccount() => signOut();
+
   @override
   Stream<AuthUserDto?> watchAuthState() async* {
     yield _current;

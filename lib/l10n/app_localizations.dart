@@ -680,6 +680,96 @@ abstract class AppLocalizations {
   /// **'By continuing you agree to the Terms & Privacy Policy.'**
   String get termsNotice;
 
+  /// Link to the Terms of Service page
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// Link to the Privacy Policy page
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// Settings section with the Terms and Privacy links
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get sectionLegal;
+
+  /// Shown when an external link cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the page. Try again later.'**
+  String get linkOpenFailed;
+
+  /// Settings entry and screen title for account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// Heading of the account deletion warning
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone'**
+  String get deleteAccountWarningTitle;
+
+  /// Deletion warning bullet
+  ///
+  /// In en, this message translates to:
+  /// **'Your account, profile and sign-in are deleted right away.'**
+  String get deleteAccountWarningAccount;
+
+  /// Deletion warning bullet
+  ///
+  /// In en, this message translates to:
+  /// **'This device stops getting notifications.'**
+  String get deleteAccountWarningDevice;
+
+  /// Deletion warning bullet for workspace owners
+  ///
+  /// In en, this message translates to:
+  /// **'If you own the workspace, its agents, actions and audit history are deleted too. Other members keep their accounts, each in a new workspace.'**
+  String get deleteAccountWarningOwner;
+
+  /// Deletion warning bullet for approvers
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'re an approver, your past decisions stay in the workspace history without your name.'**
+  String get deleteAccountWarningApprover;
+
+  /// Label of the type-to-confirm field
+  ///
+  /// In en, this message translates to:
+  /// **'Type your email to confirm'**
+  String get deleteAccountConfirmLabel;
+
+  /// Shown when the typed email does not match
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t match your account email.'**
+  String get deleteAccountConfirmMismatch;
+
+  /// Destructive button that deletes the account
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountButton;
+
+  /// Shown when deletion fails; the button retries
+  ///
+  /// In en, this message translates to:
+  /// **'Your account wasn\'t deleted. {reason}'**
+  String deleteAccountFailed(String reason);
+
+  /// Snackbar after a successful deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was deleted.'**
+  String get deleteAccountDone;
+
   /// Back button tooltip
   ///
   /// In en, this message translates to:

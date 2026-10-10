@@ -50,4 +50,31 @@ void main() {
       expect(_config(Flavor.prod).blocksStartup(debugBuild: true), isFalse);
     });
   });
+
+  group('legal links', () {
+    AppConfig withUrls({String terms = '', String privacy = ''}) => AppConfig(
+          flavor: Flavor.prod,
+          supabaseUrl: '',
+          supabaseAnonKey: '',
+          sentryDsn: '',
+          posthogKey: '',
+          firebaseEnabled: false,
+          termsUrl: terms,
+          privacyUrl: privacy,
+        );
+
+    test('https URLs become links', () {
+      final config = withUrls(terms: 'https://cockpit.example/terms', privacy: ' https://cockpit.example/privacy ');
+      expect(config.termsUri, Uri.parse('https://cockpit.example/terms'));
+      expect(config.privacyUri, Uri.parse('https://cockpit.example/privacy'));
+    });
+
+    test('empty or non-https URLs hide the link', () {
+      final config = withUrls(terms: 'http://cockpit.example/terms', privacy: '');
+      expect(config.termsUri, isNull);
+      expect(config.privacyUri, isNull);
+      expect(withUrls(terms: 'not a url').termsUri, isNull);
+      expect(withUrls(terms: 'javascript:alert(1)').termsUri, isNull);
+    });
+  });
 }

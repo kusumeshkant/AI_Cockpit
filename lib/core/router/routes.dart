@@ -21,6 +21,9 @@ abstract final class RouteNames {
   /// Settings.
   static const String settings = 'settings';
 
+  /// Delete account (child of settings).
+  static const String deleteAccount = 'deleteAccount';
+
   /// Sign in.
   static const String signIn = 'signIn';
 }
@@ -44,6 +47,9 @@ abstract final class RoutePaths {
 
   /// Settings.
   static const String settings = '/settings';
+
+  /// Child of [settings].
+  static const String deleteAccount = 'delete-account';
 
   /// Sign in.
   static const String signIn = '/sign-in';

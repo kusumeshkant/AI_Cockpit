@@ -26,6 +26,9 @@ abstract final class RouteNames {
 
   /// Sign in.
   static const String signIn = 'signIn';
+
+  /// Branded spinner while the first auth event is pending.
+  static const String loading = 'loading';
 }
 
 /// Route path templates.
@@ -53,4 +56,7 @@ abstract final class RoutePaths {
 
   /// Sign in.
   static const String signIn = '/sign-in';
+
+  /// Startup spinner (see [RouteNames.loading]).
+  static const String loading = '/loading';
 }

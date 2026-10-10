@@ -1,0 +1,11 @@
+# Release signing for the prod flavor. Copy to android/key.properties (git-ignored)
+# and fill in the values; never commit the real file or the keystore.
+#
+# storeFile: absolute path to the upload keystore. On Windows use forward
+# slashes (D:/secure/cockpit-upload.jks) or escaped backslashes
+# (D:\\secure\\cockpit-upload.jks); a single backslash is an escape character
+# in .properties files. keyAlias for the Cockpit upload key is: upload
+storeFile=
+storePassword=
+keyAlias=
+keyPassword=

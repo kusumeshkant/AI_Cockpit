@@ -1,9 +1,30 @@
+import java.io.FileInputStream
+import java.util.Base64
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Release signing: the upload key comes from android/key.properties
+// (git-ignored; template in key.properties.example). Prod release tasks fail
+// without it (see the check at the end of this file); dev release builds fall
+// back to the debug key. Values are never logged.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        FileInputStream(keystorePropertiesFile).use { load(it) }
+    }
+}
+val signingKeyNames = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val missingSigningKeys = signingKeyNames.filter { keystoreProperties.getProperty(it).isNullOrBlank() }
+val releaseStoreFile = keystoreProperties.getProperty("storeFile")?.takeIf { it.isNotBlank() }?.let { file(it) }
+val hasReleaseSigning = keystorePropertiesFile.exists() &&
+    missingSigningKeys.isEmpty() &&
+    releaseStoreFile?.exists() == true
 
 android {
     namespace = "app.cockpit.cockpit"
@@ -45,11 +66,22 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = releaseStoreFile
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Upload key when configured. Without it only dev release builds
+            // work (debug key); prod release tasks are stopped below.
+            signingConfig = signingConfigs.getByName(if (hasReleaseSigning) "release" else "debug")
         }
     }
 }
@@ -74,4 +106,48 @@ if (googleServicesConfigs.any { file(it).exists() }) {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
+// Prod release builds must be signed with the upload key, never the debug
+// key, and must carry the backend config (fail-closed: without it the app
+// would run on demo data). Checked when the task graph is known, so
+// debug/profile builds and dev releases are unaffected. Messages name files
+// and keys only, never values.
+//
+// Flutter hands dart-defines to Gradle as base64 "KEY=value" entries in the
+// `dart-defines` property. That is a Flutter-tool detail, so the app checks
+// the same thing at startup too (AppConfig.blocksStartup).
+val requiredProdDefines = listOf("SUPABASE_URL", "SUPABASE_ANON_KEY")
+fun missingProdDefines(): List<String> {
+    val defines = (project.findProperty("dart-defines") as String?).orEmpty()
+        .split(',')
+        .filter { it.isNotBlank() }
+        .mapNotNull { runCatching { String(Base64.getDecoder().decode(it)) }.getOrNull() }
+        .associate { it.substringBefore('=') to it.substringAfter('=', "") }
+    return requiredProdDefines.filter { defines[it].isNullOrBlank() }
+}
+val prodReleaseTasks = setOf("bundleProdRelease", "assembleProdRelease")
+gradle.taskGraph.whenReady {
+    if (allTasks.none { it.project == project && it.name in prodReleaseTasks }) return@whenReady
+
+    val signingProblem = when {
+        !keystorePropertiesFile.exists() ->
+            "android/key.properties not found. Copy android/key.properties.example and fill it in."
+        missingSigningKeys.isNotEmpty() ->
+            "android/key.properties is missing values for: ${missingSigningKeys.joinToString()}."
+        releaseStoreFile?.exists() != true ->
+            "The keystore named by storeFile in android/key.properties does not exist."
+        else -> null
+    }
+    val missingDefines = missingProdDefines()
+    val problems = listOfNotNull(
+        signingProblem?.let { "Prod release signing is not configured. $it" },
+        missingDefines.takeIf { it.isNotEmpty() }?.let {
+            "Prod release is missing dart-defines: ${it.joinToString()}. " +
+                "Build with --dart-define-from-file=env/prod.json (see env/prod.example.json)."
+        },
+    )
+    if (problems.isNotEmpty()) {
+        throw GradleException(problems.joinToString("\n"))
+    }
 }

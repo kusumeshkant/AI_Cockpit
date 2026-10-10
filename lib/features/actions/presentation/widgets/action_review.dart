@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/core/localization/formatters.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
@@ -132,8 +133,19 @@ class _ActionReviewState extends ConsumerState<ActionReview> {
 
     final messenger = ScaffoldMessenger.of(context);
     if (failure != null) {
+      // Network / 5xx: offer Retry. The controller keeps the attempt's
+      // idempotency key until the decision lands, so a retry can't decide
+      // twice. 409 / 410 and other answers about the action get no Retry.
       messenger.showSnackBar(
-        SnackBar(content: Text(context.failureMessage(failure))),
+        SnackBar(
+          content: Text(context.failureMessage(failure)),
+          action: isRetryable(failure)
+              ? SnackBarAction(
+                  label: context.l10n.retry,
+                  onPressed: () => _submit(type, reason: reason),
+                )
+              : null,
+        ),
       );
       return;
     }

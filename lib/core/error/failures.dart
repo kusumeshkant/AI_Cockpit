@@ -104,6 +104,16 @@ final class NotFoundFailure extends Failure {
   const NotFoundFailure([super.message = 'not_found']);
 }
 
+/// Whether repeating the same request may succeed: the network failed or the
+/// server answered 5xx (or gave no status). Never for answers that describe
+/// the request itself — already decided (409), expired (410), invalid,
+/// forbidden, not found, rate limited.
+bool isRetryable(Failure failure) => switch (failure) {
+      NetworkFailure() => true,
+      ServerFailure(:final statusCode) => statusCode == null || statusCode >= 500,
+      _ => false,
+    };
+
 /// Anything not anticipated; always reported to Sentry.
 final class UnexpectedFailure extends Failure {
   /// Creates an unexpected failure.

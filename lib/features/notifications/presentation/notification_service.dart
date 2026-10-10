@@ -3,9 +3,11 @@
 // (and re-registration on rotation), foreground display via LocalNotifier,
 // and tapped notifications handed to the caller (PushRouter). Best effort:
 // with push unavailable, start() does nothing and the app relies on
-// Realtime + poll (TR-4).
+// Realtime + poll (TR-4). The permission answer is kept so Settings can say
+// when notifications are turned off (F11).
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:injectable/injectable.dart';
 
@@ -34,6 +36,10 @@ class NotificationService {
   /// Whether a session is being served.
   bool get isRunning => _running;
 
+  /// The OS notification permission from the last start: `true` granted,
+  /// `false` denied, `null` not asked (push unavailable, e.g. demo mode).
+  final ValueNotifier<bool?> permissionGranted = ValueNotifier<bool?>(null);
+
   /// Starts push for the signed-in user. Idempotent; a no-op when push is
   /// unavailable.
   Future<void> start({
@@ -44,7 +50,7 @@ class NotificationService {
     _running = true;
 
     await _notifier.initialize(channel: channel, onTap: onOpen);
-    await _repository.requestPermission();
+    permissionGranted.value = await _repository.requestPermission();
     (await _registerDevice()).fold(
       (failure) => AppLogger.warning('Push token registration failed: $failure'),
       (_) {},
@@ -79,3 +85,19 @@ class NotificationService {
 /// The app's [NotificationService] (overridable in tests).
 final notificationServiceProvider =
     Provider<NotificationService>((ref) => getIt<NotificationService>());
+
+/// The notification permission answer (see
+/// [NotificationService.permissionGranted]); rebuilds when it changes.
+final pushPermissionGrantedProvider = Provider<bool?>((ref) {
+  final ValueNotifier<bool?> permission;
+  try {
+    permission = ref.watch(notificationServiceProvider).permissionGranted;
+  } on Object {
+    // No notification service (e.g. widget tests without DI): nothing to say.
+    return null;
+  }
+  void changed() => ref.invalidateSelf();
+  permission.addListener(changed);
+  ref.onDispose(() => permission.removeListener(changed));
+  return permission.value;
+});

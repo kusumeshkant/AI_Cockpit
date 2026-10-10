@@ -162,6 +162,8 @@
   "planConsultant": "कंसल्टेंट प्लान",
   "workspaceCount": "{count, plural, =1{1 वर्कस्पेस} other{{count} वर्कस्पेस}}",
   "about": "जानकारी",
+  "notificationsOffTitle": "सूचनाएँ बंद हैं",
+  "notificationsOffBody": "AI Cockpit आपको नए एक्शन के बारे में नहीं बता सकता। अपने फ़ोन की सेटिंग्स में AI Cockpit के लिए सूचनाएँ चालू करें।",
   "contactSupport": "सपोर्ट को ईमेल करें",
   "roleOwner": "मालिक",
   "roleApprover": "अप्रूवर",

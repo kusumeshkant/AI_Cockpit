@@ -1016,6 +1016,18 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// Settings banner label when the notification permission was denied
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notificationsOffTitle;
+
+  /// Settings banner when the notification permission was denied
+  ///
+  /// In en, this message translates to:
+  /// **'AI Cockpit can\'t tell you about new actions. Turn notifications on for AI Cockpit in your phone\'s settings.'**
+  String get notificationsOffBody;
+
   /// Settings → About: opens a mail to SUPPORT_EMAIL
   ///
   /// In en, this message translates to:

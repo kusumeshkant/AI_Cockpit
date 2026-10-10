@@ -553,6 +553,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get about => 'जानकारी';
 
   @override
+  String get notificationsOffTitle => 'सूचनाएँ बंद हैं';
+
+  @override
+  String get notificationsOffBody =>
+      'AI Cockpit आपको नए एक्शन के बारे में नहीं बता सकता। अपने फ़ोन की सेटिंग्स में AI Cockpit के लिए सूचनाएँ चालू करें।';
+
+  @override
   String get contactSupport => 'सपोर्ट को ईमेल करें';
 
   @override

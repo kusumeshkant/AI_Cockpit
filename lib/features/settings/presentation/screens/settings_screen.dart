@@ -18,6 +18,7 @@ import 'package:cockpit/core/widgets/app_scaffold.dart';
 import 'package:cockpit/core/widgets/app_top_bar.dart';
 import 'package:cockpit/core/widgets/section_label.dart';
 import 'package:cockpit/features/settings/presentation/widgets/about_card.dart';
+import 'package:cockpit/features/settings/presentation/widgets/notifications_off_banner.dart';
 import 'package:cockpit/features/settings/presentation/widgets/account_card.dart';
 import 'package:cockpit/features/settings/presentation/widgets/language_tile.dart';
 import 'package:cockpit/features/settings/presentation/widgets/legal_card.dart';
@@ -53,6 +54,7 @@ class _PhoneSettings extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.all(spacing.lg),
       children: [
+        NotificationsOffBanner(bottomGap: spacing.sectionGap),
         _Section(
           label: l10n.appearance,
           child: AppCard(
@@ -89,6 +91,7 @@ class _WideSettings extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.all(spacing.xxl),
       children: [
+        NotificationsOffBanner(bottomGap: spacing.sectionGap),
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,

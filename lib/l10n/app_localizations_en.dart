@@ -553,6 +553,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
+  String get notificationsOffTitle => 'Notifications are off';
+
+  @override
+  String get notificationsOffBody =>
+      'AI Cockpit can\'t tell you about new actions. Turn notifications on for AI Cockpit in your phone\'s settings.';
+
+  @override
   String get contactSupport => 'Email support';
 
   @override

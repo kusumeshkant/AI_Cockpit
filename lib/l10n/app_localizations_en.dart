@@ -319,7 +319,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
-  String get sendMagicLink => 'Send magic link';
+  String get sendCode => 'Email me a code';
 
   @override
   String get brandTagline => 'Control panel for AI agents';
@@ -338,8 +338,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInHeadline => 'Approve what your agents do — from your phone.';
 
   @override
-  String get signInBody =>
-      'Sign in with your email. We\'ll send you a secure magic link — no password to remember.';
+  String signInBody(int digits) {
+    return 'Sign in with your email. We\'ll send you a $digits-digit code — no password to remember.';
+  }
 
   @override
   String get emailHint => 'you@company.com';
@@ -407,8 +408,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String otpSentTo(String email) {
-    return 'We sent a sign-in email to $email. Enter the 6-digit code from it.';
+  String otpSentTo(String email, int digits, int minutes) {
+    return 'We sent a $digits-digit code to $email. It\'s valid for $minutes minutes.';
   }
 
   @override
@@ -421,10 +422,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyCode => 'Verify code';
 
   @override
-  String get useDifferentEmail => 'Use a different email';
+  String get changeEmail => 'Change email';
 
   @override
-  String get invalidOtp => 'Enter the 6-digit code from the email.';
+  String otpIncomplete(int digits) {
+    return 'Enter all $digits digits.';
+  }
+
+  @override
+  String get otpWrongOrExpired =>
+      'That code is wrong or has expired. Check the latest email or send a new code.';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendCodeIn(String time) {
+    return 'Resend code in $time';
+  }
+
+  @override
+  String get codeResent => 'We sent a new code.';
+
+  @override
+  String get otpTooManyRequests =>
+      'Too many codes requested. Try again in a few minutes.';
 
   @override
   String get settingsTitle => 'Settings';

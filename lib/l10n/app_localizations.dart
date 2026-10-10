@@ -620,11 +620,11 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get email;
 
-  /// Request a sign-in link
+  /// Request the emailed sign-in code
   ///
   /// In en, this message translates to:
-  /// **'Send magic link'**
-  String get sendMagicLink;
+  /// **'Email me a code'**
+  String get sendCode;
 
   /// Tagline under the wordmark (rendered uppercase)
   ///
@@ -659,8 +659,8 @@ abstract class AppLocalizations {
   /// Sign-in explanation
   ///
   /// In en, this message translates to:
-  /// **'Sign in with your email. We\'ll send you a secure magic link — no password to remember.'**
-  String get signInBody;
+  /// **'Sign in with your email. We\'ll send you a {digits}-digit code — no password to remember.'**
+  String signInBody(int digits);
 
   /// Email field placeholder
   ///
@@ -776,11 +776,11 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get back;
 
-  /// Shown after the sign-in email is sent
+  /// Shown after the sign-in code is emailed
   ///
   /// In en, this message translates to:
-  /// **'We sent a sign-in email to {email}. Enter the 6-digit code from it.'**
-  String otpSentTo(String email);
+  /// **'We sent a {digits}-digit code to {email}. It\'s valid for {minutes} minutes.'**
+  String otpSentTo(String email, int digits, int minutes);
 
   /// One-time code field label
   ///
@@ -803,14 +803,44 @@ abstract class AppLocalizations {
   /// Go back to the email step
   ///
   /// In en, this message translates to:
-  /// **'Use a different email'**
-  String get useDifferentEmail;
+  /// **'Change email'**
+  String get changeEmail;
 
-  /// One-time code is malformed, wrong or expired
+  /// The typed code is too short
   ///
   /// In en, this message translates to:
-  /// **'Enter the 6-digit code from the email.'**
-  String get invalidOtp;
+  /// **'Enter all {digits} digits.'**
+  String otpIncomplete(int digits);
+
+  /// Auth rejected the code (it can't tell wrong from expired)
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired. Check the latest email or send a new code.'**
+  String get otpWrongOrExpired;
+
+  /// Request another sign-in code
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCode;
+
+  /// Disabled resend button during the cooldown; time is m:ss
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {time}'**
+  String resendCodeIn(String time);
+
+  /// Snackbar after a code is resent
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a new code.'**
+  String get codeResent;
+
+  /// Auth refused another code email (rate limit)
+  ///
+  /// In en, this message translates to:
+  /// **'Too many codes requested. Try again in a few minutes.'**
+  String get otpTooManyRequests;
 
   /// Title of the settings screen
   ///

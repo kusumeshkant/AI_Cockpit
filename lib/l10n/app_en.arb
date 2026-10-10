@@ -221,8 +221,8 @@
   "@signOut": { "description": "Sign out button" },
   "email": "Email",
   "@email": { "description": "Email field label" },
-  "sendMagicLink": "Send magic link",
-  "@sendMagicLink": { "description": "Request a sign-in link" },
+  "sendCode": "Email me a code",
+  "@sendCode": { "description": "Request the emailed sign-in code" },
   "brandTagline": "Control panel for AI agents",
   "@brandTagline": { "description": "Tagline under the wordmark (rendered uppercase)" },
   "brandMarkLabel": "AI Cockpit",
@@ -233,8 +233,11 @@
   "@brandMarkLabel": { "description": "Screen-reader label for the logo mark (brand name, not translated)" },
   "signInHeadline": "Approve what your agents do — from your phone.",
   "@signInHeadline": { "description": "Sign-in headline" },
-  "signInBody": "Sign in with your email. We'll send you a secure magic link — no password to remember.",
-  "@signInBody": { "description": "Sign-in explanation" },
+  "signInBody": "Sign in with your email. We'll send you a {digits}-digit code — no password to remember.",
+  "@signInBody": {
+    "description": "Sign-in explanation",
+    "placeholders": { "digits": { "type": "int" } }
+  },
   "emailHint": "you@company.com",
   "@emailHint": { "description": "Email field placeholder" },
   "invalidEmail": "Enter a valid email address.",
@@ -276,10 +279,14 @@
   "@termsNotice": { "description": "Legal notice under the sign-in button" },
   "back": "Back",
   "@back": { "description": "Back button tooltip" },
-  "otpSentTo": "We sent a sign-in email to {email}. Enter the 6-digit code from it.",
+  "otpSentTo": "We sent a {digits}-digit code to {email}. It's valid for {minutes} minutes.",
   "@otpSentTo": {
-    "description": "Shown after the sign-in email is sent",
-    "placeholders": { "email": { "type": "String" } }
+    "description": "Shown after the sign-in code is emailed",
+    "placeholders": {
+      "email": { "type": "String" },
+      "digits": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
   },
   "otpCodeLabel": "Code",
   "@otpCodeLabel": { "description": "One-time code field label" },
@@ -287,10 +294,26 @@
   "@otpCodeHint": { "description": "One-time code placeholder" },
   "verifyCode": "Verify code",
   "@verifyCode": { "description": "Submit the one-time code" },
-  "useDifferentEmail": "Use a different email",
-  "@useDifferentEmail": { "description": "Go back to the email step" },
-  "invalidOtp": "Enter the 6-digit code from the email.",
-  "@invalidOtp": { "description": "One-time code is malformed, wrong or expired" },
+  "changeEmail": "Change email",
+  "@changeEmail": { "description": "Go back to the email step" },
+  "otpIncomplete": "Enter all {digits} digits.",
+  "@otpIncomplete": {
+    "description": "The typed code is too short",
+    "placeholders": { "digits": { "type": "int" } }
+  },
+  "otpWrongOrExpired": "That code is wrong or has expired. Check the latest email or send a new code.",
+  "@otpWrongOrExpired": { "description": "Auth rejected the code (it can't tell wrong from expired)" },
+  "resendCode": "Resend code",
+  "@resendCode": { "description": "Request another sign-in code" },
+  "resendCodeIn": "Resend code in {time}",
+  "@resendCodeIn": {
+    "description": "Disabled resend button during the cooldown; time is m:ss",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "codeResent": "We sent a new code.",
+  "@codeResent": { "description": "Snackbar after a code is resent" },
+  "otpTooManyRequests": "Too many codes requested. Try again in a few minutes.",
+  "@otpTooManyRequests": { "description": "Auth refused another code email (rate limit)" },
 
   "settingsTitle": "Settings",
   "@settingsTitle": { "description": "Title of the settings screen" },

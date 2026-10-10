@@ -319,7 +319,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get email => 'ईमेल';
 
   @override
-  String get sendMagicLink => 'मैजिक लिंक भेजें';
+  String get sendCode => 'मुझे कोड ईमेल करें';
 
   @override
   String get brandTagline => 'AI एजेंटों का कंट्रोल पैनल';
@@ -339,8 +339,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'अपने एजेंटों के काम मंज़ूर करें — अपने फ़ोन से।';
 
   @override
-  String get signInBody =>
-      'अपने ईमेल से साइन इन करें। हम आपको एक सुरक्षित मैजिक लिंक भेजेंगे — कोई पासवर्ड याद रखने की ज़रूरत नहीं।';
+  String signInBody(int digits) {
+    return 'अपने ईमेल से साइन इन करें। हम आपको $digits अंकों का कोड भेजेंगे — कोई पासवर्ड याद रखने की ज़रूरत नहीं।';
+  }
 
   @override
   String get emailHint => 'you@company.com';
@@ -408,8 +409,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get back => 'वापस';
 
   @override
-  String otpSentTo(String email) {
-    return 'हमने $email पर साइन-इन ईमेल भेजा है। उसमें दिया 6 अंकों का कोड दर्ज करें।';
+  String otpSentTo(String email, int digits, int minutes) {
+    return 'हमने $email पर $digits अंकों का कोड भेजा है। यह $minutes मिनट तक मान्य है।';
   }
 
   @override
@@ -422,10 +423,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get verifyCode => 'कोड सत्यापित करें';
 
   @override
-  String get useDifferentEmail => 'दूसरा ईमेल इस्तेमाल करें';
+  String get changeEmail => 'ईमेल बदलें';
 
   @override
-  String get invalidOtp => 'ईमेल में दिया 6 अंकों का कोड दर्ज करें।';
+  String otpIncomplete(int digits) {
+    return 'सभी $digits अंक दर्ज करें।';
+  }
+
+  @override
+  String get otpWrongOrExpired =>
+      'यह कोड गलत है या इसकी अवधि खत्म हो गई है। नया ईमेल देखें या नया कोड मँगाएँ।';
+
+  @override
+  String get resendCode => 'कोड दोबारा भेजें';
+
+  @override
+  String resendCodeIn(String time) {
+    return '$time में कोड दोबारा भेजें';
+  }
+
+  @override
+  String get codeResent => 'हमने नया कोड भेज दिया है।';
+
+  @override
+  String get otpTooManyRequests =>
+      'बहुत सारे कोड माँगे गए। कुछ मिनट बाद फिर कोशिश करें।';
 
   @override
   String get settingsTitle => 'सेटिंग्स';

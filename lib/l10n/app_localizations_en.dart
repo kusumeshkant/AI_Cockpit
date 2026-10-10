@@ -654,6 +654,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorForbidden => 'Only the workspace owner can do this.';
 
   @override
+  String get errorAgentDisabled =>
+      'This agent is turned off. Turn it back on to use it.';
+
+  @override
+  String get errorNotFound =>
+      'This item no longer exists. Refresh and try again.';
+
+  @override
   String get noAgentsApproverMessage =>
       'Ask your workspace owner to connect an agent. You\'ll review its actions here.';
 }

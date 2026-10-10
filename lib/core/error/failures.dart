@@ -91,6 +91,19 @@ final class ForbiddenFailure extends Failure {
   const ForbiddenFailure([super.message = 'forbidden']);
 }
 
+/// The agent is disabled (HTTP 403 `agent_disabled`). Not a lost session.
+final class AgentDisabledFailure extends Failure {
+  /// Creates an agent-disabled failure.
+  const AgentDisabledFailure([super.message = 'agent_disabled']);
+}
+
+/// The thing asked for no longer exists or isn't visible to this user
+/// (HTTP 404 `not_found`), e.g. an agent deleted elsewhere.
+final class NotFoundFailure extends Failure {
+  /// Creates a not-found failure.
+  const NotFoundFailure([super.message = 'not_found']);
+}
+
 /// Anything not anticipated; always reported to Sentry.
 final class UnexpectedFailure extends Failure {
   /// Creates an unexpected failure.

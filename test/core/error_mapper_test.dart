@@ -24,10 +24,14 @@ void main() {
       final limited = mapError(edgeError(429, 'rate_limited', headers: {'retry-after': '17'}));
       expect(limited, isA<RateLimitedFailure>());
       expect((limited as RateLimitedFailure).retryAfter, const Duration(seconds: 17));
-      final server = mapError(edgeError(404, 'not_found'));
+      final missing = mapError(edgeError(404, 'not_found'));
+      expect(missing, isA<NotFoundFailure>());
+      expect(missing.message, 'not_found', reason: 'envelope code is kept for diagnostics');
+      expect(mapError(edgeError(404, 'something_else')), isA<NotFoundFailure>(),
+          reason: 'status fallback');
+      final server = mapError(edgeError(500, 'server'));
       expect(server, isA<ServerFailure>());
-      expect((server as ServerFailure).statusCode, 404);
-      expect(server.message, 'not_found', reason: 'envelope code is kept for diagnostics');
+      expect((server as ServerFailure).statusCode, 500);
     });
 
     test('feature-specific envelope codes map to their failures', () {
@@ -36,8 +40,9 @@ void main() {
       // A role check is not a lost session, although both are 403.
       expect(mapError(edgeError(403, 'forbidden')), isA<ForbiddenFailure>());
       expect(mapError(edgeError(403, 'unauthorized')), isA<AuthFailure>());
-      // Same statuses with other codes keep their existing mapping.
-      expect(mapError(edgeError(404, 'not_found')), isA<ServerFailure>());
+      // A disabled agent is not a lost session either (F14).
+      expect(mapError(edgeError(403, 'agent_disabled')), isA<AgentDisabledFailure>());
+      expect(mapError(edgeError(404, 'not_found')), isA<NotFoundFailure>());
       expect(mapError(edgeError(409, 'conflict')), isA<ConflictFailure>());
       expect(mapError(edgeError(429, 'rate_limited')), isA<RateLimitedFailure>());
     });
@@ -48,7 +53,7 @@ void main() {
         isA<AuthFailure>(),
       );
       final missing = mapError(const supa.PostgrestException(message: 'no rows', code: 'PGRST116'));
-      expect((missing as ServerFailure).statusCode, 404);
+      expect(missing, isA<NotFoundFailure>());
     });
 
     test('Auth errors: bad OTP is validation, 429 is rate limited, offline is network', () {

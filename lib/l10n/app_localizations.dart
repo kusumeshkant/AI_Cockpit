@@ -1208,6 +1208,18 @@ abstract class AppLocalizations {
   /// **'Only the workspace owner can do this.'**
   String get errorForbidden;
 
+  /// agent_disabled error (403): not a lost session
+  ///
+  /// In en, this message translates to:
+  /// **'This agent is turned off. Turn it back on to use it.'**
+  String get errorAgentDisabled;
+
+  /// not_found error (404), e.g. deleted elsewhere
+  ///
+  /// In en, this message translates to:
+  /// **'This item no longer exists. Refresh and try again.'**
+  String get errorNotFound;
+
   /// Empty connections message for an approver, who can't connect agents
   ///
   /// In en, this message translates to:

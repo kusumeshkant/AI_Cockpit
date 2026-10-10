@@ -45,8 +45,10 @@ Failure mapError(Object error, [StackTrace? stack]) {
   return UnexpectedFailure(error.toString());
 }
 
-/// Maps a [DioException] (Edge Function calls) to a [Failure]. Status codes
-/// follow the backend envelope contract (product/backend/README.md).
+/// Maps a [DioException] (Edge Function calls) to a [Failure]. The backend's
+/// envelope `error.code` decides first (several codes share a status, e.g.
+/// 403 for a lost session, a role check and a disabled agent); the HTTP
+/// status is the fallback (product/backend/README.md).
 Failure mapDioException(DioException e) {
   final code = _envelopeCode(e.response?.data);
   final message = code ?? e.message;
@@ -56,9 +58,13 @@ Failure mapDioException(DioException e) {
       return FeatureDisabledFailure(code!);
     case 'trigger_disabled':
       return TriggerDisabledFailure(code!);
-    // 403 is shared with lost sessions; the role check must not read as one.
+    // 403 is shared with lost sessions; these must not read as one.
     case 'forbidden':
       return ForbiddenFailure(code!);
+    case 'agent_disabled':
+      return AgentDisabledFailure(code!);
+    case 'not_found':
+      return NotFoundFailure(code!);
   }
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||
@@ -68,6 +74,7 @@ Failure mapDioException(DioException e) {
       NetworkFailure(message ?? 'network'),
     DioExceptionType.badResponse => switch (e.response?.statusCode) {
         401 || 403 => AuthFailure(message ?? 'auth'),
+        404 => NotFoundFailure(message ?? 'not_found'),
         409 => ConflictFailure(message ?? 'conflict'),
         410 => ExpiredFailure(message ?? 'expired'),
         413 || 422 => ValidationFailure(message ?? 'validation'),
@@ -88,7 +95,7 @@ Failure mapPostgrestException(supa.PostgrestException e) {
     // JWT expired / invalid.
     'PGRST301' || 'PGRST302' || '42501' => AuthFailure(e.message),
     // `.single()` matched no row.
-    'PGRST116' => ServerFailure(e.message, 404),
+    'PGRST116' => NotFoundFailure(e.message),
     _ when status == 401 || status == 403 => AuthFailure(e.message),
     _ => ServerFailure(e.message, status),
   };

@@ -444,6 +444,10 @@
   "@errorTriggerDisabled": {"description": "trigger_disabled error"},
   "errorForbidden": "Only the workspace owner can do this.",
   "@errorForbidden": {"description": "forbidden error: the user's role may not do this (e.g. an approver connecting an agent)"},
+  "errorAgentDisabled": "This agent is turned off. Turn it back on to use it.",
+  "@errorAgentDisabled": { "description": "agent_disabled error (403): not a lost session" },
+  "errorNotFound": "This item no longer exists. Refresh and try again.",
+  "@errorNotFound": { "description": "not_found error (404), e.g. deleted elsewhere" },
   "noAgentsApproverMessage": "Ask your workspace owner to connect an agent. You'll review its actions here.",
   "@noAgentsApproverMessage": {"description": "Empty connections message for an approver, who can't connect agents"}
 }

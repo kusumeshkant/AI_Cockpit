@@ -64,7 +64,7 @@ final _isAgentManagerProvider = FutureProvider<bool?>((ref) async {
   ref.watch(authControllerProvider.select((auth) => auth.value?.id));
   try {
     final result = await ref.watch(getIsWorkspaceOwnerProvider)();
-    return result.fold((_) => null, (isOwner) => isOwner);
+    return result.fold<bool?>((_) => null, (isOwner) => isOwner);
   } on Object {
     return null;
   }

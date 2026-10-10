@@ -20,6 +20,7 @@ import 'package:cockpit/core/widgets/app_text_field.dart';
 import 'package:cockpit/core/widgets/brand_mark.dart';
 import 'package:cockpit/core/widgets/legal_links.dart';
 import 'package:cockpit/features/auth/domain/auth_constants.dart';
+import 'package:cockpit/features/auth/domain/value_objects/email_address.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/auth/presentation/controllers/otp_resend_controller.dart';
 
@@ -33,8 +34,6 @@ class SignInScreen extends ConsumerStatefulWidget {
 }
 
 class _SignInScreenState extends ConsumerState<SignInScreen> {
-  static final RegExp _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
   static final RegExp _codePattern = RegExp('^\\d{$otpLength}\$');
 
   final TextEditingController _email = TextEditingController();
@@ -75,7 +74,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(message)));
 
-  bool get _isValid => _emailPattern.hasMatch(_email.text.trim());
+  bool get _isValid => EmailAddress.isValid(_email.text);
 
   Future<void> _submit() async {
     if (!_isValid) {

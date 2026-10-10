@@ -381,5 +381,9 @@
   "errorFeatureDisabled": "This feature isn't available yet.",
   "@errorFeatureDisabled": {"description": "feature_disabled error"},
   "errorTriggerDisabled": "Running this agent is turned off.",
-  "@errorTriggerDisabled": {"description": "trigger_disabled error"}
+  "@errorTriggerDisabled": {"description": "trigger_disabled error"},
+  "errorForbidden": "Only the workspace owner can do this.",
+  "@errorForbidden": {"description": "forbidden error: the user's role may not do this (e.g. an approver connecting an agent)"},
+  "noAgentsApproverMessage": "Ask your workspace owner to connect an agent. You'll review its actions here.",
+  "@noAgentsApproverMessage": {"description": "Empty connections message for an approver, who can't connect agents"}
 }

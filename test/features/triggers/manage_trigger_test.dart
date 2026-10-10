@@ -141,12 +141,15 @@ void main() {
       ));
 
   group('visibility', () {
-    testWidgets('flag OFF: no chevron, rows not tappable, role never read', (tester) async {
+    testWidgets('flag OFF: no chevron, rows not tappable, triggers never read the role',
+        (tester) async {
       await pumpConnections(tester, flag: false);
 
       expect(chevron('g_email'), findsNothing);
       expect(rows(tester).every((row) => row.onTap == null), isTrue);
-      verifyNever(() => isOwner());
+      // The one read is Connections' owner-only gating of "Connect" (works
+      // with the flag off); Agent Triggers adds none.
+      verify(() => isOwner()).called(1);
     });
 
     testWidgets('non-owner: no chevron and onTap is null', (tester) async {

@@ -38,6 +38,7 @@ extension FormattersContextX on BuildContext {
         RateLimitedFailure() => l10n.errorRateLimited,
         FeatureDisabledFailure() => l10n.errorFeatureDisabled,
         TriggerDisabledFailure() => l10n.errorTriggerDisabled,
+        ForbiddenFailure() => l10n.errorForbidden,
         _ => l10n.errorGeneric,
       };
 

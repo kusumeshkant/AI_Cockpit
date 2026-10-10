@@ -568,4 +568,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorTriggerDisabled => 'Running this agent is turned off.';
+
+  @override
+  String get errorForbidden => 'Only the workspace owner can do this.';
+
+  @override
+  String get noAgentsApproverMessage =>
+      'Ask your workspace owner to connect an agent. You\'ll review its actions here.';
 }

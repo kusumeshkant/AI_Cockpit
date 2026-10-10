@@ -1,7 +1,8 @@
 // Feature: triggers · Layer: data
 // The signed-in user's workspace role (`app_user.role`, readable under RLS).
-// Kept out of the auth profile query on purpose: only Agent Triggers reads
-// it, and only while the flag is on. Demo mode is the owner.
+// Kept out of the auth profile query on purpose: read by Agent Triggers
+// (flag on) and by Connections (owner-only agent management). Demo mode is
+// the owner.
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

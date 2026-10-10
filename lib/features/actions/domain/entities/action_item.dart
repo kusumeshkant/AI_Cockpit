@@ -56,6 +56,14 @@ abstract class ActionItem with _$ActionItem {
 
   const ActionItem._();
 
-  /// Whether the action still needs a decision.
-  bool get isPending => status == ActionStatus.pending;
+  /// Whether the action can no longer be decided: the backend marked it
+  /// expired, or it is still pending past [expiresAt].
+  bool get isExpired =>
+      status == ActionStatus.expired ||
+      (status == ActionStatus.pending &&
+          expiresAt != null &&
+          !expiresAt!.isAfter(DateTime.now()));
+
+  /// Whether the action still needs (and can take) a decision.
+  bool get isPending => status == ActionStatus.pending && !isExpired;
 }

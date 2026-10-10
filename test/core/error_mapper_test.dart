@@ -33,6 +33,9 @@ void main() {
     test('feature-specific envelope codes map to their failures', () {
       expect(mapError(edgeError(404, 'feature_disabled')), isA<FeatureDisabledFailure>());
       expect(mapError(edgeError(409, 'trigger_disabled')), isA<TriggerDisabledFailure>());
+      // A role check is not a lost session, although both are 403.
+      expect(mapError(edgeError(403, 'forbidden')), isA<ForbiddenFailure>());
+      expect(mapError(edgeError(403, 'unauthorized')), isA<AuthFailure>());
       // Same statuses with other codes keep their existing mapping.
       expect(mapError(edgeError(404, 'not_found')), isA<ServerFailure>());
       expect(mapError(edgeError(409, 'conflict')), isA<ConflictFailure>());

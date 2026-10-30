@@ -1,4 +1,4 @@
-package app.cockpit.cockpit
+package app.aicockpit.aicockpit
 
 import io.flutter.embedding.android.FlutterActivity
 

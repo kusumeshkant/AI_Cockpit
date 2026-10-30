@@ -15,6 +15,9 @@ import '../../../helpers/live_fakes.dart';
 
 const _userId = '11111111-1111-4111-8111-111111111111';
 
+/// Token hash the fake GoTrue accepts (what reviewer-signin would issue).
+const _reviewHash = 'review-token-hash';
+
 class _MockDio extends Mock implements Dio {}
 
 Map<String, dynamic> _session() => {
@@ -51,6 +54,8 @@ void main() {
       if (path == '/auth/v1/otp') return jsonResponse(<String, dynamic>{});
       if (path == '/auth/v1/logout') return jsonResponse(<String, dynamic>{}, status: 204);
       if (path == '/auth/v1/verify') {
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        if (body['token_hash'] == _reviewHash) return jsonResponse(_session());
         return verifyStatus == 200
             ? jsonResponse(_session())
             : jsonResponse(
@@ -110,11 +115,132 @@ void main() {
 
   test('a wrong code maps to a ValidationFailure', () async {
     verifyStatus = 403;
+    when(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')))
+        .thenThrow(edgeError(400, 'invalid_code', path: '/reviewer-signin'));
     final repository = AuthRepositoryImpl(build());
 
     final result = await repository.verifyOtp(email: 'meera@clinic.example', code: '000000');
 
     expect(result.fold((failure) => failure, (_) => null), isA<ValidationFailure>());
+  });
+
+  group('Play review fallback (reviewer-signin)', () {
+    void stubReviewer(Future<Response<Object?>> Function() answer) {
+      when(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')))
+          .thenAnswer((_) => answer());
+    }
+
+    List<Map<String, dynamic>> verifyBodies() => [
+          for (final r in requests.where((r) => r.url.path == '/auth/v1/verify'))
+            jsonDecode(r.body) as Map<String, dynamic>,
+        ];
+
+    test('a right code signs in without calling the fallback', () async {
+      await build().verifyOtp(email: 'meera@clinic.example', code: '123456');
+
+      verifyNever(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')));
+      expect(verifyBodies(), hasLength(1));
+      expect(client.auth.currentSession, isNotNull);
+    });
+
+    test('a normal user with a wrong code still gets the original OTP error', () async {
+      verifyStatus = 403;
+      stubReviewer(() async => throw edgeError(400, 'invalid_code', path: '/reviewer-signin'));
+      final source = build();
+
+      Object? thrown;
+      try {
+        await source.verifyOtp(email: 'meera@clinic.example', code: '000000');
+      } on Object catch (error) {
+        thrown = error;
+      }
+
+      expect(thrown, isA<AuthApiException>());
+      expect((thrown! as AuthApiException).code, 'otp_expired', reason: "GoTrue's error, not the fallback's");
+      final captured = verify(
+        () => dio.post<Object?>(captureAny(), data: captureAny(named: 'data'), options: any(named: 'options')),
+      ).captured;
+      expect(captured, ['/reviewer-signin', {'email': 'meera@clinic.example', 'code': '000000'}],
+          reason: 'exactly one fallback request');
+      expect(verifyBodies(), hasLength(1), reason: 'no second verify when the fallback refuses');
+      expect(client.auth.currentSession, isNull);
+
+      // And through the repository the user sees the usual wrong-code failure.
+      final result = await AuthRepositoryImpl(source).verifyOtp(email: 'meera@clinic.example', code: '000000');
+      expect(result.fold((failure) => failure, (_) => null), isA<ValidationFailure>());
+    });
+
+    test('the fallback adds no delay beyond its one request', () async {
+      verifyStatus = 403;
+      const functionLatency = Duration(milliseconds: 300);
+      stubReviewer(() async {
+        await Future<void>.delayed(functionLatency);
+        throw edgeError(400, 'invalid_code', path: '/reviewer-signin');
+      });
+      final source = build();
+
+      final stopwatch = Stopwatch()..start();
+      await expectLater(
+        source.verifyOtp(email: 'meera@clinic.example', code: '000000'),
+        throwsA(isA<AuthApiException>()),
+      );
+      stopwatch.stop();
+
+      verify(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options'))).called(1);
+      // One request's latency plus local work: no retry, backoff or second wait.
+      expect(stopwatch.elapsed, greaterThanOrEqualTo(functionLatency));
+      expect(stopwatch.elapsed, lessThan(functionLatency * 2));
+    });
+
+    test('a fallback network error also surfaces the original OTP error', () async {
+      verifyStatus = 403;
+      stubReviewer(() async => throw DioException.connectionError(
+            requestOptions: RequestOptions(path: '/reviewer-signin'),
+            reason: 'offline',
+          ));
+
+      await expectLater(
+        build().verifyOtp(email: 'meera@clinic.example', code: '000000'),
+        throwsA(isA<AuthApiException>()),
+      );
+      expect(client.auth.currentSession, isNull);
+    });
+
+    test('a malformed fallback reply surfaces the original OTP error', () async {
+      verifyStatus = 403;
+      stubReviewer(() async => envelope({'token_hash': ''}, path: '/reviewer-signin'));
+
+      await expectLater(
+        build().verifyOtp(email: 'meera@clinic.example', code: '000000'),
+        throwsA(isA<AuthApiException>()),
+      );
+      expect(verifyBodies(), hasLength(1));
+    });
+
+    test('the review account signs in with the returned token hash', () async {
+      verifyStatus = 403;
+      stubReviewer(() async => envelope({'token_hash': _reviewHash}, path: '/reviewer-signin'));
+
+      await build().verifyOtp(email: 'review@example.dev', code: '246810');
+
+      final bodies = verifyBodies();
+      expect(bodies, hasLength(2));
+      expect(bodies.last['token_hash'], _reviewHash);
+      expect(bodies.last['type'], 'email');
+      expect(bodies.last.containsKey('token'), isFalse);
+      expect(bodies.last.containsKey('email'), isFalse);
+      expect(client.auth.currentSession, isNotNull);
+    });
+
+    test('a server or network failure of the code check skips the fallback', () async {
+      verifyStatus = 503;
+
+      await expectLater(
+        build().verifyOtp(email: 'meera@clinic.example', code: '000000'),
+        throwsA(isA<AuthRetryableFetchException>()),
+      );
+      verifyNever(() => dio.post<Object?>(any(), data: any(named: 'data'), options: any(named: 'options')));
+    });
   });
 
   group('deleteAccount', () {

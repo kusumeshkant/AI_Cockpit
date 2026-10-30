@@ -1,6 +1,8 @@
 // Feature: auth · Layer: data
 // Supabase Auth: email OTP sign-in, sign-out, account deletion, and the
 // signed-in user's profile (app_user + workspace plan, read under RLS).
+// A failed code is retried once against `reviewer-signin`, which only ever
+// accepts the Play review account while it's switched on server-side.
 // Throws; never returns failures.
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -43,8 +45,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _client.auth.signInWithOtp(email: email, shouldCreateUser: true);
 
   @override
-  Future<void> verifyOtp({required String email, required String code}) =>
-      _client.auth.verifyOTP(email: email, token: code, type: OtpType.email);
+  Future<void> verifyOtp({required String email, required String code}) async {
+    try {
+      await _client.auth.verifyOTP(email: email, token: code, type: OtpType.email);
+    } on AuthException catch (error) {
+      // Offline: the fallback can't help, so don't add a second wait.
+      if (error is AuthRetryableFetchException) rethrow;
+      final tokenHash = await _reviewerTokenHash(email, code);
+      // Not the review account (the usual case): the user sees the original
+      // OTP error, after exactly one extra request.
+      if (tokenHash == null) rethrow;
+      await _client.auth.verifyOTP(tokenHash: tokenHash, type: OtpType.email);
+    }
+  }
+
+  /// Play review sign-in (backend `reviewer-signin`): a one-time token hash
+  /// when [email] / [code] are the review account's and the server has it
+  /// switched on; otherwise `null`. Any refusal or error counts as `null`.
+  Future<String?> _reviewerTokenHash(String email, String code) async {
+    try {
+      final data = await _functions.postFunction(
+        ApiEndpoints.reviewerSignin,
+        {'email': email, 'code': code},
+      );
+      final tokenHash = data['token_hash'];
+      return tokenHash is String && tokenHash.isNotEmpty ? tokenHash : null;
+    } on Exception {
+      return null;
+    }
+  }
 
   @override
   Future<void> signOut() => _client.auth.signOut();

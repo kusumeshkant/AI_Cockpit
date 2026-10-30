@@ -26,6 +26,10 @@ abstract final class ApiEndpoints {
 
   /// App → delete the signed-in user's account (`{"confirm": true}`).
   static const String accountDelete = '/account-delete';
+
+  /// App (signed out) → Play review sign-in fallback (`{email, code}` →
+  /// `{token_hash}`); refuses everything unless enabled server-side.
+  static const String reviewerSignin = '/reviewer-signin';
 }
 
 /// Postgres table names (accessed through Supabase with RLS).

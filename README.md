@@ -65,7 +65,7 @@ Without `SUPABASE_URL` / `SUPABASE_ANON_KEY` the app runs on in-memory **demo** 
 
 Push is off until a Firebase config is present. Nothing else changes.
 
-1. In the Firebase console, create a project and add **two Android apps**: `app.cockpit.cockpit` and `app.cockpit.cockpit.dev` (the dev flavor's id). Download `google-services.json` (it lists both) to `android/app/`. The file is git-ignored. The Gradle `google-services` plugin is applied only when this file exists.
+1. In the Firebase console, create a project and add **two Android apps**: `app.aicockpit.aicockpit` and `app.aicockpit.aicockpit.dev` (the dev flavor's id). Download `google-services.json` (it lists both) to `android/app/`. The file is git-ignored. The Gradle `google-services` plugin is applied only when this file exists.
 2. Project settings → Service accounts → *Generate new private key*. Put it on one line in `product/backend/supabase/functions/.env` as `FCM_SERVICE_ACCOUNT_JSON=…`, then restart `supabase functions serve`.
 3. Use a **real phone** (or an emulator image *with* Google Play). `Pixel_8_NoPlay` can't receive FCM. On a phone, set `SUPABASE_URL` in `env/dev.json` to the laptop's LAN IP (`http://192.168.x.x:54321`) and add that IP to `android/app/src/dev/res/xml/network_security_config.xml`.
 4. Run the app and sign in. It asks for notification permission and registers its token (`rpc/register_fcm_token`). New actions then arrive as notifications: in the tray when the app is in the background or closed, and as a heads-up while it's open. Tapping one opens the action. Signing out removes the token first.

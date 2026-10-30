@@ -27,7 +27,7 @@ val hasReleaseSigning = keystorePropertiesFile.exists() &&
     releaseStoreFile?.exists() == true
 
 android {
-    namespace = "app.cockpit.cockpit"
+    namespace = "app.aicockpit.aicockpit"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -57,7 +57,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "app.cockpit.cockpit"
+        applicationId = "app.aicockpit.aicockpit"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -93,7 +93,7 @@ flutter {
 // Push (FCM) is optional. The google-services plugin fails the build without
 // a config file, so it's applied only when one is present: either
 // app/google-services.json (one Firebase project listing both
-// app.cockpit.cockpit and app.cockpit.cockpit.dev) or per flavor under
+// app.aicockpit.aicockpit and app.aicockpit.aicockpit.dev) or per flavor under
 // src/dev/ and src/prod/. Without it the app builds and runs with push off.
 val googleServicesConfigs = listOf(
     "google-services.json",

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:cockpit/core/error/failures.dart';
 import 'package:cockpit/core/utils/clock.dart';
+import 'package:cockpit/core/widgets/app_button.dart';
 import 'package:cockpit/features/auth/domain/auth_constants.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/auth/presentation/screens/sign_in_screen.dart';
@@ -113,7 +114,10 @@ void main() {
         await tester.enterText(_code, '123456');
         await tester.pump();
         auth.verifyGate!.complete();
-        await tester.pumpAndSettle();
+        // Not pumpAndSettle: after a success the spinner runs until the
+        // router leaves the screen.
+        await tester.pump();
+        await tester.pump();
 
         expect(auth.verifiedCodes, [('meera@clinic.example', '123456')],
             reason: 'the submitting lock blocks a second verify');
@@ -122,16 +126,43 @@ void main() {
       testWidgets('a pasted code with spaces or dashes is cleaned and verified', (tester) async {
         await sendEmail(tester);
 
+        // Rejected first: a success keeps the screen busy until it's left.
+        auth.verifyFailure = const ValidationFailure();
         await tester.enterText(_code, '123 456');
         await tester.pump();
         expect(auth.verifiedCodes, [('meera@clinic.example', '123456')]);
 
         auth.verifiedCodes.clear();
-        auth.verifyFailure = const ValidationFailure();
+        auth.verifyFailure = null;
         await tester.enterText(_code, 'code: 654-321 (expires in 60)');
         await tester.pump();
         expect(auth.verifiedCodes, [('meera@clinic.example', '654321')],
             reason: 'digits only, cut at the code length');
+      });
+
+      testWidgets('after a successful verify the spent code is never sent again', (tester) async {
+        await sendEmail(tester);
+
+        await tester.enterText(_code, '123456');
+        await tester.pump();
+        await tester.pump();
+        expect(auth.verifiedCodes, [('meera@clinic.example', '123456')]);
+
+        // Still here (the router hasn't left yet): the button stays busy and
+        // the field locked, so the used code can't be sent again.
+        final verifyButton =
+            find.byWidgetPredicate((widget) => widget is AppButton && widget.label == 'Verify code');
+        expect(tester.widget<AppButton>(verifyButton).isLoading, isTrue);
+        final field = tester.widget<TextField>(find.descendant(of: _code, matching: find.byType(TextField)));
+        expect(field.enabled, isFalse);
+        await tester.tap(verifyButton, warnIfMissed: false);
+        await tester.pump();
+
+        expect(auth.verifiedCodes, hasLength(1), reason: 'a second verify of a used code fails');
+        expect(
+          find.text('That code is wrong or has expired. Check the latest email or send a new code.'),
+          findsNothing,
+        );
       });
 
       testWidgets('a short code and a rejected code get different messages', (tester) async {

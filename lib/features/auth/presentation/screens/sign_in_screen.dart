@@ -139,11 +139,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       _codeError = null;
     });
     // On success the auth stream emits the user and the router leaves this
-    // screen; nothing else to do here.
+    // screen. Stay busy until then: the code is spent, so a second tap would
+    // only send it again and fail as "wrong or expired".
     final failure = await ref
         .read(authControllerProvider.notifier)
         .verifyOtp(_email.text.trim(), _code.text.trim());
-    if (!mounted) return;
+    if (!mounted || failure == null) return;
     setState(() {
       _submitting = false;
       if (failure is ValidationFailure) {
@@ -152,7 +153,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         _code.clear();
       }
     });
-    if (failure != null && failure is! ValidationFailure) {
+    if (failure is! ValidationFailure) {
       _showMessage(context.failureMessage(failure));
     }
   }

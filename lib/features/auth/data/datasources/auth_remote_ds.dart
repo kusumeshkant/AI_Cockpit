@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cockpit/core/config/api_endpoints.dart';
 import 'package:cockpit/core/di/environments.dart';
 import 'package:cockpit/core/network/dio_client.dart';
+import 'package:cockpit/core/utils/logger.dart';
 import 'package:cockpit/features/auth/data/models/auth_user_dto.dart';
 
 /// Remote authentication source.
@@ -92,12 +93,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       .distinct((previous, next) => previous?.id == next?.id)
       .asyncMap((user) => user == null ? Future.value() : _profile(user));
 
+  /// The profile of the signed-in [user]. Never throws: the session is valid
+  /// either way, and a thrown read would leave the auth stream silent, so the
+  /// router would keep a signed-in user on sign-in (and the retry would send
+  /// the used code again: "wrong or expired").
   Future<AuthUserDto> _profile(User user) async {
-    final row = await _client
-        .from(DbTables.appUser)
-        .select('id, email, workspace_id, workspace:workspace_id(plan)')
-        .eq('id', user.id)
-        .maybeSingle();
+    final Map<String, dynamic>? row;
+    try {
+      row = await _client
+          .from(DbTables.appUser)
+          .select('id, email, workspace_id, workspace:workspace_id(plan)')
+          .eq('id', user.id)
+          .maybeSingle();
+    } on Exception catch (error, stack) {
+      AppLogger.error('Profile read failed; using the auth user', error, stack);
+      return AuthUserDto(id: user.id, email: user.email ?? '');
+    }
     if (row == null) {
       // Profile not provisioned yet (sign-up trigger) — use the auth user.
       return AuthUserDto(id: user.id, email: user.email ?? '');

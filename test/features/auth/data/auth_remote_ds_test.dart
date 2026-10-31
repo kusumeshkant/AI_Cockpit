@@ -42,12 +42,14 @@ void main() {
   late SupabaseClient client;
   late _MockDio dio;
   var verifyStatus = 200;
+  var profileStatus = 200;
 
   setUpAll(registerDioFallbacks);
 
   setUp(() {
     requests = [];
     verifyStatus = 200;
+    profileStatus = 200;
     dio = _MockDio();
     client = fakeSupabase((request) {
       final path = request.url.path;
@@ -64,6 +66,12 @@ void main() {
               );
       }
       if (path == '/rest/v1/app_user') {
+        if (profileStatus != 200) {
+          return jsonResponse(
+            {'code': '42501', 'message': 'permission denied for table app_user'},
+            status: profileStatus,
+          );
+        }
         return jsonResponse({
           'id': _userId,
           'email': 'meera@clinic.example',
@@ -110,6 +118,26 @@ void main() {
     expect(user.id, _userId);
     expect(user.workspaceId, 'w1');
     expect(user.plan.name, 'pro');
+    await sub.cancel();
+  });
+
+  test('a failed profile read still emits the signed-in user', () async {
+    profileStatus = 403;
+    final source = build();
+    final emitted = <AuthUserDto?>[];
+    final errors = <Object>[];
+    final sub = source.watchAuthState().listen(emitted.add, onError: errors.add);
+    await pumpEventQueue();
+
+    await source.verifyOtp(email: 'meera@clinic.example', code: '123456');
+    await pumpEventQueue(times: 50);
+
+    expect(requests.where((r) => r.url.path == '/rest/v1/app_user'), isNotEmpty);
+    expect(errors, isEmpty, reason: 'a silent stream error kept the user on sign-in');
+    final user = emitted.whereType<AuthUserDto>().single.toEntity();
+    expect(user.id, _userId);
+    expect(user.email, 'meera@clinic.example');
+    expect(user.workspaceId, isNull);
     await sub.cancel();
   });
 

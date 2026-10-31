@@ -720,4 +720,49 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get noAgentsApproverMessage =>
       'किसी एजेंट को जोड़ने के लिए अपने वर्कस्पेस के मालिक से कहें। उसके कार्य आप यहाँ देखेंगे।';
+
+  @override
+  String get agentDetailStatus => 'स्थिति';
+
+  @override
+  String get agentDetailLastAction => 'पिछला कार्य';
+
+  @override
+  String get agentDetailNoActions => 'अभी तक कोई कार्य नहीं';
+
+  @override
+  String get agentDetailCallback => 'कॉलबैक डिलीवरी';
+
+  @override
+  String callbackDeliveredAgo(String ago) {
+    return 'डिलीवर हुआ $ago';
+  }
+
+  @override
+  String callbackRetryingAgo(String ago) {
+    return 'फिर कोशिश हो रही है · पिछली कोशिश $ago';
+  }
+
+  @override
+  String callbackFailedAgo(String ago) {
+    return 'विफल $ago';
+  }
+
+  @override
+  String get callbackNone =>
+      'अभी तक कोई कॉलबैक नहीं। कार्य पर फ़ैसला लेने पर कॉलबैक भेजा जाता है।';
+
+  @override
+  String get callbackUnavailable => 'डिलीवरी की स्थिति लोड नहीं हो सकी।';
+
+  @override
+  String get testActionHint =>
+      'आपके कार्य फ़ीड में एक सैंपल ईमेल भेजता है, ताकि आप मंज़ूर, बदलाव और अस्वीकार आज़मा सकें।';
+
+  @override
+  String get testActionPausedHint =>
+      'यह एजेंट रुका हुआ है, इसलिए इसे कार्य नहीं मिल सकते।';
+
+  @override
+  String get agentNotFound => 'यह एजेंट अब मौजूद नहीं है।';
 }

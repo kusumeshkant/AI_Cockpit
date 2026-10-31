@@ -718,4 +718,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noAgentsApproverMessage =>
       'Ask your workspace owner to connect an agent. You\'ll review its actions here.';
+
+  @override
+  String get agentDetailStatus => 'Status';
+
+  @override
+  String get agentDetailLastAction => 'Last action';
+
+  @override
+  String get agentDetailNoActions => 'No actions yet';
+
+  @override
+  String get agentDetailCallback => 'Callback delivery';
+
+  @override
+  String callbackDeliveredAgo(String ago) {
+    return 'Delivered $ago';
+  }
+
+  @override
+  String callbackRetryingAgo(String ago) {
+    return 'Retrying · last attempt $ago';
+  }
+
+  @override
+  String callbackFailedAgo(String ago) {
+    return 'Failed $ago';
+  }
+
+  @override
+  String get callbackNone =>
+      'No callbacks yet. One is sent when you decide an action.';
+
+  @override
+  String get callbackUnavailable => 'Couldn\'t load the delivery state.';
+
+  @override
+  String get testActionHint =>
+      'Sends a sample email to your Actions feed so you can try approve, edit and reject.';
+
+  @override
+  String get testActionPausedHint =>
+      'This agent is paused, so it can\'t receive actions.';
+
+  @override
+  String get agentNotFound => 'This agent no longer exists.';
 }

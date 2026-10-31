@@ -7,6 +7,7 @@ import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/network/dio_client.dart';
 import 'package:cockpit/features/connections/data/datasources/connections_remote_ds.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/entities/callback_delivery.dart';
 
 import '../../../helpers/live_fakes.dart';
 
@@ -128,5 +129,50 @@ void main() {
       () => build().sendTestAction('g1'),
       throwsA(isA<DioException>().having((e) => e.response?.statusCode, 'status', 429)),
     );
+  });
+
+  group('lastCallback', () {
+    late List<Recorded> calls;
+
+    ConnectionsRemoteDataSourceImpl withRows(List<Map<String, dynamic>> rows) {
+      calls = [];
+      final supabase = fakeSupabase((_) => jsonResponse(rows), calls);
+      addTearDown(supabase.dispose);
+      return ConnectionsRemoteDataSourceImpl(supabase, DioClient.withDio(dio));
+    }
+
+    test('reads the newest callback audit event of the agent', () async {
+      final event = await withRows([
+        {'event': 'callback_delivered', 'created_at': '2026-10-31T09:00:00Z', 'action': {'agent_id': 'g1'}},
+      ]).lastCallback('g1');
+
+      final uri = calls.single.url;
+      expect(uri.path, '/rest/v1/audit_entry');
+      expect(uri.queryParameters['select'], 'event,created_at,action!inner(agent_id)');
+      expect(uri.queryParameters['event'], 'in.("callback_delivered","callback_attempted","callback_failed")');
+      expect(uri.queryParameters['action.agent_id'], 'eq.g1');
+      expect(uri.queryParameters['order'], 'created_at.desc.nullslast');
+      expect(uri.queryParameters['limit'], '1');
+      expect(
+        event!.toEntity(),
+        CallbackDelivery(state: CallbackDeliveryState.delivered, at: DateTime.utc(2026, 10, 31, 9)),
+      );
+    });
+
+    test('maps attempted to retrying and failed to failed', () async {
+      for (final (wire, state) in [
+        ('callback_attempted', CallbackDeliveryState.retrying),
+        ('callback_failed', CallbackDeliveryState.failed),
+      ]) {
+        final event = await withRows([
+          {'event': wire, 'created_at': '2026-10-31T09:00:00Z'},
+        ]).lastCallback('g1');
+        expect(event!.toEntity().state, state);
+      }
+    });
+
+    test('is null before the first callback', () async {
+      expect(await withRows(const []).lastCallback('g1'), isNull);
+    });
   });
 }

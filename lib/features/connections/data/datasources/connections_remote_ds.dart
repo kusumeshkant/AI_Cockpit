@@ -1,6 +1,8 @@
 // Feature: connections · Layer: data
 // Live agents: RLS-scoped REST list + `agents-create` / `agents-test-action`
-// Edge Functions (dio).
+// Edge Functions (dio). The latest callback delivery is read from the agent's
+// audit trail (callback_* events), since clients can't read
+// `action.callback_status` (0009).
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -9,6 +11,7 @@ import 'package:cockpit/core/di/environments.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/network/dio_client.dart';
 import 'package:cockpit/features/connections/data/models/agent_dto.dart';
+import 'package:cockpit/features/connections/data/models/callback_event_dto.dart';
 
 /// Remote source for agents.
 abstract interface class ConnectionsRemoteDataSource {
@@ -27,6 +30,9 @@ abstract interface class ConnectionsRemoteDataSource {
 
   /// Calls `agents-test-action`.
   Future<void> sendTestAction(String agentId);
+
+  /// The latest callback event of [agentId]'s actions, or `null`.
+  Future<CallbackEventDto?> lastCallback(String agentId);
 }
 
 /// Supabase + Edge Function implementation.
@@ -76,5 +82,17 @@ class ConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataSource {
   Future<void> sendTestAction(String agentId) async {
     // The sample action arrives in the feed through Realtime (and as a push).
     await _functions.postFunction(ApiEndpoints.agentsTestAction, {'agent_id': agentId});
+  }
+
+  @override
+  Future<CallbackEventDto?> lastCallback(String agentId) async {
+    final rows = await _client
+        .from(DbTables.auditEntry)
+        .select('event, created_at, action!inner(agent_id)')
+        .inFilter('event', CallbackEventDto.events)
+        .eq('action.agent_id', agentId)
+        .order('created_at', ascending: false)
+        .limit(1);
+    return rows.isEmpty ? null : CallbackEventDto.fromJson(rows.first);
   }
 }

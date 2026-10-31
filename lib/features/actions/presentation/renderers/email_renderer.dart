@@ -1,6 +1,7 @@
 // Feature: actions · Layer: presentation
 // Email draft card (design: ActionDetail.dc.html): To / Subject header,
-// body, and an "editable" footer. In edit mode editable fields become inputs.
+// body, and an "editable" footer while the action can still be decided. In
+// edit mode editable fields become inputs.
 import 'package:flutter/material.dart';
 
 import 'package:cockpit/core/localization/l10n_extension.dart';
@@ -90,7 +91,7 @@ class EmailRenderer extends StatelessWidget {
                     style: text.bodyMedium?.copyWith(color: colors.inkSoft),
                   ),
           ),
-          if (item.editableFields.isNotEmpty && !editing.enabled) ...[
+          if (item.editableFields.isNotEmpty && item.isPending && !editing.enabled) ...[
             const Divider(),
             Padding(
               padding: EdgeInsets.symmetric(

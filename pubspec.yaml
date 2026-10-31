@@ -1,7 +1,7 @@
 name: cockpit
 description: "Cockpit — the mobile control panel for AI agents. Review, edit and approve what your agents propose."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.10.0

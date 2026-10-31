@@ -9,6 +9,7 @@ import 'package:cockpit/core/di/environments.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/features/connections/data/datasources/connections_remote_ds.dart';
 import 'package:cockpit/features/connections/data/models/agent_dto.dart';
+import 'package:cockpit/features/connections/data/models/callback_event_dto.dart';
 
 /// Demo implementation of [ConnectionsRemoteDataSource].
 @LazySingleton(as: ConnectionsRemoteDataSource, env: [AppEnvironments.demo])
@@ -78,6 +79,17 @@ class ConnectionsDemoDataSource implements ConnectionsRemoteDataSource {
 
   @override
   Future<void> sendTestAction(String agentId) async {}
+
+  /// Agents that have sent actions show a delivered callback a minute later.
+  @override
+  Future<CallbackEventDto?> lastCallback(String agentId) async {
+    final lastActionAt = _agents.where((a) => a.id == agentId).firstOrNull?.lastActionAt;
+    if (lastActionAt == null) return null;
+    return CallbackEventDto(
+      event: CallbackEventDto.delivered,
+      createdAt: lastActionAt.add(const Duration(minutes: 1)),
+    );
+  }
 
   String _hex(int bytes) => List.generate(
         bytes,

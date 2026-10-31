@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/utils/result.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/entities/callback_delivery.dart';
 
 /// Agent connection operations.
 abstract interface class ConnectionsRepository {
@@ -23,4 +24,7 @@ abstract interface class ConnectionsRepository {
 
   /// Inserts a sample pending action for [agentId].
   Result<Unit> sendTestAction(String agentId);
+
+  /// The latest callback delivery to [agentId]; `null` before the first one.
+  Result<CallbackDelivery?> lastCallback(String agentId);
 }

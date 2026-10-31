@@ -28,6 +28,7 @@ import 'package:cockpit/features/audit/presentation/screens/audit_screen.dart';
 import 'package:cockpit/features/auth/domain/entities/auth_user.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:cockpit/features/connections/presentation/screens/agent_detail_screen.dart';
 import 'package:cockpit/features/connections/presentation/screens/connect_agent_screen.dart';
 import 'package:cockpit/features/connections/presentation/screens/connections_screen.dart';
 import 'package:cockpit/features/settings/presentation/screens/delete_account_screen.dart';
@@ -136,6 +137,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: RoutePaths.connectAgent,
                     parentNavigatorKey: rootKey,
                     builder: (context, state) => const ConnectAgentScreen(),
+                  ),
+                  GoRoute(
+                    name: RouteNames.agentDetail,
+                    path: RoutePaths.agentDetail,
+                    parentNavigatorKey: rootKey,
+                    builder: (context, state) => AgentDetailScreen(
+                      agentId: state.pathParameters['id']!,
+                    ),
                   ),
                 ],
               ),

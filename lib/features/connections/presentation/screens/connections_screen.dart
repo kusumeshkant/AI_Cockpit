@@ -1,6 +1,9 @@
 // Feature: connections · Layer: presentation
 // Connections (design: technical/design/Connections.dc.html): title with a
-// compact "Connect" button, then the agent list.
+// compact "Connect" button, then the agent list. A row opens the agent detail
+// (with the Agent Triggers flag on, the owner's row opens the manage-trigger
+// sheet instead, as before). Rows take their last action time from the live
+// feed as well, so a new action shows without a reload.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -78,11 +81,7 @@ class ConnectionsScreen extends ConsumerWidget {
               separatorBuilder: (_, _) => SizedBox(height: spacing.cardGap),
               itemBuilder: (context, index) => triggersOn
                   ? _TriggerAwareAgentRow(key: ValueKey(value[index].id), agent: value[index])
-                  : AgentRow(
-                      key: ValueKey(value[index].id),
-                      agent: value[index],
-                      // TODO(feature/connections): agent detail (rotate secret, pause).
-                    ),
+                  : _LiveAgentRow(key: ValueKey(value[index].id), agent: value[index]),
             ),
           ),
         AsyncError(:final error) => AppErrorView(
@@ -93,6 +92,25 @@ class ConnectionsScreen extends ConsumerWidget {
       },
     );
   }
+}
+
+/// Opens the agent detail for [agent].
+void _openDetail(BuildContext context, Agent agent) => context.goNamed(
+      RouteNames.agentDetail,
+      pathParameters: {'id': agent.id},
+    );
+
+/// Agent row (flag off): live last action time, tap opens the detail.
+class _LiveAgentRow extends ConsumerWidget {
+  const _LiveAgentRow({required this.agent, super.key});
+
+  final Agent agent;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => AgentRow(
+        agent: ref.watch(liveAgentProvider(agent)),
+        onTap: () => _openDetail(context, agent),
+      );
 }
 
 /// Agent row with the Run control when the agent has an enabled trigger
@@ -106,16 +124,25 @@ class _TriggerAwareAgentRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final agent = ref.watch(liveAgentProvider(this.agent));
     final trigger = ref.watch(enabledTriggerProvider(agent.id));
     final canManage = ref.watch(canManageTriggersProvider);
+    // Taps on Run never reach the row, also while it is running (spinner, no
+    // handler): they must not open the detail or the sheet.
     final run = trigger == null
         ? null
-        : RunAgentButton(key: Key('run.${agent.id}'), agentId: agent.id);
+        : GestureDetector(
+            onTap: () {},
+            behavior: HitTestBehavior.opaque,
+            child: RunAgentButton(key: Key('run.${agent.id}'), agentId: agent.id),
+          );
 
     if (!canManage) {
-      if (trigger == null) return AgentRow(agent: agent);
+      void open() => _openDetail(context, agent);
+      if (trigger == null) return AgentRow(agent: agent, onTap: open);
       return AgentRow(
         agent: agent,
+        onTap: open,
         footer: TriggerStatusLine(trigger: trigger),
         trailing: run,
       );

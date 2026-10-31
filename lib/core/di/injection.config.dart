@@ -65,6 +65,8 @@ import 'package:cockpit/features/connections/domain/repositories/connections_rep
     as _i1045;
 import 'package:cockpit/features/connections/domain/usecases/create_agent.dart'
     as _i1045;
+import 'package:cockpit/features/connections/domain/usecases/get_last_callback.dart'
+    as _i831;
 import 'package:cockpit/features/connections/domain/usecases/list_agents.dart'
     as _i206;
 import 'package:cockpit/features/connections/domain/usecases/send_test_action.dart'
@@ -310,6 +312,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1045.CreateAgent>(
       () => _i1045.CreateAgent(gh<_i1045.ConnectionsRepository>()),
+    );
+    gh.lazySingleton<_i831.GetLastCallback>(
+      () => _i831.GetLastCallback(gh<_i1045.ConnectionsRepository>()),
     );
     gh.lazySingleton<_i206.ListAgents>(
       () => _i206.ListAgents(gh<_i1045.ConnectionsRepository>()),

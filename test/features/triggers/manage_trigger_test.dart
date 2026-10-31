@@ -141,34 +141,35 @@ void main() {
       ));
 
   group('visibility', () {
-    testWidgets('flag OFF: no chevron, rows not tappable, triggers never read the role',
+    testWidgets('flag OFF: no chevron, rows open the agent detail, triggers never read the role',
         (tester) async {
       await pumpConnections(tester, flag: false);
 
       expect(chevron('g_email'), findsNothing);
-      expect(rows(tester).every((row) => row.onTap == null), isTrue);
+      // v2: every row opens the agent detail (connections_screen_test).
+      expect(rows(tester).every((row) => row.onTap != null), isTrue);
       // The one read is Connections' owner-only gating of "Connect" (works
       // with the flag off); Agent Triggers adds none.
       verify(() => isOwner()).called(1);
     });
 
-    testWidgets('non-owner: no chevron and onTap is null', (tester) async {
+    testWidgets('non-owner: no chevron; the row opens the agent detail', (tester) async {
       when(() => isOwner()).thenAnswer((_) async => const Right(false));
       await pumpConnections(tester);
 
       expect(runButton('g_email'), findsOneWidget, reason: 'non-owners can still Run');
       expect(chevron('g_email'), findsNothing);
       expect(chevron('g_plain'), findsNothing);
-      expect(rows(tester).every((row) => row.onTap == null), isTrue);
+      expect(rows(tester).every((row) => row.onTap != null), isTrue);
     });
 
-    testWidgets('role fetch fails: treated as approver, sheet never opens', (tester) async {
+    testWidgets('role fetch fails: treated as approver, no manage chevron', (tester) async {
       when(() => isOwner()).thenAnswer((_) async => const Left(NetworkFailure('offline')));
       await pumpConnections(tester);
 
-      expect(rows(tester).every((row) => row.onTap == null), isTrue);
-      await tester.tap(find.text('Finance bot'));
-      await tester.pumpAndSettle();
+      // Rows open the agent detail (a pushed route), never the manage sheet.
+      expect(chevron('g_email'), findsNothing);
+      expect(chevron('g_plain'), findsNothing);
       expect(find.byType(ManageTriggerSheet), findsNothing);
     });
 

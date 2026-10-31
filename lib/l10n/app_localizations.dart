@@ -1315,6 +1315,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask your workspace owner to connect an agent. You\'ll review its actions here.'**
   String get noAgentsApproverMessage;
+
+  /// Agent detail: label of the live / paused row
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get agentDetailStatus;
+
+  /// Agent detail: label of the last action time row
+  ///
+  /// In en, this message translates to:
+  /// **'Last action'**
+  String get agentDetailLastAction;
+
+  /// Agent detail: the agent has never sent an action
+  ///
+  /// In en, this message translates to:
+  /// **'No actions yet'**
+  String get agentDetailNoActions;
+
+  /// Agent detail: label of the latest callback delivery row
+  ///
+  /// In en, this message translates to:
+  /// **'Callback delivery'**
+  String get agentDetailCallback;
+
+  /// Latest callback reached the agent
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {ago}'**
+  String callbackDeliveredAgo(String ago);
+
+  /// Latest callback failed and will be retried
+  ///
+  /// In en, this message translates to:
+  /// **'Retrying · last attempt {ago}'**
+  String callbackRetryingAgo(String ago);
+
+  /// Latest callback could not be delivered
+  ///
+  /// In en, this message translates to:
+  /// **'Failed {ago}'**
+  String callbackFailedAgo(String ago);
+
+  /// Agent detail: no decision has been called back yet
+  ///
+  /// In en, this message translates to:
+  /// **'No callbacks yet. One is sent when you decide an action.'**
+  String get callbackNone;
+
+  /// Agent detail: the callback state read failed
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the delivery state.'**
+  String get callbackUnavailable;
+
+  /// Agent detail: what Send a test action does
+  ///
+  /// In en, this message translates to:
+  /// **'Sends a sample email to your Actions feed so you can try approve, edit and reject.'**
+  String get testActionHint;
+
+  /// Agent detail: why the test action button is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'This agent is paused, so it can\'t receive actions.'**
+  String get testActionPausedHint;
+
+  /// Agent detail opened for a deleted or unknown agent
+  ///
+  /// In en, this message translates to:
+  /// **'This agent no longer exists.'**
+  String get agentNotFound;
 }
 
 class _AppLocalizationsDelegate

@@ -78,6 +78,27 @@ void main() {
       expect(find.text('Approve'), findsOneWidget);
     });
 
+    testWidgets('a decided email drops the "editable" hint', (tester) async {
+      await pumpDetail(
+        tester,
+        pendingEmail.copyWith(
+          status: ActionStatus.decided,
+          decision: DecisionType.approved,
+          decidedAt: fixtureNow,
+        ),
+      );
+
+      expect(find.text('priya.k@example.com'), findsOneWidget);
+      expect(find.text('Subject & body are editable'), findsNothing);
+      expect(find.text('Some fields are editable'), findsNothing);
+    });
+
+    testWidgets('an expired email drops the "editable" hint', (tester) async {
+      await pumpDetail(tester, pendingEmail.copyWith(status: ActionStatus.expired));
+
+      expect(find.text('Subject & body are editable'), findsNothing);
+    });
+
     testWidgets('approve submits an approved decision', (tester) async {
       await pumpDetail(tester, pendingEmail);
 

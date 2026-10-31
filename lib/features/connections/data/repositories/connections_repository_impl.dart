@@ -8,6 +8,7 @@ import 'package:cockpit/core/error/error_mapper.dart';
 import 'package:cockpit/core/utils/result.dart';
 import 'package:cockpit/features/connections/data/datasources/connections_remote_ds.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/entities/callback_delivery.dart';
 import 'package:cockpit/features/connections/domain/repositories/connections_repository.dart';
 
 /// Default [ConnectionsRepository].
@@ -47,4 +48,8 @@ class ConnectionsRepositoryImpl implements ConnectionsRepository {
         await _remote.sendTestAction(agentId);
         return unit;
       });
+
+  @override
+  Result<CallbackDelivery?> lastCallback(String agentId) =>
+      guard(() async => (await _remote.lastCallback(agentId))?.toEntity());
 }

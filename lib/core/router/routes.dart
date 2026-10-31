@@ -15,6 +15,9 @@ abstract final class RouteNames {
   /// Connect a new agent.
   static const String connectAgent = 'connectAgent';
 
+  /// Agent detail; path parameter `id`.
+  static const String agentDetail = 'agentDetail';
+
   /// Audit log.
   static const String audit = 'audit';
 
@@ -44,6 +47,9 @@ abstract final class RoutePaths {
 
   /// Child of [connections].
   static const String connectAgent = 'new';
+
+  /// Child of [connections].
+  static const String agentDetail = 'agents/:id';
 
   /// Audit log.
   static const String audit = '/audit';

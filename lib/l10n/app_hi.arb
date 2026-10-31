@@ -212,5 +212,17 @@
   "errorForbidden": "यह सिर्फ़ वर्कस्पेस के मालिक कर सकते हैं।",
   "errorAgentDisabled": "यह एजेंट बंद है। इस्तेमाल करने के लिए इसे फिर से चालू करें।",
   "errorNotFound": "यह आइटम अब मौजूद नहीं है। रीफ़्रेश करके फिर कोशिश करें।",
-  "noAgentsApproverMessage": "किसी एजेंट को जोड़ने के लिए अपने वर्कस्पेस के मालिक से कहें। उसके कार्य आप यहाँ देखेंगे।"
+  "noAgentsApproverMessage": "किसी एजेंट को जोड़ने के लिए अपने वर्कस्पेस के मालिक से कहें। उसके कार्य आप यहाँ देखेंगे।",
+  "agentDetailStatus": "स्थिति",
+  "agentDetailLastAction": "पिछला कार्य",
+  "agentDetailNoActions": "अभी तक कोई कार्य नहीं",
+  "agentDetailCallback": "कॉलबैक डिलीवरी",
+  "callbackDeliveredAgo": "डिलीवर हुआ {ago}",
+  "callbackRetryingAgo": "फिर कोशिश हो रही है · पिछली कोशिश {ago}",
+  "callbackFailedAgo": "विफल {ago}",
+  "callbackNone": "अभी तक कोई कॉलबैक नहीं। कार्य पर फ़ैसला लेने पर कॉलबैक भेजा जाता है।",
+  "callbackUnavailable": "डिलीवरी की स्थिति लोड नहीं हो सकी।",
+  "testActionHint": "आपके कार्य फ़ीड में एक सैंपल ईमेल भेजता है, ताकि आप मंज़ूर, बदलाव और अस्वीकार आज़मा सकें।",
+  "testActionPausedHint": "यह एजेंट रुका हुआ है, इसलिए इसे कार्य नहीं मिल सकते।",
+  "agentNotFound": "यह एजेंट अब मौजूद नहीं है।"
 }

@@ -7,11 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/error/failures.dart';
+import 'package:cockpit/features/actions/domain/entities/action_item.dart';
 import 'package:cockpit/features/actions/presentation/controllers/actions_feed_controller.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/entities/callback_delivery.dart';
 import 'package:cockpit/features/connections/domain/repositories/connections_repository.dart';
 import 'package:cockpit/features/connections/domain/usecases/create_agent.dart';
+import 'package:cockpit/features/connections/domain/usecases/get_last_callback.dart';
 import 'package:cockpit/features/connections/domain/usecases/list_agents.dart';
 import 'package:cockpit/features/connections/domain/usecases/send_test_action.dart';
 import 'package:cockpit/features/triggers/presentation/controllers/trigger_controllers.dart'
@@ -55,6 +58,60 @@ class ConnectionsController extends AsyncNotifier<List<Agent>> {
 final agentHasActionsProvider = Provider.family<bool, String>((ref, agentId) {
   final items = ref.watch(actionsFeedControllerProvider).value ?? const [];
   return items.any((item) => item.agentId == agentId);
+});
+
+/// When the live feed last saw an action from [agentId] (`null` if none is in
+/// the feed). The agents list is read once per visit, so its `last_action_at`
+/// goes stale while the tab stays alive; the feed updates through Realtime +
+/// poll (TR-4).
+final latestFeedActionAtProvider = Provider.family<DateTime?, String>((ref, agentId) {
+  return ref.watch(
+    actionsFeedControllerProvider.select((feed) {
+      DateTime? latest;
+      for (final item in feed.value ?? const <ActionItem>[]) {
+        if (item.agentId == agentId) latest = laterOf(latest, item.createdAt);
+      }
+      return latest;
+    }),
+  );
+});
+
+/// [agent] with its last action time brought up to date from the live feed,
+/// so the list never says "no actions yet" after an action arrived.
+final liveAgentProvider = Provider.family<Agent, Agent>((ref, agent) {
+  final fromFeed = ref.watch(latestFeedActionAtProvider(agent.id));
+  final latest = laterOf(agent.lastActionAt, fromFeed);
+  return latest == agent.lastActionAt ? agent : agent.copyWith(lastActionAt: latest);
+});
+
+/// The later of two optional times.
+@visibleForTesting
+DateTime? laterOf(DateTime? a, DateTime? b) {
+  if (a == null) return b;
+  if (b == null) return a;
+  return b.isAfter(a) ? b : a;
+}
+
+/// The [GetLastCallback] use case (overridden in widget tests).
+final getLastCallbackProvider = Provider<GetLastCallback>((ref) => getIt<GetLastCallback>());
+
+/// The latest callback delivery to an agent (agent detail). Re-read when one
+/// of the agent's actions in the feed is decided, since a decision triggers
+/// the callback.
+final lastCallbackProvider =
+    FutureProvider.autoDispose.family<CallbackDelivery?, String>((ref, agentId) async {
+  ref.watch(authControllerProvider.select((auth) => auth.value?.id));
+  ref.watch(
+    actionsFeedControllerProvider.select((feed) {
+      DateTime? latest;
+      for (final item in feed.value ?? const <ActionItem>[]) {
+        if (item.agentId == agentId) latest = laterOf(latest, item.decidedAt);
+      }
+      return latest;
+    }),
+  );
+  final result = await ref.watch(getLastCallbackProvider)(agentId);
+  return result.fold((failure) => throw failure, (delivery) => delivery);
 });
 
 /// The signed-in user's ownership, independent of any feature flag: `true`

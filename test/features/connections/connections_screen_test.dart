@@ -1,18 +1,32 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:cockpit/core/di/providers.dart';
 import 'package:cockpit/core/domain/agent_platform.dart';
 import 'package:cockpit/core/error/failures.dart';
+import 'package:cockpit/core/router/routes.dart';
+import 'package:cockpit/core/theme/app_theme.dart';
+import 'package:cockpit/features/actions/domain/entities/action_item.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
+import 'package:cockpit/features/connections/domain/usecases/get_last_callback.dart';
 import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
+import 'package:cockpit/features/connections/presentation/screens/agent_detail_screen.dart';
 import 'package:cockpit/features/connections/presentation/screens/connections_screen.dart';
 import 'package:cockpit/features/connections/presentation/widgets/agent_row.dart';
 import 'package:cockpit/features/triggers/domain/usecases/get_is_workspace_owner.dart';
 import 'package:cockpit/features/triggers/presentation/controllers/trigger_controllers.dart';
 
+import 'package:cockpit/l10n/app_localizations.dart';
+
+import '../../helpers/action_fixtures.dart';
 import '../../helpers/pump_app.dart';
+
+class _MockGetLastCallback extends Mock implements GetLastCallback {}
 
 class _MockIsOwner extends Mock implements GetIsWorkspaceOwner {}
 
@@ -51,6 +65,7 @@ void main() {
       ThemeMode themeMode = ThemeMode.light,
       Locale locale = const Locale('en'),
       GetIsWorkspaceOwner? isOwner,
+      List<ActionItem>? feed,
     }) =>
         pumpApp(
           tester,
@@ -62,6 +77,7 @@ void main() {
             connectionsControllerProvider
                 .overrideWith(() => _FakeConnectionsController(agents)),
             if (isOwner != null) getIsWorkspaceOwnerProvider.overrideWithValue(isOwner),
+            if (feed != null) feedOverride(feed),
           ],
         );
 
@@ -136,6 +152,112 @@ void main() {
       expect(find.text('Custom · paused'), findsOneWidget);
       expect(find.text('LIVE'), findsOneWidget);
       expect(find.text('PAUSED'), findsOneWidget);
+    });
+
+    group('last action stays current (v2)', () {
+      testWidgets('an action in the live feed replaces "no actions yet"', (tester) async {
+        await pumpConnections(
+          tester,
+          [_agents.first.copyWith(lastActionAt: null)],
+          feed: [pendingEmail.copyWith(agentId: 'g1', createdAt: DateTime.now())],
+        );
+
+        expect(find.text('n8n · last action just now'), findsOneWidget);
+        expect(find.text('n8n · no actions yet'), findsNothing);
+      });
+
+      testWidgets('a newer feed action wins over the listed time', (tester) async {
+        await pumpConnections(
+          tester,
+          _agents,
+          feed: [pendingEmail.copyWith(agentId: 'g1', createdAt: DateTime.now())],
+        );
+
+        expect(find.text('n8n · last action just now'), findsOneWidget);
+      });
+
+      testWidgets('an older feed action does not roll the time back', (tester) async {
+        await pumpConnections(
+          tester,
+          _agents,
+          feed: [
+            pendingEmail.copyWith(
+              agentId: 'g1',
+              createdAt: DateTime.now().subtract(const Duration(days: 3)),
+            ),
+          ],
+        );
+
+        expect(find.text('n8n · last action 4 min ago'), findsOneWidget);
+      });
+
+      testWidgets('without any action it still says so', (tester) async {
+        await pumpConnections(tester, [_agents.first.copyWith(lastActionAt: null)], feed: const []);
+
+        expect(find.text('n8n · no actions yet'), findsOneWidget);
+      });
+    });
+
+    testWidgets('tapping an agent opens its detail', (tester) async {
+      final lastCallback = _MockGetLastCallback();
+      when(() => lastCallback(any())).thenAnswer((_) async => const Right(null));
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      tester.view
+        ..physicalSize = phoneSize
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final router = GoRouter(
+        initialLocation: RoutePaths.connections,
+        routes: [
+          GoRoute(
+            name: RouteNames.connections,
+            path: RoutePaths.connections,
+            builder: (_, _) => const ConnectionsScreen(),
+            routes: [
+              GoRoute(
+                name: RouteNames.agentDetail,
+                path: RoutePaths.agentDetail,
+                builder: (_, state) => AgentDetailScreen(agentId: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            connectionsControllerProvider.overrideWith(() => _FakeConnectionsController(_agents)),
+            feedOverride(const []),
+            getLastCallbackProvider.overrideWithValue(lastCallback),
+            testActionsSupportedProvider.overrideWithValue(true),
+            canManageAgentsProvider.overrideWithValue(true),
+          ],
+          child: MaterialApp.router(
+            theme: AppTheme.buildLight(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Support triage'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AgentDetailScreen), findsOneWidget);
+      expect(find.text('PAUSED'), findsOneWidget);
+      expect(find.text('https://support.example.com/hook'), findsOneWidget);
+      expect(router.routeInformationProvider.value.uri.path, '/connections/agents/g2');
+
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AgentDetailScreen), findsNothing);
+      expect(find.byType(AgentRow), findsNWidgets(2));
     });
 
     testWidgets('shows the empty state with a connect CTA', (tester) async {

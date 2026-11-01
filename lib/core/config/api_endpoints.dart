@@ -54,4 +54,7 @@ abstract final class DbTables {
 
   /// Trigger runs (Agent Triggers, flag-gated).
   static const String triggerRun = 'trigger_run';
+
+  /// Server feature flags (backend 0010; read-only for the app).
+  static const String featureSetting = 'feature_setting';
 }

@@ -1,8 +1,14 @@
-// Feature flags. Every flag is OFF by default. A flag turns on either at
-// compile time (`--dart-define`, for local development against a backend with
-// the matching flag) or remotely through PostHog once analytics is
-// initialised. Until PostHog is set up (bootstrap TODO) the remote read is
-// skipped and never touches the plugin, so the defaults apply.
+// Feature flags. Every flag is OFF by default.
+//
+// The server decides (backend `feature_setting`, migration 0010), so a
+// feature switches on or off with no app re-release:
+//  * Agent Triggers = compile-time capability (`--dart-define=AGENT_TRIGGERS`)
+//    AND the server's `agent_triggers` flag. A build without the capability
+//    never reads the server value for it.
+//  * Agent services = the server's `agent_services` flag only.
+// Server values come from featureSettingsControllerProvider: last known value
+// kept on a failed read, fail closed while nothing is known, `min_app_version`
+// respected. PostHog is not consulted for these flags.
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -10,13 +16,14 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'package:cockpit/core/config/app_config.dart';
 import 'package:cockpit/core/utils/logger.dart';
+import 'package:cockpit/features/feature_settings/domain/entities/feature_setting.dart';
+import 'package:cockpit/features/feature_settings/presentation/controllers/feature_settings_controller.dart';
 
-/// Compile-time flag defaults.
+/// Compile-time capabilities.
 abstract final class FeatureFlags {
-  /// Agent Triggers (start an agent from the app). Off unless built with
-  /// `--dart-define=AGENT_TRIGGERS=true`. Mirrors the backend's
-  /// FEATURE_AGENT_TRIGGERS: with the backend flag off the Edge Functions
-  /// answer `feature_disabled`.
+  /// Agent Triggers capability. Off unless built with
+  /// `--dart-define=AGENT_TRIGGERS=true`; even then the UI shows only while
+  /// the server's `agent_triggers` flag is on (see [agentTriggersProvider]).
   static const bool agentTriggers = bool.fromEnvironment('AGENT_TRIGGERS');
 }
 
@@ -33,7 +40,9 @@ abstract interface class RemoteFlagSource {
 }
 
 /// PostHog-backed flags. Returns `null` (never throws) when PostHog isn't
-/// configured for this build or the read fails.
+/// configured for this build or the read fails. Not consulted by the flag
+/// providers since 0010 (the server's feature_setting decides); kept for
+/// analytics-side experiments once PostHog is initialised.
 class PostHogFlagSource implements RemoteFlagSource {
   /// Creates the source. [configured] is false when no POSTHOG_KEY is set.
   const PostHogFlagSource({required this.configured});
@@ -60,17 +69,18 @@ final remoteFlagSourceProvider = Provider<RemoteFlagSource>(
   ),
 );
 
-/// The remote value of Agent Triggers (`null` until / unless known).
-final _remoteAgentTriggersProvider = FutureProvider<bool?>(
-  (ref) => ref.watch(remoteFlagSourceProvider).isEnabled(RemoteFlagKeys.agentTriggers),
-);
+/// The Agent Triggers compile-time capability (overridable in tests).
+final agentTriggersCapabilityProvider = Provider<bool>((ref) => FeatureFlags.agentTriggers);
 
-/// Whether Agent Triggers UI is shown. Default OFF: the compile-time default,
-/// or the PostHog flag when it has been read as true.
+/// Whether Agent Triggers UI is shown: capability AND server flag.
 final agentTriggersProvider = Provider<bool>((ref) {
-  if (FeatureFlags.agentTriggers) return true;
-  return ref.watch(_remoteAgentTriggersProvider).value ?? false;
+  if (!ref.watch(agentTriggersCapabilityProvider)) return false;
+  return ref.watch(serverFeatureProvider(FeatureKeys.agentTriggers));
 });
+
+/// Whether agent services are available (server flag only).
+final agentServicesProvider =
+    Provider<bool>((ref) => ref.watch(serverFeatureProvider(FeatureKeys.agentServices)));
 
 /// For widget tests: the flag forced to [enabled].
 @visibleForTesting

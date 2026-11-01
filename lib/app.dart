@@ -10,6 +10,7 @@ import 'package:cockpit/core/router/app_router.dart';
 import 'package:cockpit/core/theme/localized_typography.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
 import 'package:cockpit/core/theme/theme_controller.dart';
+import 'package:cockpit/features/feature_settings/presentation/controllers/feature_settings_controller.dart';
 import 'package:cockpit/features/notifications/presentation/push_gate.dart';
 import 'package:cockpit/l10n/app_localizations.dart';
 
@@ -23,6 +24,9 @@ class CockpitApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     final themeMode = ref.watch(themeControllerProvider);
     final locale = ref.watch(localeControllerProvider);
+    // Server feature flags: read at start and kept fresh (resume, sign-in,
+    // ~5 min). A listen, not a watch: a flag change never rebuilds the app.
+    ref.listen(featureSettingsControllerProvider, (_, _) {});
 
     return MaterialApp.router(
       onGenerateTitle: (context) => context.l10n.appTitle,

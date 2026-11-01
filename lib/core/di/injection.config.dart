@@ -71,6 +71,14 @@ import 'package:cockpit/features/connections/domain/usecases/list_agents.dart'
     as _i206;
 import 'package:cockpit/features/connections/domain/usecases/send_test_action.dart'
     as _i947;
+import 'package:cockpit/features/feature_settings/data/datasources/feature_settings_ds.dart'
+    as _i82;
+import 'package:cockpit/features/feature_settings/data/repositories/feature_settings_repository_impl.dart'
+    as _i230;
+import 'package:cockpit/features/feature_settings/domain/repositories/feature_settings_repository.dart'
+    as _i445;
+import 'package:cockpit/features/feature_settings/domain/usecases/get_feature_settings.dart'
+    as _i1041;
 import 'package:cockpit/features/notifications/data/datasources/fcm_message_ds.dart'
     as _i445;
 import 'package:cockpit/features/notifications/data/datasources/fcm_token_ds.dart'
@@ -165,6 +173,10 @@ extension GetItInjectableX on _i174.GetIt {
       registerFor: {_demo},
     );
     gh.lazySingleton<_i194.NetworkInfo>(() => const _i194.NetworkInfoImpl());
+    gh.lazySingleton<_i82.FeatureSettingsDataSource>(
+      () => const _i82.FeatureSettingsDemoDataSource(),
+      registerFor: {_demo},
+    );
     gh.lazySingleton<_i454.SupabaseClient>(
       () => supabaseModule.supabaseClient,
       registerFor: {_live},
@@ -175,6 +187,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i445.FcmMessageDataSource>(
       () => const _i445.FcmMessageDataSourceImpl(),
+      registerFor: {_live},
+    );
+    gh.lazySingleton<_i82.FeatureSettingsDataSource>(
+      () => _i82.FeatureSettingsRemoteDataSource(gh<_i454.SupabaseClient>()),
       registerFor: {_live},
     );
     gh.lazySingleton<_i476.AuthInterceptor>(
@@ -249,6 +265,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i952.SetTriggerEnabled>(
       () => _i952.SetTriggerEnabled(gh<_i799.TriggerRepository>()),
     );
+    gh.lazySingleton<_i445.FeatureSettingsRepository>(
+      () => _i230.FeatureSettingsRepositoryImpl(
+        gh<_i82.FeatureSettingsDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i941.ConnectionsRemoteDataSource>(
       () => _i941.ConnectionsRemoteDataSourceImpl(
         gh<_i454.SupabaseClient>(),
@@ -284,6 +305,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i815.WatchAuthState>(
       () => _i815.WatchAuthState(gh<_i90.AuthRepository>()),
+    );
+    gh.lazySingleton<_i1041.GetFeatureSettings>(
+      () => _i1041.GetFeatureSettings(gh<_i445.FeatureSettingsRepository>()),
     );
     gh.lazySingleton<_i282.GetAuditEntries>(
       () => _i282.GetAuditEntries(gh<_i280.AuditRepository>()),

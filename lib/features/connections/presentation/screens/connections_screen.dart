@@ -20,6 +20,8 @@ import 'package:cockpit/core/widgets/app_icon.dart';
 import 'package:cockpit/core/widgets/app_loader.dart';
 import 'package:cockpit/core/widgets/app_scaffold.dart';
 import 'package:cockpit/core/widgets/app_top_bar.dart';
+import 'package:cockpit/features/agent_services/presentation/controllers/agent_services_controller.dart';
+import 'package:cockpit/features/agent_services/presentation/widgets/services_section.dart';
 import 'package:cockpit/features/connections/domain/entities/agent.dart';
 import 'package:cockpit/features/connections/presentation/controllers/connections_controller.dart';
 import 'package:cockpit/features/connections/presentation/widgets/agent_row.dart';
@@ -41,6 +43,8 @@ class ConnectionsScreen extends ConsumerWidget {
     final triggersOn = ref.watch(agentTriggersProvider);
     // Connecting an agent is owner-only: approvers see no entry point.
     final canManage = ref.watch(canManageAgentsProvider);
+    // Agent services (Release A): false — and nothing read — with the flag off.
+    final servicesVisible = ref.watch(servicesVisibleProvider);
     void openConnect() => context.goNamed(RouteNames.connectAgent);
 
     return AppScaffold(
@@ -55,6 +59,41 @@ class ConnectionsScreen extends ConsumerWidget {
             : null,
       ),
       body: switch (agents) {
+        // Agent services (server flag + owner + ≥ 1 service): the Services
+        // section above the agents. Otherwise the arms below, unchanged.
+        AsyncData(:final value) when servicesVisible => RefreshIndicator(
+            color: context.colors.accent,
+            backgroundColor: context.colors.surface,
+            onRefresh: () async {
+              if (triggersOn) ref.invalidate(agentTriggersControllerProvider);
+              await ref.read(agentServicesControllerProvider.notifier).refresh();
+              final _ = await ref.refresh(connectionsControllerProvider.future);
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(spacing.screenPadding),
+              children: [
+                const ServicesSection(),
+                SizedBox(height: spacing.md),
+                if (value.isEmpty)
+                  AppEmptyView(
+                    icon: AppIcons.link,
+                    title: l10n.noAgentsTitle,
+                    message: canManage ? l10n.noAgentsMessage : l10n.noAgentsApproverMessage,
+                    action: canManage
+                        ? AppButton(label: l10n.connectAgent, icon: AppIcons.plus, onPressed: openConnect)
+                        : null,
+                  )
+                else
+                  for (final agent in value) ...[
+                    triggersOn
+                        ? _TriggerAwareAgentRow(key: ValueKey(agent.id), agent: agent)
+                        : _LiveAgentRow(key: ValueKey(agent.id), agent: agent),
+                    SizedBox(height: spacing.cardGap),
+                  ],
+              ],
+            ),
+          ),
         AsyncData(:final value) when value.isEmpty => AppEmptyView(
             icon: AppIcons.link,
             title: l10n.noAgentsTitle,

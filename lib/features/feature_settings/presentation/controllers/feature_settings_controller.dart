@@ -11,20 +11,20 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cockpit/core/config/app_config.dart';
+import 'package:cockpit/core/config/app_version.dart';
 import 'package:cockpit/core/di/injection.dart';
 import 'package:cockpit/core/utils/logger.dart';
 import 'package:cockpit/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:cockpit/features/feature_settings/domain/entities/feature_setting.dart';
 import 'package:cockpit/features/feature_settings/domain/usecases/get_feature_settings.dart';
 
+// The running app's version now lives in core (ADR-012, package_info_plus);
+// re-exported here so existing imports / overrides keep working.
+export 'package:cockpit/core/config/app_version.dart' show appVersionProvider;
+
 /// [GetFeatureSettings] use case (overridable in tests).
 final getFeatureSettingsProvider =
     Provider<GetFeatureSettings>((ref) => getIt<GetFeatureSettings>());
-
-/// The running app's version, compared with `min_app_version` (overridable
-/// in tests).
-final appVersionProvider = Provider<String>((ref) => AppConfig.appVersion);
 
 /// Last known server flags by key; `null` until the first successful read.
 class FeatureSettingsController extends Notifier<Map<String, FeatureSetting>?> {

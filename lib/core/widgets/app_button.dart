@@ -41,6 +41,7 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.expand = false,
+    this.autofocus = false,
     super.key,
   });
 
@@ -67,6 +68,9 @@ class AppButton extends StatelessWidget {
 
   /// Fills the available width.
   final bool expand;
+
+  /// Takes focus when first shown (e.g. the safe choice of a confirm dialog).
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +135,7 @@ class AppButton extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
+          autofocus: autofocus,
           onTap: enabled ? onPressed : null,
           child: SizedBox(
             height: compact ? spacing.buttonHeightCompact : spacing.buttonHeight,

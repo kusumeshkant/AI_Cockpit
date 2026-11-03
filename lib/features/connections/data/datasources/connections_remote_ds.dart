@@ -52,6 +52,9 @@ class ConnectionsRemoteDataSourceImpl implements ConnectionsRemoteDataSource {
     final rows = await _client
         .from(DbTables.agent)
         .select(_columns)
+        // Service agents (backend 0011) are already hidden by RLS (0011
+        // policy); defence in depth, as their callback_url is null.
+        .neq('platform', 'service')
         .order('created_at', ascending: false);
     return rows.map(AgentDto.fromJson).toList(growable: false);
   }

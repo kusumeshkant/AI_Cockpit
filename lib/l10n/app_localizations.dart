@@ -1387,6 +1387,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This agent no longer exists.'**
   String get agentNotFound;
+
+  /// Agent service unreachable (agent_unavailable)
+  ///
+  /// In en, this message translates to:
+  /// **'The service isn\'t reachable right now. Try again in a moment.'**
+  String get errorAgentUnavailable;
+
+  /// Agent service timeout (agent_timeout)
+  ///
+  /// In en, this message translates to:
+  /// **'The service is taking too long. Try again in a moment.'**
+  String get errorAgentTimeout;
+
+  /// Unexpected agent service answer (agent_error)
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on the service\'s side. Try again later.'**
+  String get errorAgentError;
+
+  /// Agent service paused (agent_paused)
+  ///
+  /// In en, this message translates to:
+  /// **'This service is paused for now.'**
+  String get errorAgentPaused;
+
+  /// Agent service trial over (trial_ended)
+  ///
+  /// In en, this message translates to:
+  /// **'Your trial for this service has ended.'**
+  String get errorTrialEnded;
+
+  /// Agent service limit reached (quota_reached)
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached this service\'s usage limit.'**
+  String get errorQuotaReached;
+
+  /// Agent refused an approval (approval_blocked)
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be approved yet. Check the open findings first.'**
+  String get errorApprovalBlocked;
+
+  /// Operation not offered (unsupported_op)
+  ///
+  /// In en, this message translates to:
+  /// **'This app version can\'t do that with this service.'**
+  String get errorUnsupportedOp;
+
+  /// App older than the service needs (app_update_required)
+  ///
+  /// In en, this message translates to:
+  /// **'Update the app to use this service.'**
+  String get errorAppUpdateRequired;
+
+  /// Service unknown / not offered (service_not_found)
+  ///
+  /// In en, this message translates to:
+  /// **'This service isn\'t available.'**
+  String get errorServiceNotFound;
+
+  /// Service off or blocked for this workspace (service_not_enabled); never says why
+  ///
+  /// In en, this message translates to:
+  /// **'This service isn\'t available for your account.'**
+  String get errorServiceNotEnabled;
+
+  /// Agent says the idea is final (conflict / idea_final)
+  ///
+  /// In en, this message translates to:
+  /// **'This idea was already decided.'**
+  String get errorIdeaFinal;
+
+  /// Connections: heading of the agent services section
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get servicesSectionTitle;
+
+  /// Service status: never enabled or disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Not enabled'**
+  String get serviceStatusNotEnabled;
+
+  /// Service status: enabled
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get serviceStatusEnabled;
+
+  /// Service status: paused by the operator
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get serviceStatusPaused;
+
+  /// Service status: blocked or unknown (no reason given)
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get serviceStatusUnavailable;
+
+  /// Screen-reader label of a service row
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {status}'**
+  String serviceRowSemantics(String name, String status);
+
+  /// Service detail: paused banner
+  ///
+  /// In en, this message translates to:
+  /// **'The service is paused for now. Your settings are kept.'**
+  String get servicePausedBanner;
+
+  /// Service detail: app older than min_app_version
+  ///
+  /// In en, this message translates to:
+  /// **'This service needs a newer version of the app.'**
+  String get serviceUpdateBanner;
+
+  /// Service detail: opens the store listing
+  ///
+  /// In en, this message translates to:
+  /// **'Update the app'**
+  String get serviceUpdateAction;
+
+  /// Service detail / consent: enable button
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get serviceEnable;
+
+  /// Service detail / confirm: disable button
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get serviceDisable;
+
+  /// Service detail: enabled, no screens yet (Release A)
+  ///
+  /// In en, this message translates to:
+  /// **'Ready. This service\'s screens will appear here soon.'**
+  String get serviceReady;
+
+  /// Snackbar after enabling a service
+  ///
+  /// In en, this message translates to:
+  /// **'Service enabled'**
+  String get serviceEnabledToast;
+
+  /// Snackbar after disabling a service
+  ///
+  /// In en, this message translates to:
+  /// **'Service disabled'**
+  String get serviceDisabledToast;
+
+  /// Service detail opened for a service that isn't listed
+  ///
+  /// In en, this message translates to:
+  /// **'This service is no longer listed.'**
+  String get serviceNotListed;
+
+  /// Consent sheet title
+  ///
+  /// In en, this message translates to:
+  /// **'Before you enable {name}'**
+  String serviceConsentTitle(String name);
+
+  /// Consent v1: what is shared
+  ///
+  /// In en, this message translates to:
+  /// **'Your brand details and post text are sent to the service provider so it can create drafts for you.'**
+  String get serviceConsentShared;
+
+  /// Consent v1: retention
+  ///
+  /// In en, this message translates to:
+  /// **'The provider keeps them for up to 30 days.'**
+  String get serviceConsentRetention;
+
+  /// Consent v1: user control
+  ///
+  /// In en, this message translates to:
+  /// **'You can disable the service at any time and ask for your data to be deleted.'**
+  String get serviceConsentControl;
+
+  /// Consent v1: the checkbox the user must tick
+  ///
+  /// In en, this message translates to:
+  /// **'I understand and agree'**
+  String get serviceConsentCheckbox;
+
+  /// Disable confirm dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Disable {name}?'**
+  String serviceDisableTitle(String name);
+
+  /// Disable confirm dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'No new drafts will arrive. Cards already in your feed stay until you decide them.'**
+  String get serviceDisableBody;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'package:cockpit/core/config/app_version.dart' as _i923;
 import 'package:cockpit/core/di/supabase_module.dart' as _i868;
 import 'package:cockpit/core/network/auth_interceptor.dart' as _i476;
 import 'package:cockpit/core/network/dio_client.dart' as _i846;
@@ -30,6 +31,16 @@ import 'package:cockpit/features/actions/domain/usecases/get_action_detail.dart'
     as _i357;
 import 'package:cockpit/features/actions/domain/usecases/watch_pending_actions.dart'
     as _i61;
+import 'package:cockpit/features/agent_services/data/datasources/agent_gateway_client.dart'
+    as _i468;
+import 'package:cockpit/features/agent_services/data/datasources/agent_services_ds.dart'
+    as _i843;
+import 'package:cockpit/features/agent_services/data/repositories/agent_services_repository_impl.dart'
+    as _i254;
+import 'package:cockpit/features/agent_services/domain/repositories/agent_services_repository.dart'
+    as _i639;
+import 'package:cockpit/features/agent_services/domain/usecases/agent_services_usecases.dart'
+    as _i407;
 import 'package:cockpit/features/audit/data/datasources/audit_demo_ds.dart'
     as _i595;
 import 'package:cockpit/features/audit/data/datasources/audit_remote_ds.dart'
@@ -152,6 +163,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => const _i937.FcmTokenDemoDataSource(),
       registerFor: {_demo},
     );
+    gh.lazySingleton<_i923.AppVersionSource>(
+      () => const _i923.DemoAppVersionSource(),
+      registerFor: {_demo},
+    );
+    gh.lazySingleton<_i843.AgentServicesDataSource>(
+      () => _i843.AgentServicesDemoDataSource(),
+      registerFor: {_demo},
+    );
     gh.lazySingleton<_i1038.WorkspaceRoleDataSource>(
       () => const _i1038.WorkspaceRoleDemoDataSource(),
       registerFor: {_demo},
@@ -179,6 +198,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i454.SupabaseClient>(
       () => supabaseModule.supabaseClient,
+      registerFor: {_live},
+    );
+    gh.lazySingleton<_i923.AppVersionSource>(
+      () => _i923.PackageAppVersionSource(),
       registerFor: {_live},
     );
     gh.lazySingleton<_i195.LocalNotifier>(
@@ -309,6 +332,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1041.GetFeatureSettings>(
       () => _i1041.GetFeatureSettings(gh<_i445.FeatureSettingsRepository>()),
     );
+    gh.lazySingleton<_i468.AgentGatewayClient>(
+      () => _i468.AgentGatewayClient(
+        gh<_i846.DioClient>(),
+        gh<_i923.AppVersionSource>(),
+      ),
+      registerFor: {_live},
+    );
     gh.lazySingleton<_i282.GetAuditEntries>(
       () => _i282.GetAuditEntries(gh<_i280.AuditRepository>()),
     );
@@ -326,6 +356,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i302.UnregisterDevice>(
       () => _i302.UnregisterDevice(gh<_i56.PushRepository>()),
+    );
+    gh.lazySingleton<_i843.AgentServicesDataSource>(
+      () => _i843.AgentServicesRemoteDataSource(
+        gh<_i454.SupabaseClient>(),
+        gh<_i468.AgentGatewayClient>(),
+      ),
+      registerFor: {_live},
     );
     gh.lazySingleton<_i555.NotificationService>(
       () => _i555.NotificationService(
@@ -351,6 +388,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i90.AuthRepository>(),
         gh<_i302.UnregisterDevice>(),
       ),
+    );
+    gh.lazySingleton<_i639.AgentServicesRepository>(
+      () => _i254.AgentServicesRepositoryImpl(
+        gh<_i843.AgentServicesDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i407.ListServices>(
+      () => _i407.ListServices(gh<_i639.AgentServicesRepository>()),
+    );
+    gh.lazySingleton<_i407.GetServiceAccess>(
+      () => _i407.GetServiceAccess(gh<_i639.AgentServicesRepository>()),
+    );
+    gh.lazySingleton<_i407.EnableService>(
+      () => _i407.EnableService(gh<_i639.AgentServicesRepository>()),
+    );
+    gh.lazySingleton<_i407.DisableService>(
+      () => _i407.DisableService(gh<_i639.AgentServicesRepository>()),
     );
     return this;
   }

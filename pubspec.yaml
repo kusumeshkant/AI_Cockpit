@@ -48,6 +48,7 @@ dependencies:
   http: ^1.6.0
   marionette_flutter: ^0.6.0
   url_launcher: ^6.3.2 # ADR-011: Terms / Privacy links
+  package_info_plus: ^10.2.1 # ADR-012: real app version for min_app_version / X-App-Version
 
 dev_dependencies:
   flutter_test:

@@ -65,6 +65,31 @@ Failure mapDioException(DioException e) {
       return AgentDisabledFailure(code!);
     case 'not_found':
       return NotFoundFailure(code!);
+    // Agent services gateway (backend 0011–0014).
+    case 'agent_unavailable':
+      return AgentUnavailableFailure(code!, _retryAfter(e.response?.headers.value('retry-after')));
+    case 'agent_timeout':
+      return AgentTimeoutFailure(code!);
+    case 'agent_error':
+      return AgentErrorFailure(code!);
+    case 'agent_paused':
+      return AgentPausedFailure(code!);
+    case 'trial_ended':
+      return TrialEndedFailure(code!);
+    case 'quota_reached':
+      return QuotaReachedFailure(code!);
+    case 'approval_blocked':
+      return ApprovalBlockedFailure(code!);
+    case 'unsupported_op':
+      return UnsupportedOpFailure(code!);
+    case 'app_update_required':
+      return AppUpdateRequiredFailure(code!);
+    case 'service_not_found':
+      return ServiceNotFoundFailure(code!);
+    case 'service_not_enabled':
+      return ServiceNotEnabledFailure(code!);
+    case 'conflict' when _envelopeDetailCode(e.response?.data) == 'idea_final':
+      return const IdeaFinalFailure();
   }
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||
@@ -123,6 +148,15 @@ Failure mapAppException(AppException e) => switch (e) {
 Duration? _retryAfter(String? header) {
   final seconds = int.tryParse(header ?? '');
   return seconds == null || seconds < 0 ? null : Duration(seconds: seconds);
+}
+
+/// `error.details.code` of an envelope (e.g. `idea_final` on a 409 conflict).
+String? _envelopeDetailCode(Object? data) {
+  if (data is Map && data['error'] is Map) {
+    final details = (data['error'] as Map)['details'];
+    if (details is Map && details['code'] is String) return details['code'] as String;
+  }
+  return null;
 }
 
 String? _envelopeCode(Object? data) {

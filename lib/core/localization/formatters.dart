@@ -41,6 +41,19 @@ extension FormattersContextX on BuildContext {
         ForbiddenFailure() => l10n.errorForbidden,
         AgentDisabledFailure() => l10n.errorAgentDisabled,
         NotFoundFailure() => l10n.errorNotFound,
+        // Agent services gateway: calm, never the service's own text.
+        AgentUnavailableFailure() => l10n.errorAgentUnavailable,
+        AgentTimeoutFailure() => l10n.errorAgentTimeout,
+        AgentErrorFailure() => l10n.errorAgentError,
+        AgentPausedFailure() => l10n.errorAgentPaused,
+        TrialEndedFailure() => l10n.errorTrialEnded,
+        QuotaReachedFailure() => l10n.errorQuotaReached,
+        ApprovalBlockedFailure() => l10n.errorApprovalBlocked,
+        UnsupportedOpFailure() => l10n.errorUnsupportedOp,
+        AppUpdateRequiredFailure() => l10n.errorAppUpdateRequired,
+        ServiceNotFoundFailure() => l10n.errorServiceNotFound,
+        ServiceNotEnabledFailure() => l10n.errorServiceNotEnabled,
+        IdeaFinalFailure() => l10n.errorIdeaFinal,
         _ => l10n.errorGeneric,
       };
 

@@ -1,10 +1,11 @@
 // Feature: settings · Layer: presentation
-// Settings → About (F12): the app version (APP_VERSION) and, when
+// Settings → About (F12): the app version (installed package, ADR-012;
+// APP_VERSION as the fallback) and, when
 // SUPPORT_EMAIL is configured, a row that opens a mail to support.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cockpit/core/config/app_config.dart';
+import 'package:cockpit/core/config/app_version.dart';
 import 'package:cockpit/core/config/config_providers.dart';
 import 'package:cockpit/core/localization/l10n_extension.dart';
 import 'package:cockpit/core/theme/app_theme.dart';
@@ -39,7 +40,7 @@ class AboutCard extends ConsumerWidget {
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  l10n.versionLabel(AppConfig.appVersion),
+                  l10n.versionLabel(ref.watch(appVersionProvider)),
                   key: const ValueKey('settings_about_version'),
                   style: context.textTheme.titleSmall,
                 ),

@@ -14,6 +14,9 @@ enum StatusTone {
 
   /// Red — rejected / failed.
   stop,
+
+  /// Grey — inactive / not set up (e.g. a service not enabled).
+  neutral,
 }
 
 /// Rounded status label.
@@ -43,6 +46,7 @@ class StatusPill extends StatelessWidget {
       StatusTone.pending => (colors.pending, colors.pendingBg),
       StatusTone.go => (colors.go, colors.goBg),
       StatusTone.stop => (colors.stop, colors.stopBg),
+      StatusTone.neutral => (colors.muted, colors.surfaceAlt),
     };
     final dotSize = bare ? spacing.dotMd : spacing.dotSm;
 

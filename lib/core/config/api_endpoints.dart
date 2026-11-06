@@ -30,6 +30,10 @@ abstract final class ApiEndpoints {
   /// App (signed out) → Play review sign-in fallback (`{email, code}` →
   /// `{token_hash}`); refuses everything unless enabled server-side.
   static const String reviewerSignin = '/reviewer-signin';
+
+  /// App → an agent service op through the gateway (JWT; Idempotency-Key for
+  /// write / destructive ops; X-App-Version). Backend 0012.
+  static const String agentProxy = '/agent-proxy';
 }
 
 /// Postgres table names (accessed through Supabase with RLS).
@@ -57,4 +61,10 @@ abstract final class DbTables {
 
   /// Server feature flags (backend 0010; read-only for the app).
   static const String featureSetting = 'feature_setting';
+
+  /// Agent services the app may list (backend 0011; safe columns only).
+  static const String agentService = 'agent_service';
+
+  /// The workspace's access to agent services (backend 0011; own workspace).
+  static const String serviceAccess = 'service_access';
 }

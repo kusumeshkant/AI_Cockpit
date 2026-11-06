@@ -763,4 +763,126 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agentNotFound => 'This agent no longer exists.';
+
+  @override
+  String get errorAgentUnavailable =>
+      'The service isn\'t reachable right now. Try again in a moment.';
+
+  @override
+  String get errorAgentTimeout =>
+      'The service is taking too long. Try again in a moment.';
+
+  @override
+  String get errorAgentError =>
+      'Something went wrong on the service\'s side. Try again later.';
+
+  @override
+  String get errorAgentPaused => 'This service is paused for now.';
+
+  @override
+  String get errorTrialEnded => 'Your trial for this service has ended.';
+
+  @override
+  String get errorQuotaReached =>
+      'You\'ve reached this service\'s usage limit.';
+
+  @override
+  String get errorApprovalBlocked =>
+      'This can\'t be approved yet. Check the open findings first.';
+
+  @override
+  String get errorUnsupportedOp =>
+      'This app version can\'t do that with this service.';
+
+  @override
+  String get errorAppUpdateRequired => 'Update the app to use this service.';
+
+  @override
+  String get errorServiceNotFound => 'This service isn\'t available.';
+
+  @override
+  String get errorServiceNotEnabled =>
+      'This service isn\'t available for your account.';
+
+  @override
+  String get errorIdeaFinal => 'This idea was already decided.';
+
+  @override
+  String get servicesSectionTitle => 'Services';
+
+  @override
+  String get serviceStatusNotEnabled => 'Not enabled';
+
+  @override
+  String get serviceStatusEnabled => 'Enabled';
+
+  @override
+  String get serviceStatusPaused => 'Paused';
+
+  @override
+  String get serviceStatusUnavailable => 'Not available';
+
+  @override
+  String serviceRowSemantics(String name, String status) {
+    return '$name, $status';
+  }
+
+  @override
+  String get servicePausedBanner =>
+      'The service is paused for now. Your settings are kept.';
+
+  @override
+  String get serviceUpdateBanner =>
+      'This service needs a newer version of the app.';
+
+  @override
+  String get serviceUpdateAction => 'Update the app';
+
+  @override
+  String get serviceEnable => 'Enable';
+
+  @override
+  String get serviceDisable => 'Disable';
+
+  @override
+  String get serviceReady =>
+      'Ready. This service\'s screens will appear here soon.';
+
+  @override
+  String get serviceEnabledToast => 'Service enabled';
+
+  @override
+  String get serviceDisabledToast => 'Service disabled';
+
+  @override
+  String get serviceNotListed => 'This service is no longer listed.';
+
+  @override
+  String serviceConsentTitle(String name) {
+    return 'Before you enable $name';
+  }
+
+  @override
+  String get serviceConsentShared =>
+      'Your brand details and post text are sent to the service provider so it can create drafts for you.';
+
+  @override
+  String get serviceConsentRetention =>
+      'The provider keeps them for up to 30 days.';
+
+  @override
+  String get serviceConsentControl =>
+      'You can disable the service at any time and ask for your data to be deleted.';
+
+  @override
+  String get serviceConsentCheckbox => 'I understand and agree';
+
+  @override
+  String serviceDisableTitle(String name) {
+    return 'Disable $name?';
+  }
+
+  @override
+  String get serviceDisableBody =>
+      'No new drafts will arrive. Cards already in your feed stay until you decide them.';
 }

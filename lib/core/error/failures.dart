@@ -104,13 +104,99 @@ final class NotFoundFailure extends Failure {
   const NotFoundFailure([super.message = 'not_found']);
 }
 
-/// Whether repeating the same request may succeed: the network failed or the
-/// server answered 5xx (or gave no status). Never for answers that describe
-/// the request itself — already decided (409), expired (410), invalid,
-/// forbidden, not found, rate limited.
+// -----------------------------------------------------------------------------
+// Agent services gateway (backend 0011–0014; agent-gateway-wire-v1.md). The
+// codes come from the envelope's `error.code`.
+// -----------------------------------------------------------------------------
+
+/// The service can't be reached right now (503 `agent_unavailable`);
+/// retry after [retryAfter].
+final class AgentUnavailableFailure extends Failure {
+  /// Creates the failure.
+  const AgentUnavailableFailure([super.message = 'agent_unavailable', this.retryAfter]);
+
+  /// Server hint from `Retry-After`, when present.
+  final Duration? retryAfter;
+}
+
+/// The service took too long (504 `agent_timeout`).
+final class AgentTimeoutFailure extends Failure {
+  /// Creates the failure.
+  const AgentTimeoutFailure([super.message = 'agent_timeout']);
+}
+
+/// The service answered something unexpected (502 `agent_error`). Never
+/// carries the service's own text.
+final class AgentErrorFailure extends Failure {
+  /// Creates the failure.
+  const AgentErrorFailure([super.message = 'agent_error']);
+}
+
+/// The service is paused (503 `agent_paused`).
+final class AgentPausedFailure extends Failure {
+  /// Creates the failure.
+  const AgentPausedFailure([super.message = 'agent_paused']);
+}
+
+/// The service's trial is over (403 `trial_ended`).
+final class TrialEndedFailure extends Failure {
+  /// Creates the failure.
+  const TrialEndedFailure([super.message = 'trial_ended']);
+}
+
+/// The service's usage limit is reached (403 `quota_reached`).
+final class QuotaReachedFailure extends Failure {
+  /// Creates the failure.
+  const QuotaReachedFailure([super.message = 'quota_reached']);
+}
+
+/// The service won't approve this yet (422 `approval_blocked`).
+final class ApprovalBlockedFailure extends Failure {
+  /// Creates the failure.
+  const ApprovalBlockedFailure([super.message = 'approval_blocked']);
+}
+
+/// The service doesn't offer this operation (422 `unsupported_op`).
+final class UnsupportedOpFailure extends Failure {
+  /// Creates the failure.
+  const UnsupportedOpFailure([super.message = 'unsupported_op']);
+}
+
+/// This app version is too old for the service (426 `app_update_required`).
+final class AppUpdateRequiredFailure extends Failure {
+  /// Creates the failure.
+  const AppUpdateRequiredFailure([super.message = 'app_update_required']);
+}
+
+/// The service doesn't exist or isn't offered (404 `service_not_found`).
+final class ServiceNotFoundFailure extends Failure {
+  /// Creates the failure.
+  const ServiceNotFoundFailure([super.message = 'service_not_found']);
+}
+
+/// The service isn't enabled — or available — for this workspace (403
+/// `service_not_enabled`; blocked access looks the same).
+final class ServiceNotEnabledFailure extends Failure {
+  /// Creates the failure.
+  const ServiceNotEnabledFailure([super.message = 'service_not_enabled']);
+}
+
+/// The idea was already decided on the service's side (409 `conflict` with
+/// `details.code == 'idea_final'`).
+final class IdeaFinalFailure extends Failure {
+  /// Creates the failure.
+  const IdeaFinalFailure([super.message = 'idea_final']);
+}
+
+/// Whether repeating the same request may succeed: the network failed, the
+/// server answered 5xx (or gave no status), or the service was unreachable /
+/// too slow. Never for answers that describe the request itself — already
+/// decided (409), expired (410), invalid, forbidden, not found, rate limited,
+/// trial over, quota reached.
 bool isRetryable(Failure failure) => switch (failure) {
       NetworkFailure() => true,
       ServerFailure(:final statusCode) => statusCode == null || statusCode >= 500,
+      AgentUnavailableFailure() || AgentTimeoutFailure() => true,
       _ => false,
     };
 

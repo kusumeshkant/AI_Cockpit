@@ -765,4 +765,123 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get agentNotFound => 'यह एजेंट अब मौजूद नहीं है।';
+
+  @override
+  String get errorAgentUnavailable =>
+      'सेवा अभी उपलब्ध नहीं है। थोड़ी देर में फिर कोशिश करें।';
+
+  @override
+  String get errorAgentTimeout =>
+      'सेवा जवाब देने में बहुत समय ले रही है। थोड़ी देर में फिर कोशिश करें।';
+
+  @override
+  String get errorAgentError =>
+      'सेवा की ओर से कुछ गलत हो गया। बाद में फिर कोशिश करें।';
+
+  @override
+  String get errorAgentPaused => 'यह सेवा अभी रुकी हुई है।';
+
+  @override
+  String get errorTrialEnded => 'इस सेवा का आपका ट्रायल खत्म हो गया है।';
+
+  @override
+  String get errorQuotaReached => 'आप इस सेवा की उपयोग सीमा तक पहुँच गए हैं।';
+
+  @override
+  String get errorApprovalBlocked =>
+      'इसे अभी मंज़ूरी नहीं दी जा सकती। पहले बाकी बिंदु देख लें।';
+
+  @override
+  String get errorUnsupportedOp =>
+      'ऐप का यह वर्शन इस सेवा के साथ यह नहीं कर सकता।';
+
+  @override
+  String get errorAppUpdateRequired =>
+      'इस सेवा का उपयोग करने के लिए ऐप अपडेट करें।';
+
+  @override
+  String get errorServiceNotFound => 'यह सेवा उपलब्ध नहीं है।';
+
+  @override
+  String get errorServiceNotEnabled =>
+      'यह सेवा आपके अकाउंट के लिए उपलब्ध नहीं है।';
+
+  @override
+  String get errorIdeaFinal => 'इस आइडिया पर पहले ही फ़ैसला हो चुका है।';
+
+  @override
+  String get servicesSectionTitle => 'सेवाएँ';
+
+  @override
+  String get serviceStatusNotEnabled => 'चालू नहीं';
+
+  @override
+  String get serviceStatusEnabled => 'चालू';
+
+  @override
+  String get serviceStatusPaused => 'रुकी हुई';
+
+  @override
+  String get serviceStatusUnavailable => 'उपलब्ध नहीं';
+
+  @override
+  String serviceRowSemantics(String name, String status) {
+    return '$name, $status';
+  }
+
+  @override
+  String get servicePausedBanner =>
+      'सेवा अभी रुकी हुई है। आपकी सेटिंग्स सुरक्षित हैं।';
+
+  @override
+  String get serviceUpdateBanner => 'इस सेवा के लिए ऐप का नया वर्शन चाहिए।';
+
+  @override
+  String get serviceUpdateAction => 'ऐप अपडेट करें';
+
+  @override
+  String get serviceEnable => 'चालू करें';
+
+  @override
+  String get serviceDisable => 'बंद करें';
+
+  @override
+  String get serviceReady => 'तैयार। इस सेवा की स्क्रीन जल्द ही यहाँ दिखेंगी।';
+
+  @override
+  String get serviceEnabledToast => 'सेवा चालू हो गई';
+
+  @override
+  String get serviceDisabledToast => 'सेवा बंद हो गई';
+
+  @override
+  String get serviceNotListed => 'यह सेवा अब सूची में नहीं है।';
+
+  @override
+  String serviceConsentTitle(String name) {
+    return '$name चालू करने से पहले';
+  }
+
+  @override
+  String get serviceConsentShared =>
+      'आपके लिए ड्राफ़्ट बनाने के लिए आपके ब्रांड की जानकारी और पोस्ट का टेक्स्ट सेवा प्रदाता को भेजा जाता है।';
+
+  @override
+  String get serviceConsentRetention => 'प्रदाता इन्हें 30 दिनों तक रखता है।';
+
+  @override
+  String get serviceConsentControl =>
+      'आप कभी भी सेवा बंद कर सकते हैं और अपना डेटा मिटाने का अनुरोध कर सकते हैं।';
+
+  @override
+  String get serviceConsentCheckbox => 'मुझे समझ आ गया है और मैं सहमत हूँ';
+
+  @override
+  String serviceDisableTitle(String name) {
+    return '$name बंद करें?';
+  }
+
+  @override
+  String get serviceDisableBody =>
+      'नए ड्राफ़्ट आना बंद हो जाएँगे। फ़ीड में पहले से मौजूद कार्ड तब तक रहेंगे जब तक आप उन पर फ़ैसला नहीं करते।';
 }
